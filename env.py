@@ -18,7 +18,7 @@ class NetworkEnv(object):
     state consists of node 'attr' and A
     '''
     
-    def __init__(self, G, T=3, budget_ratio=0.2, propagate_p = 0.1):
+    def __init__(self, G, T=3, budget_ratio=0.2, propagate_p = 0.2):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
@@ -92,6 +92,7 @@ if __name__ == '__main__':
     G = nx.read_edgelist(path, nodetype=int)
     mapping=dict(zip(G.nodes(),range(len(G))))
     G = nx.relabel_nodes(G,mapping)
+    print(len(G.nodes))
     env=NetworkEnv(G=G)
 
 
@@ -119,7 +120,7 @@ if __name__ == '__main__':
                     action_v=v
                     max_degree=degree[v]
             action.append(action_v)
-        print(action)
+        #print(action)
         env.step(action)
     print(env.reward)
     '''

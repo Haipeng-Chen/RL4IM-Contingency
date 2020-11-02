@@ -26,11 +26,9 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import ExtraTreesRegressor
 
 from gcn import NaiveGCN
-#from SIS_Belief_env import EpidemicEnv #hp: remove
 from env import NetworkEnv
 
 
-#Q1: did you use Memory_belief?
 #Q2: Use NaiveGCN for now, change it later
 
 
@@ -101,7 +99,7 @@ class FQI(object):
             state = self.simulator.state
             S.append(state)
             action = self.policy(state, eps)
-            state_, reward=self.simulator.step(action=action)#Transition Happen #hp: changed all perform to step
+            state_, reward=self.simulator.step(action=action)#Transition Happen 
             state=state_
             A.append(action)
             R.append(reward)
@@ -170,7 +168,7 @@ class DQN(FQI):
         self.edge_index = torch.Tensor(list(nx.DiGraph(graph).edges())).long().t()
         self.loss_fn = nn.MSELoss()
         self.replay_memory = []
-        self.replay_memory_belief = [] #hp: never used? Han Ching yes could be remove
+        self.replay_memory_belief = [] #not used, could be remove
         self.memory_size = 5000
 
     def predict_rewards(self, state, action, netid='primary'): # non backpropagatable
@@ -212,7 +210,7 @@ class DQN(FQI):
         total_loss = sum(loss_list)
         return loss
 
-    def fit_GCN(self, num_episodes=100, num_epochs=100, eps=0.1, discount=0.99): #hp: I changed discount from 0.9 to 0.99 as discount should be larger (or even 1) for us as time horizon is small (t=0, 1, 2, 3) 
+    def fit_GCN(self, num_episodes=100, num_epochs=100, eps=0.1, discount=0.99):  
         writer = SummaryWriter()
         best_value=0
         for epoch in range(num_epochs):#hp: why is epoch outside the episode loop? In this way you are basically running num_epochs*num_episodes episodes; see the DQN paper, they update q at every time step with a minibatch size of 32; let's keep it for now and revise later
@@ -249,7 +247,7 @@ class DQN(FQI):
     
 
     
-    def run_episode_GCN(self, eps=0.1, discount=0.98):
+    def run_episode_GCN(self, eps=0.1, discount=0.99):
         #hp: this should be majorly revised
         S, A, R = [], [], []
         cumulative_reward = 0
@@ -294,7 +292,7 @@ if __name__ == '__main__':
     g, graph_name=get_graph(graph_index)
     if First_time:
         model=DQN(graph=g)
-        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=10, num_epochs=30)#hp: I changed num_iterations to num_episodes
+        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=10, num_epochs=30)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,true_cumulative_reward_list], f)
     else:
