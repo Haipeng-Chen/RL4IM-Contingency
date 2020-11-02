@@ -46,7 +46,7 @@ class FQI(object):
         """Initialize simulator and regressor. Can optionally pass a custom
         `regressor` model (which must implement `fit` and `predict` -- you can
         use this to try different models like linear regression or NNs)"""
-        self.simulator = NetworkEnv(graph=graph)
+        self.simulator = NetworkEnv(G=graph)
         self.regressor = regressor or ExtraTreesRegressor()
     
     def state_action(self, states,actions):
@@ -80,8 +80,8 @@ class FQI(object):
         return list(next_action)   
     
     def random_action(self):
-        if len(self.simulator.possible_nodes)>0:
-            action = random.sample(self.simulator.possible_nodes,int(min(len(self.simulator.possible_nodes),self.simulator.budget)))
+        if len(self.simulator.feasible_actions)>0:
+            action = random.sample(self.simulator.feasible_actions,int(min(len(self.simulator.feasible_actions),self.simulator.budget)))
         else:
             action = random.sample(self.simulator.all_nodes,int(min(self.simulator.n,self.simulator.budget)))
         return action
@@ -101,7 +101,7 @@ class FQI(object):
             state = self.simulator.true_state
             S.append(state)
             action = self.policy(state, eps)
-            state_,reward=self.simulator.step(active_screen_list=action)#Transition Happen #hp: changed all perform to step
+            state_,reward=self.simulator.step(action=action)#Transition Happen #hp: changed all perform to step
             state=state_
             A.append(action)
             R.append(reward)
@@ -187,7 +187,8 @@ class DQN(FQI):
     def greedy_action_GCN(self, state):
         #series of action selection for secondary agents
         action=[]
-        possible_actions = self.simulator.possible_nodes.copy()
+        # possible_actions = self.simulator.possible_nodes.copy()
+        possible_actions = self.simulator.feasible_actions.copy()
         for i in range(int(self.simulator.budget)): # greedy selection
             node_rewards = self.predict_rewards(state, action, netid=i).reshape(-1)
             if len(possible_actions)<2:#hp: what is 2 for? When there is only 1 candidate(posible infection) python will make possible_actions a element instead of list which makes strange things happen.
@@ -255,10 +256,11 @@ class DQN(FQI):
         a=0
         self.simulator.reset()
         for t in range(self.simulator.T): 
-            state = self.simulator.belief_state.copy() #hp: what is state? A list? array? # It's an np array
+            # state = self.simulator.belief_state.copy() #hp: what is state? A list? array? # It's an np array
+            state = self.simulator.state.copy()
             S.append(state)
             action = self.policy_GCN(state, eps)
-            true_state, state_,reward, true_reward=self.simulator.step(active_screen_list=action)#Transition Happen
+            true_state, state_,reward, true_reward=self.simulator.step(action=action)#Transition Happen
             A.append(action)
             R.append(reward)
             true_states.append(true_state)
