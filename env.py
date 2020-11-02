@@ -45,7 +45,7 @@ class NetworkEnv(object):
             self.G.nodes[v]['attr']=2
             self.state[v]=2
         next_state=self.state.copy()
-        if self.t == self.T:
+        if self.t == self.T-1:
             seeds = []
             [seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
             self.reward, _ = runIC_repeat(self.G, seeds, p=self.propagate_p, sample=1000)
@@ -64,7 +64,7 @@ class NetworkEnv(object):
             self.t += 1
             
  
-        return state, action, self.reward, next_state #hp: revise 
+        return next_state, self.reward #hp: revise 
     
     #the simple state transition process
     def transition(self, invited, q=0.6):#q is probability being present

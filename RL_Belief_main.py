@@ -96,12 +96,12 @@ class FQI(object):
         S, A, R = [], [], []
         cumulative_reward = 0
         self.simulator.reset()
-        state = self.simulator.true_state
+        state = self.simulator.state
         for t in range(self.simulator.T):    
-            state = self.simulator.true_state
+            state = self.simulator.state
             S.append(state)
             action = self.policy(state, eps)
-            state_,reward=self.simulator.step(action=action)#Transition Happen #hp: changed all perform to step
+            state_, reward=self.simulator.step(action=action)#Transition Happen #hp: changed all perform to step
             state=state_
             A.append(action)
             R.append(reward)
@@ -220,9 +220,9 @@ class DQN(FQI):
             cumulative_reward_list = []#hp: what are the 3? #cumulative_reward_list: Reward assigned while training (with discount factor=0.98)
             true_cumulative_reward_list = [] #true_cumulative_reward_list: Reward assigned while testing (with discount factor=1)
             true_RL_reward=[]# Objective function while testing, all 3 print for sanity check and can be remove.
-            self.simulator.Temperature=max((1-(epoch/20)),0) #hp: hard-coded, maybe revise later # This is for curiculum learning
+            #self.simulator.Temperature=max((1-(epoch/20)),0) #hp: hard-coded, maybe revise later # This is for curiculum learning
             for episode in range(num_episodes):
-                S, A, R, cumulative_reward,True_S = self.run_episode_GCN(eps=eps, discount=discount)
+                S, A, R, cumulative_reward = self.run_episode_GCN(eps=eps, discount=discount)
                 new_memory_belief=[]
                 new_memory = []
                 horizon = len(S) - 1
@@ -240,10 +240,10 @@ class DQN(FQI):
                     self.replay_memory = self.replay_memory[-self.memory_size:]
 
                 cumulative_reward_list.append(cumulative_reward)
-                _, _, true_R, true_cumulative_reward,True_S = self.run_episode_GCN(eps=0, discount=1)
+                _, _, true_R, true_cumulative_reward = self.run_episode_GCN(eps=0, discount=1)
                 true_RL_reward.append(sum(true_R))
                 true_cumulative_reward_list.append(true_cumulative_reward)
-            print('Epoch {}, MSE loss: {}, average reward: {}, true RL reward: {}, true reward: {}'.format(epoch, np.mean(loss_list), np.mean(cumulative_reward_list),np.mean(true_RL_reward), np.mean(true_cumulative_reward_list)))
+            print('Epoch {}, MSE loss: {}, average train reward: {}, no discount test reward: {}, discount test reward: {}'.format(epoch, np.mean(loss_list), np.mean(cumulative_reward_list),np.mean(true_RL_reward), np.mean(true_cumulative_reward_list)))
         return cumulative_reward_list,true_cumulative_reward_list
     
     
@@ -251,7 +251,7 @@ class DQN(FQI):
     
     def run_episode_GCN(self, eps=0.1, discount=0.98):
         #hp: this should be majorly revised
-        S, A, R, true_states = [], [], [], []
+        S, A, R = [], [], []
         cumulative_reward = 0
         a=0
         self.simulator.reset()
@@ -260,12 +260,11 @@ class DQN(FQI):
             state = self.simulator.state.copy()
             S.append(state)
             action = self.policy_GCN(state, eps)
-            true_state, state_,reward, true_reward=self.simulator.step(action=action)#Transition Happen
+            state_,reward=self.simulator.step(action=action)#Transition Happen
             A.append(action)
             R.append(reward)
-            true_states.append(true_state)
-            cumulative_reward += true_reward * (discount**t)
-        return S, A, R, cumulative_reward, true_states
+            cumulative_reward += reward * (discount**t)
+        return S, A, R, cumulative_reward
     
     def policy_GCN(self, state, eps=0.1):
         s=state.copy()
@@ -291,7 +290,7 @@ if __name__ == '__main__':
     
     discount=1
     First_time=True
-    graph_index=1
+    graph_index=2
     g, graph_name=get_graph(graph_index)
     if First_time:
         model=DQN(graph=g)
