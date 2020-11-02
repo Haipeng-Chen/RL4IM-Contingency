@@ -37,7 +37,7 @@ def runIC (G, S, p=0.01 ):
 def runIC_repeat(G, S, p=0.01, sample=1000):
     infl_list = []
     for i in range(sample):
-        T = runIC(G, S, p=0.01)
+        T = runIC(G, S, p=p)
         influence = len(T)
         infl_list.append(influence)
     infl_mean = np.mean(infl_list)
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     #S = set(S)
     #T = runIC(g, S)
     #print(T)
-    infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
+    infl_mean, infl_std = runIC_repeat(g, S, p=1, sample=1000)
     print(infl_mean, infl_std)
 
 

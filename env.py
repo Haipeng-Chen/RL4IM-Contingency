@@ -31,18 +31,21 @@ class NetworkEnv(object):
         self.done = False
         self.reward = 0
         self.feasible_actions = list(range(self.N))
-
+        self.state=np.zeros(self.N)#0: not invited, 1: invited and came. 2: invited and not came
         nx.set_node_attributes(self.G, 0, 'attr')
 
     def step(self, action):
         #when final setp
         invited = action
         present, absent = self.transition(invited, q=0.6)
+        state=self.state.copy()
         for v in present:
             self.G.nodes[v]['attr']=1
+            self.state[v]=1
         for v in absent:
             self.G.nodes[v]['attr']=2
-
+            self.state[v]=2
+        next_state=self.state.copy()
         if self.t == self.T:
             seeds = []
             [seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
@@ -55,13 +58,14 @@ class NetworkEnv(object):
                 #self.G.nodes[v]['attr']=1
             #for i in absent:
                 #self.G.nodes[v]['attr']=2
-            self.reward = 0 #TODO: add an auxilliary reward to warm-start
+            self.reward = 0 #TODO: add an auxilliary reward to warm-start 
+            #Han Ching: One idea is to simulate the IM here with given seend.
             feasible_actions_cp = self.feasible_actions.copy()
             self.feasible_actions = [i for i in feasible_actions_cp if i not in invited]
             self.t += 1
             
  
-        #return state, action, self.reward, next_state #hp: revise 
+        return state, action, self.reward, next_state #hp: revise 
     
     #the simple state transition process
     def transition(self, invited, q=0.6):#q is probability being present
