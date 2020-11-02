@@ -5,7 +5,6 @@ import random
 #from influence import influence, parallel_influence
 from IC import runIC_repeat
 
-
 class NetworkEnv(object):
     '''
     Environment for peer leader selection process of influence maximization
@@ -87,7 +86,7 @@ class NetworkEnv(object):
 
 if __name__ == '__main__':
     Graph_List=['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
-    Graph_index = 1
+    Graph_index = 2
     Graph_name=Graph_List[Graph_index]
     path='graph_data/'+Graph_name+'.txt'
     G = nx.read_edgelist(path, nodetype=int)
@@ -99,14 +98,30 @@ if __name__ == '__main__':
     rewards = [ ]
     env.reset()
     while(env.done == False):
-        print('step: ', env.t)
+        # print('step: ', env.t)
         action = random.sample(env.feasible_actions, env.budget) 
+        # print(action)
+        env.step(action)
+    print(env.reward)
+        # rewards.append(env.reward)
+    # print(sum(rewards))
+    env.reset()
+    while(env.done == False):
+        # print('step: ', env.t)
+        degree=nx.degree(G)
+        degree = [val for (node, val) in G.degree()]
+        # print(degree)
+        action=[]
+        for i in range(env.budget):
+            max_degree=0
+            for v in env.feasible_actions:
+                if degree[v]>max_degree and v not in action:
+                    action_v=v
+                    max_degree=degree[v]
+            action.append(action_v)
         print(action)
         env.step(action)
-        print(env.reward)
-        #rewards.append(env.reward)
-    #print(sum(rewards))
-
+    print(env.reward)
     '''
     #sanity check for trnasition()
     invited = [1, 2, 3, 4]
