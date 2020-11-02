@@ -160,8 +160,8 @@ class Memory_belief:
 class DQN(FQI):
     def __init__(self, graph, lr=0.005):
         FQI.__init__(self, graph)
-        self.feature_size = 2 #hp: what are the 2? I can only imagine belief of the heath status which seems to be a scalar
-        self.best_net = NaiveGCN(node_feature_size=self.feature_size)#hp: what is this for?
+        self.feature_size = 2 #hp: what are the 2? I can only imagine belief of the heath status which seems to be a scalar #oops the second feature was for the exp I test when assign the remaining budget as a feature. (ablation study)
+        self.best_net = NaiveGCN(node_feature_size=self.feature_size)#hp: what is this for? Han Ching: I tried to store the net with best result on earlier exp, not used in this ver. I forgot to remove it. Change to 1 and remove the [state] in line 177 will be the original version.
         self.net = NaiveGCN(node_feature_size=self.feature_size)
         self.net_list=[] #nets for secondary agents 
         for i in range(int(self.simulator.budget)): 
@@ -170,7 +170,7 @@ class DQN(FQI):
         self.edge_index = torch.Tensor(list(nx.DiGraph(graph).edges())).long().t()
         self.loss_fn = nn.MSELoss()
         self.replay_memory = []
-        self.replay_memory_belief = [] #hp: never used?
+        self.replay_memory_belief = [] #hp: never used? Han Ching yes could be remove
         self.memory_size = 5000
 
     def predict_rewards(self, state, action, netid='primary'): # non backpropagatable
@@ -190,7 +190,7 @@ class DQN(FQI):
         possible_actions = self.simulator.possible_nodes.copy()
         for i in range(int(self.simulator.budget)): # greedy selection
             node_rewards = self.predict_rewards(state, action, netid=i).reshape(-1)
-            if len(possible_actions)<2:#hp: what is 2 for? 
+            if len(possible_actions)<2:#hp: what is 2 for? When there is only 1 candidate(posible infection) python will make possible_actions a element instead of list which makes strange things happen.
                 possible_actions=self.simulator.all_nodes.copy()   
             max_indices = node_rewards[possible_actions].argsort()[-1:]
             node=np.array(possible_actions)[max_indices]
@@ -216,10 +216,10 @@ class DQN(FQI):
         best_value=0
         for epoch in range(num_epochs):#hp: why is epoch outside the episode loop? In this way you are basically running num_epochs*num_episodes episodes; see the DQN paper, they update q at every time step with a minibatch size of 32; let's keep it for now and revise later
             loss_list = []
-            cumulative_reward_list = []#hp: what are the 3?
-            true_cumulative_reward_list = []
-            true_RL_reward=[]
-            self.simulator.Temperature=max((1-(epoch/20)),0) #hp: hard-coded, maybe revise later
+            cumulative_reward_list = []#hp: what are the 3? #cumulative_reward_list: Reward assigned while training (with discount factor=0.98)
+            true_cumulative_reward_list = [] #true_cumulative_reward_list: Reward assigned while testing (with discount factor=1)
+            true_RL_reward=[]# Objective function while testing, all 3 print for sanity check and can be remove.
+            self.simulator.Temperature=max((1-(epoch/20)),0) #hp: hard-coded, maybe revise later # This is for curiculum learning
             for episode in range(num_episodes):
                 S, A, R, cumulative_reward,True_S = self.run_episode_GCN(eps=eps, discount=discount)
                 new_memory_belief=[]
@@ -255,7 +255,7 @@ class DQN(FQI):
         a=0
         self.simulator.reset()
         for t in range(self.simulator.T): 
-            state = self.simulator.belief_state.copy() #hp: what is state? A list? array?
+            state = self.simulator.belief_state.copy() #hp: what is state? A list? array? # It's an np array
             S.append(state)
             action = self.policy_GCN(state, eps)
             true_state, state_,reward, true_reward=self.simulator.step(active_screen_list=action)#Transition Happen
