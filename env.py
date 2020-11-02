@@ -19,7 +19,7 @@ class NetworkEnv(object):
     state consists of node 'attr' and A
     '''
     
-    def __init__(self, G, T=4, budget_ratio=0.2, propagate_p = 0.1):
+    def __init__(self, G, T=3, budget_ratio=0.2, propagate_p = 0.1):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
@@ -59,9 +59,9 @@ class NetworkEnv(object):
             feasible_actions_cp = self.feasible_actions.copy()
             self.feasible_actions = [i for i in feasible_actions_cp if i not in invited]
             self.t += 1
-             
+            
  
-        #return state,action,reward,next_state
+        #return state, action, self.reward, next_state #hp: revise 
     
     #the simple state transition process
     def transition(self, invited, q=0.6):#q is probability being present

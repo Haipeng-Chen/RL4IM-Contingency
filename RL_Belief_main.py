@@ -26,9 +26,12 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import ExtraTreesRegressor
 
 from gcn import NaiveGCN
-from SIS_Belief_env import EpidemicEnv
+#from SIS_Belief_env import EpidemicEnv #hp: remove
+from env import NetworkEnv
 
 
+#Q1: did you use Memory_belief?
+#Q2: Use NaiveGCN for now, change it later
 
 
 
@@ -43,7 +46,7 @@ class FQI(object):
         """Initialize simulator and regressor. Can optionally pass a custom
         `regressor` model (which must implement `fit` and `predict` -- you can
         use this to try different models like linear regression or NNs)"""
-        self.simulator = EpidemicEnv(graph=graph)
+        self.simulator = NetworkEnv(graph=graph)
         self.regressor = regressor or ExtraTreesRegressor()
     
     def state_action(self, states,actions):
@@ -98,7 +101,7 @@ class FQI(object):
             state = self.simulator.true_state
             S.append(state)
             action = self.policy(state, eps)
-            state_,reward=self.simulator.perform(active_screen_list=action)#Transition Happen
+            state_,reward=self.simulator.step(active_screen_list=action)#Transition Happen #hp: changed all perform to step
             state=state_
             A.append(action)
             R.append(reward)
@@ -157,17 +160,17 @@ class Memory_belief:
 class DQN(FQI):
     def __init__(self, graph, lr=0.005):
         FQI.__init__(self, graph)
-        self.feature_size = 2
-        self.best_net = NaiveGCN(node_feature_size=self.feature_size)
+        self.feature_size = 2 #hp: what are the 2? I can only imagine belief of the heath status which seems to be a scalar
+        self.best_net = NaiveGCN(node_feature_size=self.feature_size)#hp: what is this for?
         self.net = NaiveGCN(node_feature_size=self.feature_size)
-        self.net_list=[]
+        self.net_list=[] #nets for secondary agents 
         for i in range(int(self.simulator.budget)): 
             self.net_list.append(NaiveGCN(node_feature_size=self.feature_size))
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr)
         self.edge_index = torch.Tensor(list(nx.DiGraph(graph).edges())).long().t()
         self.loss_fn = nn.MSELoss()
         self.replay_memory = []
-        self.replay_memory_belief = []
+        self.replay_memory_belief = [] #hp: never used?
         self.memory_size = 5000
 
     def predict_rewards(self, state, action, netid='primary'): # non backpropagatable
@@ -182,12 +185,12 @@ class DQN(FQI):
         return y_pred
 
     def greedy_action_GCN(self, state):
-
+        #series of action selection for secondary agents
         action=[]
         possible_actions = self.simulator.possible_nodes.copy()
         for i in range(int(self.simulator.budget)): # greedy selection
             node_rewards = self.predict_rewards(state, action, netid=i).reshape(-1)
-            if len(possible_actions)<2:
+            if len(possible_actions)<2:#hp: what is 2 for? 
                 possible_actions=self.simulator.all_nodes.copy()   
             max_indices = node_rewards[possible_actions].argsort()[-1:]
             node=np.array(possible_actions)[max_indices]
@@ -208,16 +211,16 @@ class DQN(FQI):
         total_loss = sum(loss_list)
         return loss
 
-    def fit_GCN(self, num_iterations=100, num_epochs=100, eps=0.1, discount=0.9):
+    def fit_GCN(self, num_episodes=100, num_epochs=100, eps=0.1, discount=0.99): #hp: I changed discount from 0.9 to 0.99 as discount should be larger (or even 1) for us as time horizon is small (t=0, 1, 2, 3) 
         writer = SummaryWriter()
         best_value=0
-        for epoch in range(num_epochs):
+        for epoch in range(num_epochs):#hp: why is epoch outside the episode loop? In this way you are basically running num_epochs*num_episodes episodes; see the DQN paper, they update q at every time step with a minibatch size of 32; let's keep it for now and revise later
             loss_list = []
-            cumulative_reward_list = []
+            cumulative_reward_list = []#hp: what are the 3?
             true_cumulative_reward_list = []
             true_RL_reward=[]
-            self.simulator.Temperature=max((1-(epoch/20)),0)
-            for episode in range(num_iterations):
+            self.simulator.Temperature=max((1-(epoch/20)),0) #hp: hard-coded, maybe revise later
+            for episode in range(num_episodes):
                 S, A, R, cumulative_reward,True_S = self.run_episode_GCN(eps=eps, discount=discount)
                 new_memory_belief=[]
                 new_memory = []
@@ -246,15 +249,16 @@ class DQN(FQI):
 
     
     def run_episode_GCN(self, eps=0.1, discount=0.98):
+        #hp: this should be majorly revised
         S, A, R, true_states = [], [], [], []
         cumulative_reward = 0
         a=0
         self.simulator.reset()
-        for t in range(self.simulator.T):
-            state = self.simulator.belief_state.copy()
+        for t in range(self.simulator.T): 
+            state = self.simulator.belief_state.copy() #hp: what is state? A list? array?
             S.append(state)
             action = self.policy_GCN(state, eps)
-            true_state, state_,reward, true_reward=self.simulator.perform(active_screen_list=action)#Transition Happen
+            true_state, state_,reward, true_reward=self.simulator.step(active_screen_list=action)#Transition Happen
             A.append(action)
             R.append(reward)
             true_states.append(true_state)
@@ -289,7 +293,7 @@ if __name__ == '__main__':
     g, graph_name=get_graph(graph_index)
     if First_time:
         model=DQN(graph=g)
-        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_iterations=10, num_epochs=30)
+        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=10, num_epochs=30)#hp: I changed num_iterations to num_episodes
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,true_cumulative_reward_list], f)
     else:
