@@ -168,7 +168,11 @@ class DQN(FQI):
         self.edge_index = torch.Tensor(list(nx.DiGraph(graph).edges())).long().t()
         self.loss_fn = nn.MSELoss()
         self.replay_memory = []
-        self.replay_memory_belief = [] #not used, could be remove
+        self.optimizer_list=[]
+        self.replay_memory_list = []
+        for i in range(int(self.simulator.budget)): 
+            self.optimizer_list.append(optim.Adam(self.net_list[i].parameters(), lr=lr))
+            self.replay_memory_list.append([])
         self.memory_size = 5000
 
     def predict_rewards(self, state, action, netid='primary'): # non backpropagatable
@@ -198,13 +202,13 @@ class DQN(FQI):
             state[node]=0
         return action
 
-    def memory_loss(self, batch_memory, discount=0.98):
+    def memory_loss(self, batch_memory, netid='primary', discount=0.98):
         loss_list = []
         for memory in batch_memory:
             state, action, reward, next_state = memory.state.copy(), memory.action.copy(), memory.reward, memory.next_state.copy()
             next_action = self.greedy_action_GCN(next_state)
-            prediction = self.Q_GCN(state, action)
-            target = reward + discount * self.Q_GCN(next_state, next_action)
+            prediction = self.Q_GCN(state, action, netid=netid)
+            target = reward + discount * self.Q_GCN(next_state, next_action, netid= netid)
             loss = self.loss_fn(prediction, target)
             loss_list.append(loss)
         total_loss = sum(loss_list)
@@ -223,10 +227,23 @@ class DQN(FQI):
                 S, A, R, cumulative_reward = self.run_episode_GCN(eps=eps, discount=discount)
                 new_memory_belief=[]
                 new_memory = []
+                new_memory_list=[]
+                for i in range(int(self.simulator.budget)):
+                    new_memory_list.append([])
                 horizon = len(S) - 1
                 for i in range(horizon):
                     new_memory.append(Memory(S[i], A[i], R[i], S[i+1]))
+                    act=[]
+                    for j in range(int(self.simulator.budget)):
+                        sta=self.state_action(S[i],act)
+                        act.append(A[i][j])
+                        rew=float(self.predict_rewards(sta, act, netid='primary')[0])
+                        new_memory_list[j].append(Memory(sta ,[np.array(A[i][j])],rew ,self.state_action(sta,act)) )
+
                 self.replay_memory += new_memory
+                for i in range(int(self.simulator.budget)):
+                        self.replay_memory_list[i]+=new_memory_list[i]
+                # batch_memory = np.random.choice(self.replay_memory, horizon)
                 batch_memory=self.replay_memory[-horizon:].copy()
                 self.optimizer.zero_grad()
                 loss = self.memory_loss(batch_memory, discount=discount)
@@ -236,6 +253,13 @@ class DQN(FQI):
                 self.optimizer.step()
                 if len(self.replay_memory) > self.memory_size:
                     self.replay_memory = self.replay_memory[-self.memory_size:]
+                for i in range(int(self.simulator.budget)):
+                    # batch_memory=self.replay_memory[-horizon:].copy()
+                    batch_memory=self.replay_memory_list[i][-horizon:].copy()
+                    self.optimizer_list[i].zero_grad()
+                    loss = self.memory_loss(batch_memory,netid=i, discount=discount)
+                    loss.backward()
+                    self.optimizer_list[i].step()
 
                 cumulative_reward_list.append(cumulative_reward)
                 _, _, true_R, true_cumulative_reward = self.run_episode_GCN(eps=0, discount=1)
