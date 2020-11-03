@@ -64,7 +64,8 @@ class FQI(object):
             X = np.array([self.state_action(state , action ) for (state,action) in zip(states,actions)])
             y_pred = self.regressor.predict(X)
             return y_pred    
-    
+
+    #not used
     def greedy_action(self, state):
         action = []
         possible_actions = self.simulator.possible_nodes
@@ -90,7 +91,7 @@ class FQI(object):
         else:
             return self.greedy_action(state) 
     
-    def run_episode(self, eps=0.1, discount=0.98):
+    def run_episode(self, eps=0.1, discount=0.99):
         S, A, R = [], [], []
         cumulative_reward = 0
         self.simulator.reset()
@@ -107,7 +108,7 @@ class FQI(object):
         return S, A, R, cumulative_reward
 
 
-    def fit_Q(self, episodes, num_iters=10, discount=0.9):
+    def fit_Q(self, episodes, num_iters=10, discount=0.99):
         prev_S = []
         next_S = []
         rewards = []
@@ -130,7 +131,7 @@ class FQI(object):
             self.regressor.fit(prev_S, y)
 
     
-    def fit(self, num_refits=10, num_episodes=10, discount=0.9, eps=0.1):
+    def fit(self, num_refits=10, num_episodes=10, discount=0.99, eps=0.1):
         cumulative_rewards = np.zeros((num_refits, num_episodes))
         for refit_iter in range(num_refits):
             episodes = []
@@ -144,11 +145,12 @@ class FQI(object):
         return episodes, cumulative_rewards    
 
 class Memory:
-    def __init__(self, state, action, reward, next_state):
+    def __init__(self, state, action, reward, next_state, done):
         self.state = state
         self.action = action
         self.reward = reward
         self.next_state = next_state
+        self.done = done
 
 class Memory_belief:
     def __init__(self, state):
@@ -156,7 +158,7 @@ class Memory_belief:
 
 
 class DQN(FQI):
-    def __init__(self, graph, lr=0.005):
+    def __init__(self, graph, lr=0.002):
         FQI.__init__(self, graph)
         self.feature_size = 2 #hp: what are the 2? I can only imagine belief of the heath status which seems to be a scalar #oops the second feature was for the exp I test when assign the remaining budget as a feature. (ablation study)
         self.best_net = NaiveGCN(node_feature_size=self.feature_size)#hp: what is this for? Han Ching: I tried to store the net with best result on earlier exp, not used in this ver. I forgot to remove it. Change to 1 and remove the [state] in line 177 will be the original version.
@@ -189,8 +191,9 @@ class DQN(FQI):
         possible_actions = self.simulator.feasible_actions.copy()
         for i in range(int(self.simulator.budget)): # greedy selection
             node_rewards = self.predict_rewards(state, action, netid=i).reshape(-1)
+            #print(node_rewards)
             if len(possible_actions)<2:#hp: what is 2 for? When there is only 1 candidate(posible infection) python will make possible_actions a element instead of list which makes strange things happen.
-                possible_actions=self.simulator.all_nodes.copy()   
+                possible_actions=self.simulator.all_nodes.copy() #hp: this should be revised  
             max_indices = node_rewards[possible_actions].argsort()[-1:]
             node=np.array(possible_actions)[max_indices]
             action.append(node)
@@ -198,38 +201,56 @@ class DQN(FQI):
             state[node]=0
         return action
 
-    def memory_loss(self, batch_memory, discount=0.98):
+    def memory_loss(self, batch_memory, discount=1):
         loss_list = []
         for memory in batch_memory:
-            state, action, reward, next_state = memory.state.copy(), memory.action.copy(), memory.reward, memory.next_state.copy()
-            next_action = self.greedy_action_GCN(next_state)
-            prediction = self.Q_GCN(state, action)
-            target = reward + discount * self.Q_GCN(next_state, next_action)
+            state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
+            if done:
+                prediction = self.Q_GCN(state, action)
+                target = torch.tensor([reward], requires_grad=True)
+                #print(done, type(target), target )
+            else:
+                next_state = memory.next_state.copy()
+                next_action = self.greedy_action_GCN(next_state)
+                prediction = self.Q_GCN(state, action)
+                target = reward + discount * self.Q_GCN(next_state, next_action)
+                #print(type(target), target)
             loss = self.loss_fn(prediction, target)
+            #print(loss)
             loss_list.append(loss)
         total_loss = sum(loss_list)
-        return loss
+        #print(total_loss)
+        #return loss #hp: only loss is returned?
+        return total_loss
 
-    def fit_GCN(self, num_episodes=100, num_epochs=100, eps=0.1, discount=0.99):  
+    def fit_GCN(self, num_episodes=100, num_epochs=10, eps=0.1, discount=1):  
         writer = SummaryWriter()
         best_value=0
         for epoch in range(num_epochs):#hp: why is epoch outside the episode loop? In this way you are basically running num_epochs*num_episodes episodes; see the DQN paper, they update q at every time step with a minibatch size of 32; let's keep it for now and revise later
             loss_list = []
-            cumulative_reward_list = []#hp: what are the 3? #cumulative_reward_list: Reward assigned while training (with discount factor=0.98)
+            cumulative_reward_list = [] #cumulative_reward_list: Reward assigned while training (with discount factor=0.98)
             true_cumulative_reward_list = [] #true_cumulative_reward_list: Reward assigned while testing (with discount factor=1)
             true_RL_reward=[]# Objective function while testing, all 3 print for sanity check and can be remove.
             #self.simulator.Temperature=max((1-(epoch/20)),0) #hp: hard-coded, maybe revise later # This is for curiculum learning
             for episode in range(num_episodes):
-                S, A, R, cumulative_reward = self.run_episode_GCN(eps=eps, discount=discount)
+                print('episode: ', episode)
+                S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps, discount=discount)
+                #print(len(S),len(A))
                 new_memory_belief=[]
                 new_memory = []
-                horizon = len(S) - 1
+                #horizon = len(S) - 1 #hp: why -1? #so this is primary or secondary agent's memories?
+                horizon = self.simulator.T
+                #print('time horizon is: ', horizon)
                 for i in range(horizon):
-                    new_memory.append(Memory(S[i], A[i], R[i], S[i+1]))
+                    #print(S[i], A[i], R[i], NextS[i], D[i])
+                    if D[i]:
+                        print('terminal state reward is: {}'.format(R[i]))
+                    new_memory.append(Memory(S[i], A[i], R[i], NextS[i], D[i]))
                 self.replay_memory += new_memory
-                batch_memory=self.replay_memory[-horizon:].copy()
+                batch_memory=self.replay_memory[-horizon:].copy()#hp: revise it to bigger values
                 self.optimizer.zero_grad()
                 loss = self.memory_loss(batch_memory, discount=discount)
+                print('MSE loss is: ', loss.item())
                 loss_list.append(loss.item())
                 writer.add_scalar('\\Train/Loss\\', loss.item(), epoch)
                 loss.backward()
@@ -238,9 +259,9 @@ class DQN(FQI):
                     self.replay_memory = self.replay_memory[-self.memory_size:]
 
                 cumulative_reward_list.append(cumulative_reward)
-                _, _, true_R, true_cumulative_reward = self.run_episode_GCN(eps=0, discount=1)
-                true_RL_reward.append(sum(true_R))
-                true_cumulative_reward_list.append(true_cumulative_reward)
+                #_, _, true_R, true_cumulative_reward = self.run_episode_GCN(eps=0, discount=1) #hp: what is this for?
+                #true_RL_reward.append(sum(true_R))
+                #true_cumulative_reward_list.append(true_cumulative_reward)
             print('Epoch {}, MSE loss: {}, average train reward: {}, no discount test reward: {}, discount test reward: {}'.format(epoch, np.mean(loss_list), np.mean(cumulative_reward_list),np.mean(true_RL_reward), np.mean(true_cumulative_reward_list)))
         return cumulative_reward_list,true_cumulative_reward_list
     
@@ -249,7 +270,7 @@ class DQN(FQI):
     
     def run_episode_GCN(self, eps=0.1, discount=0.99):
         #hp: this should be majorly revised
-        S, A, R = [], [], []
+        S, A, R, NextS, D = [], [], [], [], []#D is for done -- indicator of terminal state
         cumulative_reward = 0
         a=0
         self.simulator.reset()
@@ -258,17 +279,23 @@ class DQN(FQI):
             state = self.simulator.state.copy()
             S.append(state)
             action = self.policy_GCN(state, eps)
-            state_,reward=self.simulator.step(action=action)#Transition Happen
+            next_state, reward, done = self.simulator.step(action=action)#Transition Happen
             A.append(action)
             R.append(reward)
+            NextS.append(next_state)
+            D.append(done)
             cumulative_reward += reward * (discount**t)
-        return S, A, R, cumulative_reward
+        #print('action in this episode is: ', A)
+        #print('cumulated reward is: ', cumulative_reward)
+        return S, A, R, NextS, D, cumulative_reward
     
     def policy_GCN(self, state, eps=0.1):
         s=state.copy()
         if np.random.rand() < eps:
+            #print('taking random action')
             return self.random_action()
         else:
+            #print('taking RL action')
             return self.greedy_action_GCN(s) 
 
 
@@ -292,7 +319,7 @@ if __name__ == '__main__':
     g, graph_name=get_graph(graph_index)
     if First_time:
         model=DQN(graph=g)
-        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=10, num_epochs=30)
+        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=50, eps=0.1, num_epochs=5, discount=1)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,true_cumulative_reward_list], f)
     else:
@@ -301,13 +328,13 @@ if __name__ == '__main__':
         model=X[0]
         true_cumulative_reward_list=X[1]
     cumulative_rewards = []
-    for i in range(10):
-        print('i is: ', i)
-        model.simulator.Temperature=0
-        S, A, R, cumulative_reward ,_ = model.run_episode_GCN(eps=0, discount=discount)
+    for episode in range(10):
+        #print('test episode: ', episode)
+        #model.simulator.Temperature=0
+        S, A, R, _, _, cumulative_reward = model.run_episode_GCN(eps=0, discount=discount)
         cumulative_rewards.append(cumulative_reward)
-    print('optimal reward:', np.mean(cumulative_rewards))
-    print('optimal reward std:', np.std(cumulative_rewards))
+    print('average reward:', np.mean(cumulative_rewards))
+    print('reward std:', np.std(cumulative_rewards))
 
 
 
