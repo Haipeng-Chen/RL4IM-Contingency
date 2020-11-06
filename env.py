@@ -18,7 +18,7 @@ class NetworkEnv(object):
     state consists of node 'attr' and A
     '''
     
-    def __init__(self, G, T=4, budget_ratio=0.02, propagate_p = 0.15, q=1):
+    def __init__(self, G, T=1, budget_ratio=0.01, propagate_p = 0.1, q=1):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
@@ -124,7 +124,7 @@ if __name__ == '__main__':
         #print('absent: ', absent)
         #print(env.reward)
         rewards.append(env.reward)
-    print(sum(rewards)/10)
+    print('average reward for random policy is: ', sum(rewards)/10)
     for i in range(1):
         env.reset()
         while(env.done == False):
@@ -155,7 +155,7 @@ if __name__ == '__main__':
         print('invited: ', invited)
         print('present: ', present)
         print('absent: ', absent)
-        print(env.reward)
+        print('reward for maxdegree policy is: ', env.reward)
 
 
 
