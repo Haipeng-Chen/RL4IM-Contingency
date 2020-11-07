@@ -161,7 +161,7 @@ class Memory_belief:
 
 
 class DQN(FQI):
-    def __init__(self, graph, lr_primary=0.001, lr_secondary=0.005):
+    def __init__(self, graph, lr_primary=0.001, lr_secondary=0.001):
         FQI.__init__(self, graph)
         self.feature_size = 2 #hp 
         self.net = NaiveGCN(node_feature_size=self.feature_size)
@@ -187,9 +187,10 @@ class DQN(FQI):
         #features = self.state_action(state, action)
         #print('=============================')
         #print(self.state_action(state,action))
-        #print(features)
+        #print('feature is ', features)
         net = self.net if netid == 'primary' else self.net_list[netid]
         node_pred = net(torch.Tensor(features), self.edge_index) #.detach().numpy()
+        print(node_pred)
         return node_pred
 
     def Q_GCN(self, state, action, netid='primary'):
@@ -200,18 +201,23 @@ class DQN(FQI):
     def greedy_action_GCN(self, state):
         #series of action selection for secondary agents
         action=[]
-        # possible_actions = self.simulator.possible_nodes.copy()
         possible_actions = self.simulator.feasible_actions.copy()
+        print('possible actions: ', possible_actions)
         for i in range(int(self.simulator.budget)): # greedy selection
+            #node_rewards = self.predict_rewards(state, action, netid=i).reshape(-1)
+            #action = [i] #hp: need to generalize
             node_rewards = self.predict_rewards(state, action, netid=i).reshape(-1)
-            #print(node_rewards)
+            print('state is ', state)
+            print('action is ', action)
+            print('netid is: ', i)
+            print('node rewards: ', node_rewards)
             if len(possible_actions)<2:#hp: what is 2 for? When there is only 1 candidate(posible infection) python will make possible_actions a element instead of list which makes strange things happen.
                 possible_actions=self.simulator.all_nodes.copy() #hp: this should be revised  
             max_indices = node_rewards[possible_actions].argsort()[-1:]
             node=np.array(possible_actions)[max_indices]
             action.append(node)
             possible_actions.remove(node)
-            state[node]=0
+            state[node]=0  #hp: wrong
         return action
 
     def memory_loss(self, batch_memory, netid='primary', discount=1):
@@ -397,8 +403,9 @@ class DQN(FQI):
         a=0
         self.simulator.reset()
         for t in range(self.simulator.T): 
-            # state = self.simulator.belief_state.copy() #hp: what is state? A list? array? # It's an np array
             state = self.simulator.state.copy()
+            #print('==========================')
+            #print('state is ', state)
             S.append(state)
             action = self.policy_GCN(state, eps)
             next_state, reward, done = self.simulator.step(action=action)#Transition Happen
@@ -440,7 +447,7 @@ if __name__ == '__main__':
     g, graph_name=get_graph(graph_index)
     if First_time:
         model=DQN(graph=g)
-        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=300, eps=0.1, num_epochs=1, discount=1)
+        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=500, eps=0.1, num_epochs=1, discount=1)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,true_cumulative_reward_list], f)
     else:

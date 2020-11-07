@@ -18,7 +18,7 @@ class NetworkEnv(object):
     state consists of node 'attr' and A
     '''
     
-    def __init__(self, G, T=1, budget_ratio=0.01, propagate_p = 0.1, q=1):
+    def __init__(self, G, T=1, budget_ratio=0.005, propagate_p = 0.1, q=1):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
@@ -32,6 +32,7 @@ class NetworkEnv(object):
         self.reward = 0
         self.feasible_actions = list(range(self.N))
         self.state=np.zeros(self.N)#0: not invited, 1: invited and came. 2: invited and not came
+        print('initialized state: ',self.state)
         nx.set_node_attributes(self.G, 0, 'attr')
 
     def step(self, action ):
@@ -84,18 +85,19 @@ class NetworkEnv(object):
         self.t = 0
         self.done = False
         self.reward = 0
+        self.state=np.zeros(self.N)
         self.feasible_actions = list(range(self.N))
         nx.set_node_attributes(self.G, 0, 'attr')
 
 if __name__ == '__main__':
-    Graph_List=['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
-    Graph_index = 2
-    Graph_name=Graph_List[Graph_index]
-    path='graph_data/'+Graph_name+'.txt'
+    graph_index = 2
+    graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
+    graph_name = graph_list[graph_index]
+    path = 'graph_data/' + graph_name + '.txt'
     G = nx.read_edgelist(path, nodetype=int)
-    mapping=dict(zip(G.nodes(),range(len(G))))
+    mapping = dict(zip(G.nodes(),range(len(G))))
     G = nx.relabel_nodes(G,mapping)
-    print('selected graph: ', Graph_name)
+    print('selected graph: ', graph_name)
     print('graph size: ', len(G.nodes))
     env=NetworkEnv(G=G)
 
