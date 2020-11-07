@@ -18,7 +18,7 @@ class NetworkEnv(object):
     state consists of node 'attr' and A
     '''
     
-    def __init__(self, G, T=1, budget_ratio=0.005, propagate_p = 0.1, q=1):
+    def __init__(self, G, T=4, budget_ratio=0.05, propagate_p = 0.1, q=1):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
@@ -32,7 +32,7 @@ class NetworkEnv(object):
         self.reward = 0
         self.feasible_actions = list(range(self.N))
         self.state=np.zeros(self.N)#0: not invited, 1: invited and came. 2: invited and not came
-        print('initialized state: ',self.state)
+        #print('initialized state: ',self.state)
         nx.set_node_attributes(self.G, 0, 'attr')
 
     def step(self, action ):
