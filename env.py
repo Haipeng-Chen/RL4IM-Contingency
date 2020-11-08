@@ -18,7 +18,7 @@ class NetworkEnv(object):
     state consists of node 'attr' and A
     '''
     
-    def __init__(self, G, T=4, budget_ratio=0.05, propagate_p = 0.1, q=1):
+    def __init__(self, G, T=3, budget_ratio=0.03, propagate_p = 0.1, q=1):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)

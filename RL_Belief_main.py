@@ -180,15 +180,18 @@ class DQN(FQI):
         for i in range(int(self.simulator.budget)): 
             self.optimizer_list.append(optim.Adam(self.net_list[i].parameters(), lr=lr_secondary))
             self.replay_memory_list.append([])
-        self.memory_size = 5000
+        self.memory_size = 1024
 
     def predict_rewards(self, state, action, netid='primary'): # non backpropagatable
         #hp: split it into predict_rewards_primary and predict_rewards_secondary? when action becomes an embedding, they might be handled differently?
         features = np.concatenate([[self.state_action(state, action)],[state]], axis=0).T #hp: revise later
         net = self.net if netid == 'primary' else self.net_list[netid]
         graph_pred = net(torch.Tensor(features), self.edge_index) #.detach().numpy()
-        #print('reward is: ', graph_pred)
+        #print('graph pred is: ', graph_pred)
         return graph_pred
+
+    #def batch_predict_rewards(self, states, actions, netid='primary'):
+            
 
     def Q_GCN(self, state, action, netid='primary'):
         #TODO: remove it later
@@ -232,19 +235,22 @@ class DQN(FQI):
     def memory_loss(self, batch_memory, netid='primary', discount=1):
         #hp: revise it to batch-based loss computation
         #hp: revise it to separate primary and secondary agents
-        loss_list = []
+        prediction_list = [] 
+        target_list = []
         if netid == 'primary':
             for memory in batch_memory:
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
                 if done:
                     prediction = self.Q_GCN(state, action, netid= netid)
-                    target = torch.tensor([reward], requires_grad=True)
+                    target = torch.tensor(reward, requires_grad=True)
                 else:
                     next_state = memory.next_state.copy()
                     next_action = self.greedy_action_GCN(next_state)
                     prediction = self.Q_GCN(state, action, netid= netid) 
                     target = reward + discount * self.Q_GCN(next_state, next_action, netid= netid) #hp: can revise to maintain a diff. net for each main step like secondary agents
-                loss = self.loss_fn(prediction, target)
+                prediction_list.append(prediction.view(1))
+                target_list.append(target.view(1))
+                #loss = self.loss_fn(prediction, target) #TODO: revise to batch loss
                 '''
                 if done:
                     print('netid is: ', netid)
@@ -255,14 +261,14 @@ class DQN(FQI):
                     print('Target: ', target.item())
                     print('one sample mse loss is: ', loss.item())
                 '''
-                print('netid is: ', netid)
+                #print('netid is: ', netid)
                 #print('state is: ', state)
                 #print('action is: ', action)
-                print('Terminal state?', done)
-                print('Prediction: ', prediction.item())
-                print('Target: ', target.item())
-                print('one sample mse loss is: ', loss.item())
-                loss_list.append(loss)
+                #print('Terminal state?', done)
+                #print('Prediction: ', prediction.item())
+                #print('Target: ', target.item())
+                #print('one sample mse loss is: ', loss.item())
+                #loss_list.append(loss)
         elif netid < self.simulator.budget-1:
             for memory in batch_memory:
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
@@ -271,30 +277,34 @@ class DQN(FQI):
                 prediction = self.Q_GCN(state, action, netid= netid)
                 next_prediction = self.Q_GCN(next_state, next_action, netid= netid+1)
                 #target = reward + discount * self.Q_GCN(next_state, next_action, netid= netid+1) #this is problematic
-                target = torch.tensor([float(reward)], requires_grad=True) + discount * self.Q_GCN(next_state, next_action, netid= netid+1) #this is problematic
-                loss = self.loss_fn(prediction, target)
-                print('netid is: ',netid)
-                print('Terminal state?', done) 
+                target = torch.tensor(float(reward), requires_grad=True) + discount * self.Q_GCN(next_state, next_action, netid= netid+1) #this is problematic
+                #loss = self.loss_fn(prediction, target)
+                #print('netid is: ',netid)
+                #print('Terminal state?', done) 
                 #print('state is: ', state)
                 #print('action is: ', action)
-                print('Prediction: ', prediction.item())
-                print('next prediction: ',next_prediction.item())
-                print('Target: ', target.item())
-                print('one sample mse loss is: ', loss.item())
-                loss_list.append(loss)
+                #print('Prediction: ', prediction.item())
+                #print('next prediction: ',next_prediction.item())
+                #print('Target: ', target.item())
+                #print('one sample mse loss is: ', loss.item())
+                prediction_list.append(prediction.view(1))
+                target_list.append(target.view(1))
+                #loss_list.append(loss)
         else:
             for memory in batch_memory:
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
                 if done:
                     prediction = self.Q_GCN(state, action, netid= netid)
-                    target = torch.tensor([reward], requires_grad=True)
+                    target = torch.tensor(reward, requires_grad=True)
                 else:
                     #when last secondary agent and not last main time step, update target using the first agent's (netid=0) Q network
                     next_state = memory.next_state.copy()
                     next_action = self.greedy_action_GCN(next_state)
                     prediction = self.Q_GCN(state, action, netid= netid)
                     target = reward + discount * self.Q_GCN(next_state, next_action, netid= 0) #hp: may also be updated using primary agent's Q network
-                loss = self.loss_fn(prediction, target)
+                prediction_list.append(prediction.view(1))
+                target_list.append(target.view(1))
+                #loss = self.loss_fn(prediction, target)
                 '''
                 if done:
                     print('netid is: ', netid)
@@ -305,38 +315,27 @@ class DQN(FQI):
                     print('Target: ', target.item())
                     print('one sample mse loss is: ', loss.item())
                 '''
-                print('netid is: ',netid)
-                print('Terminal state?', done) 
+                #print('netid is: ',netid)
+                #print('Terminal state?', done) 
                 #print('state is: ', state)
                 #print('action is: ', action)
-                print('Prediction: ', prediction.item())
-                print('Target: ', target.item())
-                print('one sample mse loss is: ', loss.item())
-                loss_list.append(loss) 
-        #for memory in batch_memory:
-            #state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
-            #if done:
-                #prediction = self.Q_GCN(state, action, netid= netid)
-                #target = torch.tensor([reward], requires_grad=True)
-                #print(done, type(target), target )
-            #else:
-                #next_state = memory.next_state.copy()
-                #next_action = self.greedy_action_GCN(next_state)
-                #prediction = self.Q_GCN(state, action, netid= netid)
-                #target = reward + discount * self.Q_GCN(next_state, next_action, netid= netid)
-                #print(type(target), target)
-        #loss = self.loss_fn(prediction, target)
-        #print('netid is: ',netid)
-        #print('Terminal state?', done, 'one sample loss is: ', loss)
-        #print(prediction, target)
-        #loss_list.append(loss)
-        total_loss = sum(loss_list)
-        #print(total_loss)
+                #print('Prediction: ', prediction.item())
+                #print('Target: ', target.item())
+                #print('one sample mse loss is: ', loss.item())
+                #loss_list.append(loss) 
+        batch_prediction = torch.stack(prediction_list)
+        batch_target = torch.stack(target_list)
+        batch_loss = self.loss_fn(batch_prediction, batch_target)
+        #total_loss = sum(loss_list)
+        #print(batch_loss)
         #return loss #hp: only loss is returned?
-        return total_loss
+        return batch_loss
 
-    def fit_GCN(self, num_episodes=100, num_epochs=10, eps=0.1, discount=1):  
-        writer = SummaryWriter()
+    def fit_GCN(self, num_episodes=100, num_epochs=10, max_eps=0.5, min_eps=0.1, eps_decay=False, batch_size = 16, discount=1, logdir=None):  
+        if logdir == None:
+            writer = SummaryWriter()
+        else:
+            writer = SummaryWriter(os.path.join('runs', logdir))
         best_value=0
         for epoch in range(num_epochs):#hp: why is epoch outside the episode loop? In this way you are basically running num_epochs*num_episodes episodes; see the DQN paper, they update q at every time step with a minibatch size of 32; let's keep it for now and revise later
             loss_list = []
@@ -347,6 +346,10 @@ class DQN(FQI):
             for episode in range(num_episodes):
                 print('---------------------------------------------------------------')
                 print('train episode: ', episode)
+                if eps_decay:
+                    eps=max(max_eps-0.005*episode, min_eps)
+                else:
+                    eps=min_eps
                 S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps, discount=discount)
                 writer.add_scalar('primary reward', cumulative_reward, episode)
                 #print(len(S),len(A))
@@ -356,14 +359,10 @@ class DQN(FQI):
                 new_memory_list=[]
                 for _ in range(int(self.simulator.budget)):
                     new_memory_list.append([])
-                #horizon = len(S) - 1 #hp: why -1? #so this is primary or secondary agent's memories?
                 horizon = self.simulator.T
-                #print('time horizon is: ', horizon)
                 for t in range(horizon):
                     #print('time step: ', t)
                     #print(S[t], A[t], R[t], NextS[t], D[t])
-                    if D[t]:
-                        print('terminal state reward is: {}'.format(R[t]))
                     new_memory.append(Memory(S[t], A[t], R[t], NextS[t], D[t]))
                     act=[]
                     for i in range(int(self.simulator.budget)):
@@ -377,14 +376,15 @@ class DQN(FQI):
                         else:
                             rew = R[horizon-1]
   
-                        new_memory_list[i].append(Memory(sta ,[np.array(A[t][i])],rew ,self.state_action(sta,act),D[t]) )#hp: what is state_action() for? #it is the concat of state and action
+                        new_memory_list[i].append(Memory(sta ,[np.array(A[t][i])],rew ,self.state_action(sta,act),D[t]) )
                 self.replay_memory += new_memory
                 for i in range(int(self.simulator.budget)):
                     self.replay_memory_list[i]+=new_memory_list[i]
-                batch_memory=self.replay_memory[-horizon:].copy()#hp: revise it to bigger values
+                #batch_memory = np.random.choice(self.replay_memory, batch_size)
+                batch_memory = self.replay_memory[-batch_size:].copy()
                 self.optimizer.zero_grad()
                 loss = self.memory_loss(batch_memory, discount=discount)
-                #print('MSE loss is: ', loss.item())
+                print('primary loss is: ', loss.item())
                 loss_list.append(loss.item())
                 writer.add_scalar('primary loss', loss.item(), episode)
                 loss.backward()
@@ -392,10 +392,11 @@ class DQN(FQI):
                 if len(self.replay_memory) > self.memory_size:
                     self.replay_memory = self.replay_memory[-self.memory_size:]
                 for i in range(int(self.simulator.budget)):
-                    batch_memory=self.replay_memory_list[i][-horizon:].copy()
+                    batch_memory=self.replay_memory_list[i][-batch_size:].copy()
+                    #batch_memory = np.random.choice(self.replay_memory, batch_size)
                     self.optimizer_list[i].zero_grad()
                     loss = self.memory_loss(batch_memory,netid=i, discount=discount)
-                    #if i == self.simulator.budget-1:
+                    print('secondary {} loss is: {}'.format(i, loss.item()))
                     writer.add_scalar('secondary {} loss'.format(i), loss.item(), episode)
                     loss.backward()
                     self.optimizer_list[i].step()
@@ -429,6 +430,7 @@ class DQN(FQI):
             NextS.append(next_state)
             D.append(done)
             cumulative_reward += reward * (discount**t)
+        print('epsilon value is: ', eps)
         print('action in this episode is: ', A)
         print('cumulated reward is: ', cumulative_reward)
         return S, A, R, NextS, D, cumulative_reward
@@ -454,15 +456,17 @@ def get_graph(graph_index):
     return g, graph_name
 
 if __name__ == '__main__':
-    print('Here goes nothing')
-    
+    #logdir = 'last-16'
+    logdir = None
+    batch_size = 16 
+    eps_decay = False
     discount=1
     First_time=True
     graph_index=2
     g, graph_name=get_graph(graph_index)
     if First_time:
         model=DQN(graph=g)
-        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=50, eps=0.1, num_epochs=1, discount=1)
+        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=80, num_epochs=1, discount=1, logdir=logdir, batch_size=batch_size)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,true_cumulative_reward_list], f)
     else:
@@ -473,6 +477,7 @@ if __name__ == '__main__':
     cumulative_rewards = []
     [print() for i in range(5)]
     print('testing')
+    print(logdir)
     for episode in range(10):
         print('---------------------------------------------------------------')
         print('test episode: ', episode)
