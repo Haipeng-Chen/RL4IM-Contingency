@@ -277,7 +277,7 @@ class DQN(FQI):
                 prediction = self.Q_GCN(state, action, netid= netid)
                 next_prediction = self.Q_GCN(next_state, next_action, netid= netid+1)
                 #target = reward + discount * self.Q_GCN(next_state, next_action, netid= netid+1) #this is problematic
-                target = torch.tensor(float(reward), requires_grad=True) + discount * self.Q_GCN(next_state, next_action, netid= netid+1) #this is problematic
+                target = torch.tensor(float(reward), requires_grad=True) + discount * self.Q_GCN(next_state, next_action, netid= netid+1) 
                 #loss = self.loss_fn(prediction, target)
                 #print('netid is: ',netid)
                 #print('Terminal state?', done) 
@@ -331,7 +331,7 @@ class DQN(FQI):
         #return loss #hp: only loss is returned?
         return batch_loss
 
-    def fit_GCN(self, num_episodes=100, num_epochs=10, max_eps=0.5, min_eps=0.1, eps_decay=False, batch_size = 16, discount=1, logdir=None):  
+    def fit_GCN(self, num_episodes=100, num_epochs=10, max_eps=0.3, min_eps=0.1, eps_decay=False, batch_size = 16, discount=1, logdir=None):  
         if logdir == None:
             writer = SummaryWriter()
         else:
@@ -380,33 +380,38 @@ class DQN(FQI):
                 self.replay_memory += new_memory
                 for i in range(int(self.simulator.budget)):
                     self.replay_memory_list[i]+=new_memory_list[i]
-                #batch_memory = np.random.choice(self.replay_memory, batch_size)
-                batch_memory = self.replay_memory[-batch_size:].copy()
-                self.optimizer.zero_grad()
-                loss = self.memory_loss(batch_memory, discount=discount)
-                print('primary loss is: ', loss.item())
-                loss_list.append(loss.item())
-                writer.add_scalar('primary loss', loss.item(), episode)
-                loss.backward()
-                self.optimizer.step()
+
+                #----------------------------update Q---------------------------------
+                #hp: revise to update every time step
+                if len(self.replay_memory) >= batch_size:
+                    #batch_memory = np.random.choice(self.replay_memory, batch_size)
+                    batch_memory = self.replay_memory[-batch_size:].copy()
+                    self.optimizer.zero_grad()
+                    loss = self.memory_loss(batch_memory, discount=discount)
+                    print('primary loss is: ', loss.item())
+                    #loss_list.append(loss.item())
+                    writer.add_scalar('primary loss', loss.item(), episode)
+                    loss.backward()
+                    self.optimizer.step()
                 if len(self.replay_memory) > self.memory_size:
                     self.replay_memory = self.replay_memory[-self.memory_size:]
                 for i in range(int(self.simulator.budget)):
-                    batch_memory=self.replay_memory_list[i][-batch_size:].copy()
-                    #batch_memory = np.random.choice(self.replay_memory, batch_size)
-                    self.optimizer_list[i].zero_grad()
-                    loss = self.memory_loss(batch_memory,netid=i, discount=discount)
-                    print('secondary {} loss is: {}'.format(i, loss.item()))
-                    writer.add_scalar('secondary {} loss'.format(i), loss.item(), episode)
-                    loss.backward()
-                    self.optimizer_list[i].step()
+                    if len(self.replay_memory_list[i]) >= batch_size:
+                        batch_memory=self.replay_memory_list[i][-batch_size:].copy()
+                        #batch_memory = np.random.choice(self.replay_memory_list[i], batch_size)
+                        self.optimizer_list[i].zero_grad()
+                        loss = self.memory_loss(batch_memory,netid=i, discount=discount)
+                        print('secondary {} loss is: {}'.format(i, loss.item()))
+                        writer.add_scalar('secondary {} loss'.format(i), loss.item(), episode)
+                        loss.backward()
+                        self.optimizer_list[i].step()
                     if len(self.replay_memory_list[i]) > self.memory_size:
                         self.replay_memory_list[i] = self.replay_memory_list[i][-self.memory_size:]
                 cumulative_reward_list.append(cumulative_reward)
                 #_, _, true_R, true_cumulative_reward = self.run_episode_GCN(eps=0, discount=1) #hp: what is this for?
                 #true_RL_reward.append(sum(true_R))
                 #true_cumulative_reward_list.append(true_cumulative_reward)
-            print('Epoch {}, MSE loss: {}, average train reward: {}, no discount test reward: {}, discount test reward: {}'.format(epoch, np.mean(loss_list), np.mean(cumulative_reward_list),np.mean(true_RL_reward), np.mean(true_cumulative_reward_list)))
+            #print('Epoch {}, MSE loss: {}, average train reward: {}, no discount test reward: {}, discount test reward: {}'.format(epoch, np.mean(loss_list), np.mean(cumulative_reward_list),np.mean(true_RL_reward), np.mean(true_cumulative_reward_list)))
         return cumulative_reward_list,true_cumulative_reward_list
     
     
@@ -456,17 +461,17 @@ def get_graph(graph_index):
     return g, graph_name
 
 if __name__ == '__main__':
-    #logdir = 'last-16'
+    #logdir = 'eps-decay+last-16'
     logdir = None
     batch_size = 16 
-    eps_decay = False
+    eps_decay = True 
     discount=1
     First_time=True
     graph_index=2
     g, graph_name=get_graph(graph_index)
     if First_time:
         model=DQN(graph=g)
-        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=80, num_epochs=1, discount=1, logdir=logdir, batch_size=batch_size)
+        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=100, num_epochs=1, discount=1, logdir=logdir, batch_size=batch_size, eps_decay=eps_decay)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,true_cumulative_reward_list], f)
     else:
@@ -475,7 +480,7 @@ if __name__ == '__main__':
         model=X[0]
         true_cumulative_reward_list=X[1]
     cumulative_rewards = []
-    [print() for i in range(5)]
+    [print() for i in range(4)]
     print('testing')
     print(logdir)
     for episode in range(10):
