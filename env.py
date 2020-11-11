@@ -13,16 +13,16 @@ class NetworkEnv(object):
 
     G is a nx graph
 
-    node 'attr': a trinary value where 0 is not-selected; 1 is selected and present; 2 is selected but not present; I am planning to put the state and action embedding outside environment 
+    node 'attr': a trinary value where 0 is not-selected; 1 is selected and present; 2 is selected but not present; I am planning to put the state and action embedding outside environment #hp: removed this
 
-    state consists of node 'attr' and A
+    state is a 2xN binary ndarray, the first row means invited in previous main step and came (=1) or invited but not come (=0) or not invited (=0), second row means invited in previous sub step (=1) or not (=0)  
+    note that the 2nd row of state will also be updated outside environment (in greedy_action_GCN())
     '''
     
     def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.1, q=0.6):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
-        #self.node_attr =  np.zeros(self.N) #I am planning to put the state and action embedding outside environment 
         self.A = nx.to_numpy_matrix(self.G)  
         self.propagate_p = propagate_p
         self.q = q
@@ -31,22 +31,22 @@ class NetworkEnv(object):
         self.done = False
         self.reward = 0
         self.feasible_actions = list(range(self.N))
-        self.state=np.zeros(self.N)#0: not invited, 1: invited and came. 2: invited and not came
+        self.state=np.zeros((2, self.N)) 
         #print('initialized state: ',self.state)
         nx.set_node_attributes(self.G, 0, 'attr')
 
-    def step(self, action ):
-        #when final setp
+    def step(self, action):
         invited = action
         present, absent = self.transition(invited)
         state=self.state.copy()
         for v in present:
             self.G.nodes[v]['attr']=1
-            self.state[v]=1
+            self.state[0][v]=1
+            self.state[1][v]=0
         for v in absent:
             self.G.nodes[v]['attr']=2
-            self.state[v]=2
-        #next_state=self.state.copy()
+            self.state[0][v]=0
+            self.state[1][v]=0
         if self.t == self.T-1:
             seeds = []
             [seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
@@ -54,12 +54,6 @@ class NetworkEnv(object):
             next_state = None
             self.done = True
         else:
-            #invited = action
-            #present, absent = transition(invited, q=0.6)
-            #for i in present:
-                #self.G.nodes[v]['attr']=1
-            #for i in absent:
-                #self.G.nodes[v]['attr']=2
             self.reward = 0 #TODO: add an auxilliary reward to warm-start 
             #Han Ching: One idea is to simulate the IM here with given seend.
             next_state = self.state.copy()
@@ -85,7 +79,7 @@ class NetworkEnv(object):
         self.t = 0
         self.done = False
         self.reward = 0
-        self.state=np.zeros(self.N)
+        self.state=np.zeros((2, self.N))
         self.feasible_actions = list(range(self.N))
         nx.set_node_attributes(self.G, 0, 'attr')
 

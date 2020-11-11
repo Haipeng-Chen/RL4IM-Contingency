@@ -47,18 +47,21 @@ class FQI(object):
         self.simulator = NetworkEnv(G=graph)
         self.regressor = regressor or ExtraTreesRegressor()
     
-    def state_action(self, states,actions):
+    def state_action(self, state, action):
+        ###############
         #hp: seems to have warning
         #hp: it is a unique way of concatenating state and action, needs to use a more generalized way of representing it 
-        #TODO: check Dai et al. 2017 
-        output_state=states.copy()
-        if len(actions)>0:
-            #output_state[actions]=0
-            output_state[actions]=1
-        return output_state
+        #the input action is a list of nodes, needs to first convert it into a 1xN ndarray 
+        #the output is a 3xN ndarray
+        state=state.copy()
+        action = action
+        np_action = np.zeros((1, self.simulator.N))
+        for n in action:
+            np_action[0][n]=1
+        state_action  = np.concatenate((state, np_action), axis=0)
+        return state_action 
     
-
-    
+    #not used 
     def Q(self, states, actions):
         states, actions = np.array(states), np.array(actions)
         if not is_fitted(self.regressor):
@@ -80,7 +83,8 @@ class FQI(object):
         else:
             next_action=np.array(possible_actions)
         return list(next_action)   
-    
+   
+    #not used
     def random_action(self):
         if len(self.simulator.feasible_actions)>0:
             action = random.sample(self.simulator.feasible_actions,int(min(len(self.simulator.feasible_actions),self.simulator.budget)))
@@ -88,12 +92,14 @@ class FQI(object):
             action = random.sample(self.simulator.all_nodes,int(min(self.simulator.n,self.simulator.budget)))
         return action
     
+    #not used
     def policy(self, state, eps=0.1):
         if np.random.rand() < eps:
             return self.random_action()
         else:
             return self.greedy_action(state) 
     
+    #not used
     def run_episode(self, eps=0.1, discount=0.99):
         S, A, R = [], [], []
         cumulative_reward = 0
@@ -111,6 +117,7 @@ class FQI(object):
         return S, A, R, cumulative_reward
 
 
+    #not used
     def fit_Q(self, episodes, num_iters=10, discount=0.99):
         prev_S = []
         next_S = []
@@ -133,7 +140,7 @@ class FQI(object):
             y = list(rewards + discount * np.array(Q_best))
             self.regressor.fit(prev_S, y)
 
-    
+    #not used 
     def fit(self, num_refits=10, num_episodes=10, discount=0.99, eps=0.1):
         cumulative_rewards = np.zeros((num_refits, num_episodes))
         for refit_iter in range(num_refits):
@@ -163,16 +170,13 @@ class Memory_belief:
 class DQN(FQI):
     def __init__(self, graph, lr_primary=0.001, lr_secondary=0.001):
         FQI.__init__(self, graph)
-        self.feature_size = 2 #hp 
+        self.feature_size = 3 #################### 
         self.net = NaiveGCN(node_feature_size=self.feature_size)
         self.net_list=[] #nets for secondary agents 
         for i in range(int(self.simulator.budget)): 
             self.net_list.append(NaiveGCN(node_feature_size=self.feature_size))
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr_primary)
-        #print('graph edges: ', graph.edges())
-        #print('graph edges: ', torch.Tensor(list(nx.DiGraph(graph).edges())))
         self.edge_index = torch.Tensor(list(nx.DiGraph(graph).edges())).long().t() #this is a 2 x num_edges tensor where each column is an edge
-        #print('edge index is: ',self.edge_index.data.cpu().numpy())
         self.loss_fn = nn.MSELoss()
         self.replay_memory = []
         self.optimizer_list=[]
@@ -182,19 +186,22 @@ class DQN(FQI):
             self.replay_memory_list.append([])
         self.memory_size = 1024
 
-    def predict_rewards(self, state, action, netid='primary'): # non backpropagatable
+    def predict_rewards(self, state, action, netid='primary'): 
         #hp: split it into predict_rewards_primary and predict_rewards_secondary? when action becomes an embedding, they might be handled differently?
-        features = np.concatenate([[self.state_action(state, action)],[state]], axis=0).T #hp: revise later
+        #features = np.concatenate([[self.state_action(state, action)],[state]], axis=0).T #hp: revise later
+        features = self.state_action(state, action).T
+        #print('netid: ', netid)
+        #print('action is: ', action)
+        #print('feature dimension: ', features.shape)
         net = self.net if netid == 'primary' else self.net_list[netid]
         graph_pred = net(torch.Tensor(features), self.edge_index) #.detach().numpy()
-        #print('graph pred is: ', graph_pred)
         return graph_pred
 
     #def batch_predict_rewards(self, states, actions, netid='primary'):
             
 
     def Q_GCN(self, state, action, netid='primary'):
-        #TODO: remove it later
+        #TODO: remove it later. it is the same as predict_rewards
         graph_pred = self.predict_rewards(state, action, netid)
         #y_pred = sum(node_pred[action]) # manually handle action selection
         return graph_pred
@@ -206,8 +213,6 @@ class DQN(FQI):
         possible_actions = self.simulator.feasible_actions.copy()
         #print('possible actions: ', possible_actions)
         for i in range(int(self.simulator.budget)): # greedy selection
-            #node_rewards = self.predict_rewards(state, action, netid=i).reshape(-1)
-            #action = [i] #hp: need to generalize
             if len(possible_actions)<2:#hp: what is 2 for? When there is only 1 candidate(posible infection) python will make possible_actions a element instead of list which makes strange things happen.
                 possible_actions=self.simulator.all_nodes.copy() #hp: this should be revised
             #action_rewards = dict(zip(possible_actions, [None]*len(possible_actions)))
@@ -215,21 +220,20 @@ class DQN(FQI):
             opt_sec_action = None
             for sec_action in possible_actions:
                 sec_action_ = [sec_action]
+                #print(sec_action_) ##############
                 sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid=i)
                 #print('reward for secondary action {} is {}: '.format(sec_action, sec_action_reward))
                 if sec_action_reward > max_reward:
                     max_reward = sec_action_reward
                     opt_sec_action = sec_action 
-            #node_rewards = self.predict_rewards(sec_state, action, netid=i).reshape(-1)
             #print('netid is: ', i)
             #print('secondary state is ', sec_state)
             #print('optimal secondary action is ', opt_sec_action)
             #print('predicted secondary max_reward: ', max_reward)
-            #max_indice = node_rewards[possible_actions].argsort()[-1:]
-            #node=np.array(possible_actions)[max_indice]
             pri_action.append(opt_sec_action)
             possible_actions.remove(opt_sec_action)
-            sec_state[opt_sec_action]=1  #hp: wrong #another way is to define some state transtiion for secondary agent #TODO: revise it when state is trinary or other forms 
+            sec_state[1][opt_sec_action]=1 ################## 
+            #print('secondary state is: ', sec_state)
         return pri_action
 
     def memory_loss(self, batch_memory, netid='primary', discount=1):
@@ -337,10 +341,10 @@ class DQN(FQI):
         else:
             writer = SummaryWriter(os.path.join('runs', logdir))
         best_value=0
-        for epoch in range(num_epochs):#hp: why is epoch outside the episode loop? In this way you are basically running num_epochs*num_episodes episodes; see the DQN paper, they update q at every time step with a minibatch size of 32; let's keep it for now and revise later
+        for epoch in range(num_epochs):#hp: remove epoch later? 
             loss_list = []
-            cumulative_reward_list = [] #cumulative_reward_list: Reward assigned while training (with discount factor=0.98)
-            true_cumulative_reward_list = [] #true_cumulative_reward_list: Reward assigned while testing (with discount factor=1)
+            cumulative_reward_list = [] #cumulative_reward_list: Reward assigned while training 
+            true_cumulative_reward_list = [] #true_cumulative_reward_list: Reward assigned while testing 
             true_RL_reward=[]# Objective function while testing, all 3 print for sanity check and can be remove.
             #self.simulator.Temperature=max((1-(epoch/20)),0) #hp: hard-coded, maybe revise later # This is for curiculum learning
             for episode in range(num_episodes):
@@ -352,31 +356,38 @@ class DQN(FQI):
                     eps=min_eps
                 S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps, discount=discount)
                 writer.add_scalar('primary reward', cumulative_reward, episode)
-                #print(len(S),len(A))
-                new_memory_belief=[]
                 #hp: the names of variables are misleading. Change it to primary-secondary
                 new_memory = []
                 new_memory_list=[]
                 for _ in range(int(self.simulator.budget)):
                     new_memory_list.append([])
                 horizon = self.simulator.T
+
+                #----------------------------store memory---------------------------------
                 for t in range(horizon):
                     #print('time step: ', t)
                     #print(S[t], A[t], R[t], NextS[t], D[t])
                     new_memory.append(Memory(S[t], A[t], R[t], NextS[t], D[t]))
-                    act=[]
+                    #act=[]
+                    sta = S[t].copy()
                     for i in range(int(self.simulator.budget)):
-                        sta=self.state_action(S[t],act)
-                        act.append(A[t][i])
+                        #sta=self.state_action(S[t],act) ###############
+                        old_sta = sta.copy()
+                        #act.append(A[t][i])
                         #rew=float(self.predict_rewards(sta, act, netid='primary')[0]) #this could leads to high bias; maybe try it later
-                        if D[t] == False: #t = horizon-1 
+                        if D[t] == False:  
                             rew = 0
+                            sta[1][A[t][i]] = 1
+                            next_sta = sta
                         elif i<self.simulator.budget-1:
                             rew = 0
+                            sta[1][A[t][i]] = 1
+                            next_sta = sta
                         else:
+                            next_sta = None
                             rew = R[horizon-1]
-  
-                        new_memory_list[i].append(Memory(sta ,[np.array(A[t][i])],rew ,self.state_action(sta,act),D[t]) )
+                        new_memory_list[i].append(Memory(old_sta, [A[t][i]], rew, next_sta, D[t])) 
+                        #new_memory_list[i].append(Memory(sta ,[np.array(A[t][i])],rew ,self.state_action(sta,act),D[t]) )
                 self.replay_memory += new_memory
                 for i in range(int(self.simulator.budget)):
                     self.replay_memory_list[i]+=new_memory_list[i]
@@ -399,6 +410,7 @@ class DQN(FQI):
                     if len(self.replay_memory_list[i]) >= batch_size:
                         batch_memory=self.replay_memory_list[i][-batch_size:].copy()
                         #batch_memory = np.random.choice(self.replay_memory_list[i], batch_size)
+                        #print(batch_memory[0].state.shape, batch_memory[0].action)
                         self.optimizer_list[i].zero_grad()
                         loss = self.memory_loss(batch_memory,netid=i, discount=discount)
                         print('secondary {} loss is: {}'.format(i, loss.item()))
@@ -418,15 +430,12 @@ class DQN(FQI):
 
     
     def run_episode_GCN(self, eps=0.1, discount=0.99):
-        #hp: this should be majorly revised
         S, A, R, NextS, D = [], [], [], [], []#D is for done -- indicator of terminal state
         cumulative_reward = 0
         a=0
         self.simulator.reset()
         for t in range(self.simulator.T): 
             state = self.simulator.state.copy()
-            #print('==========================')
-            #print('state is ', state)
             S.append(state)
             action = self.policy_GCN(state, eps)
             next_state, reward, done = self.simulator.step(action=action)#Transition Happen
@@ -435,18 +444,16 @@ class DQN(FQI):
             NextS.append(next_state)
             D.append(done)
             cumulative_reward += reward * (discount**t)
-        print('epsilon value is: ', eps)
+        print('epsilon value in this episode is: ', eps)
         print('action in this episode is: ', A)
-        print('cumulated reward is: ', cumulative_reward)
+        print('episode total reward is: ', cumulative_reward)
         return S, A, R, NextS, D, cumulative_reward
     
     def policy_GCN(self, state, eps=0.1):
         s=state.copy()
         if np.random.rand() < eps:
-            #print('taking random action')
             return self.random_action()
         else:
-            #print('taking RL action')
             return self.greedy_action_GCN(s) 
 
 

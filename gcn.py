@@ -36,9 +36,8 @@ class NaiveGCN(nn.Module):
         self.activation = nn.Sigmoid()
 
     def forward(self, x, edge_index):
+        #print('x dimension is: ', x.shape)
         x = self.activation(self.gcn1(x, edge_index))
-        #print(x)
-        #print('output dimension is: ', x.size())
         #x = self.activation(self.gcn2(x, edge_index)) #hp
         #x = self.activation(self.gcn3(x, edge_index)) #hp
         # x = self.activation(self.gcn4(x, edge_index))
@@ -47,15 +46,11 @@ class NaiveGCN(nn.Module):
         x = self.activation(self.fc1(x))
         # x = self.activation(self.fc2(x))
         x = self.fc2(x)
-        #print(x)
-        #print('output dimension is: ', x.size())
 
         if self.aggregation == 'sum':
             x = torch.sum(x) 
         else:
             x = torch.max(x)
-        #print(x)
-        #print('output dimension is: ', x.size())
         
         return x
 
