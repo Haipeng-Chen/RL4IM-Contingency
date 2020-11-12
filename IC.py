@@ -53,7 +53,7 @@ def runDIC (G, S, p=0.01, q=0.001 ):
              w = 1
              if v not in T:
                  if v not in V1:
-                     if random.random() < q:
+                     if random.random() < q: # First infect as small prob
                          T.append(v)
                      else:
                          V1.append(v)
@@ -61,42 +61,105 @@ def runDIC (G, S, p=0.01, q=0.001 ):
                      if random.random() < (1-(1-p**2)-q)/(1-q): #q+(1-q)x=(1-(1-p^2)), x=(1-(1-p^2)-q)/(1-q)
                          T.append(v)
                      else:
-                         V2.append(v) #with prob ()
+                         V2.append(v) #the node is atempted by more then 2 times
                  elif v in V2:
                      if random.random() < p:
                          T.append(v)
     return T
 
-
+def runLT (G, S, l=0.01 ):
+    ''' Runs independent cascade model.
+    Input: G -- networkx graph object
+    S -- initial list of vertices
+    l -- weights
+    Output: T -- resulted influenced set of vertices (including S)
+    '''
+    
+    T = deepcopy(S)
+    Threshold=np.random.rand(len(G)) #uniform random threshold
+    Any_Change=True    
+    while(Any_Change): #loop until no newly infected
+        Any_Change=False
+        Current_influence=np.zeros(len(G)) #Reset influence
+        for v in T:
+            Current_influence[v]=1 #Set influenced nodes above threshold
+        for u in T: 
+            for v in G[u] and v not in T: 
+                Current_influence[v]+=l #Add influence to neighbor
+        NewT=[]
+        for v in range(len(G)):
+            if Current_influence[v]>Threshold[v]:
+                NewT.append(v)
+        if len(NewT)>len(T):#If some nodes are newly infected
+            T = deepcopy(NewT)
+            Any_Change=True#Set change to true
+    return T
 
 def runSC (G, S, d=1 ):
     ''' Runs independent cascade model.
     Input: G -- networkx graph object
     S -- initial list of vertices
-    d -- propagation probability
+    d -- fraction coefficient
     Output: T -- resulted influenced set of vertices (including S)
     '''
-    i = 0
-    while i < len(T):
-        for v in G[T[i]]: # for neighbors of a selected node
-            if v not in T: # if it wasn't selected yet
-                w = G[T[i]][v]['weight'] # count the number of edges between two nodes
-                if w==1:
-                    if random() <= 1 - (1-q)**w: # if at least one of edges propagate influence
-                        print T[i], 'influences', v
-                        T.append(v) 
-                else:
-                    if random() <= 1 - (1-p)**w: # if at least one of edges propagate influence
-                        print T[i], 'influences', v
-                        T.append(v)
-        i += 1
+    Threshold=np.random.rand(len(G))
+    T = deepcopy(S)
+    Any_Change=True    
+    while(Any_Change):
+        Any_Change=False
+        Current_influence=np.zeros(len(G))
+        Neighbor_fraction=np.zeros(len(G)) #fraction of neighbor got infected
+        
+        for v in range(len(G)):
+            if v not in T:
+                for u in G[v]:
+                    if u in T:
+                        Neighbor_fraction[v]+=1
+        for v in range(len(G)):
+            Neighbor_fraction[v]/=len(G[v])
+        # Count fraction of neighbor, a bit ugly
+        for v in range(len(G)):
+            Current_influence[v]=(Neighbor_fraction[v]/(2*d))**2/((Neighbor_fraction[v]/(2*d))**2+(1-Neighbor_fraction[v]/d)**2)
+        for v in T:
+            Current_influence[v]=1
+        # Calculate current accumulated thrshold, bellow same as LT
+        NewT=[]
+        for v in range(len(G)):
+            if Current_influence[v]>Threshold[v]:
+                NewT.append(v)
+        if len(NewT)>len(T):
+            T = deepcopy(NewT)
+            Any_Change=True
     return T
+
 
 
 def runIC_repeat(G, S, p=0.01, sample=1000):
     infl_list = []
     for i in range(sample):
         T = runIC(G, S, p=p)
+        influence = len(T)
+        infl_list.append(influence)
+    infl_mean = np.mean(infl_list)
+    infl_std = np.std(infl_list)
+
+    return infl_mean, infl_std 
+
+def runLT_repeat(G, S, l=0.01, sample=1000):
+    infl_list = []
+    for i in range(sample):
+        T = runLT(G, S,l=l)
+        influence = len(T)
+        infl_list.append(influence)
+    infl_mean = np.mean(infl_list)
+    infl_std = np.std(infl_list)
+
+    return infl_mean, infl_std 
+
+def runSC_repeat(G, S, d=1, sample=1000):
+    infl_list = []
+    for i in range(sample):
+        T = runSC(G, S,d=d)
         influence = len(T)
         infl_list.append(influence)
     infl_mean = np.mean(infl_list)
@@ -112,7 +175,9 @@ if __name__ == '__main__':
     #S = set(S)
     #T = runIC(g, S)
     #print(T)
-    infl_mean, infl_std = runIC_repeat(g, S, p=1, sample=1000)
+    # infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
+    # infl_mean, infl_std = runLT_repeat(g, S, l=0.01, sample=1000)
+    infl_mean, infl_std = runSC_repeat(g, S, d=0.5, sample=1000)
     print(infl_mean, infl_std)
 
 
