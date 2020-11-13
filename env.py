@@ -19,7 +19,7 @@ class NetworkEnv(object):
     note that the 2nd row of state will also be updated outside environment (in greedy_action_GCN())
     '''
     
-    def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.1, q=0.6):
+    def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.1, q=1):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
@@ -125,6 +125,8 @@ if __name__ == '__main__':
     rewards = []
     for i in range(10):
         env.reset()
+        actions = []
+        presents = []
         while(env.done == False):
             #print('step: ', env.t)
             degree=nx.degree(G)
@@ -138,37 +140,19 @@ if __name__ == '__main__':
                         action_v=v
                         max_degree=degree[v]
                 action.append(action_v)
-            #print(action)
+            actions.append(action)
+            invited = action
+            present, _ = env.transition(action)
+            presents.append(present)
             env.step(action)
         rewards.append(env.reward) 
-        '''
-        present = []
-        absent = []
-        invited = []
-        for v in env.G.nodes:
-            if env.G.nodes[v]['attr']==1:
-                present.append(v)
-                invited.append(v)
-            if env.G.nodes[v]['attr']==2:
-                absent.append(v)
-                invited.append(v)
-        print('invited: ', invited)
-        print('present: ', present)
-        print('absent: ', absent)
-        print('reward for maxdegree policy is: ', env.reward)
-        '''
+        print('----------------------------------------------')
+        print('episode: ', i)
+        print('reward: ', env.reward)
+        print('invited: ', actions)
+        print('present: ', presents)
     print('average reward for maxdegree policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
 
-
-    '''
-    #sanity check for trnasition()
-    invited = [1, 2, 3, 4]
-    num_invited = 0
-    for i in range(1000):
-        present,absent = env.transition(invited, q=0.6)
-        num_invited += len(present)
-    print(num_invited/1000)    
-    '''
 
 
 
