@@ -67,6 +67,7 @@ def runDIC (G, S, p=0.01, q=0.001 ):
                          T.append(v)
     return T
 
+#hp: I have not considered >1 hop influences. This needs to be revised.
 def runLT (G, S, l=0.01 ):
     ''' Runs independent cascade model.
     Input: G -- networkx graph object
@@ -131,7 +132,6 @@ def runSC (G, S, d=1 ):
             T = deepcopy(NewT)
             Any_Change=True
     return T
-
 
 
 def runIC_repeat(G, S, p=0.01, sample=1000):
