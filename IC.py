@@ -174,14 +174,14 @@ if __name__ == '__main__':
     g = nx.erdos_renyi_graph(100,0.5)
     #for u,v in g.edges():
         #g[u][v]['p'] = 0.02
-    budget=10
+    budget=3
     S = random.sample(g.nodes, budget)
     def f_multi(x):
         s=list(x)
         val,_=runIC_repeat(G=g, S=s, p=0.01, sample=1000)
         return val
     S, obj=greedy(range(len(g)),budget,f_multi)
-    S = list(S)
+    
     #T = runIC(g, S)
     #print(T)
     infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)

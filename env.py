@@ -4,6 +4,7 @@ import math
 import random
 #from influence import influence, parallel_influence
 from IC import runIC_repeat
+from baseline import *
 
 class NetworkEnv(object):
     '''
@@ -96,54 +97,68 @@ if __name__ == '__main__':
     env=NetworkEnv(G=G)
 
 
-    rewards = [ ]
-    env.reset()
-    for i in range(10):
-        env.reset()
-        while(env.done == False):
-            #print('step: ', env.t)
-            action = random.sample(env.feasible_actions, env.budget) 
-            # print(action)
-            env.step(action)
-        present = []
-        absent = []
-        invited = []
-        for v in env.G.nodes:
-            if env.G.nodes[v]['attr']==1:
-                present.append(v)
-                invited.append(v)
-            if env.G.nodes[v]['attr']==2:
-                absent.append(v)
-                invited.append(v)
-        #print('invited: ', invited)
-        #print('present: ', present)
-        #print('absent: ', absent)
-        #print(env.reward)
-        rewards.append(env.reward)
-    print('average reward for random policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
+    # rewards = [ ]
+    # env.reset()
+    # for i in range(10):
+    #     env.reset()
+    #     while(env.done == False):
+    #         #print('step: ', env.t)
+    #         action = random.sample(env.feasible_actions, env.budget) 
+    #         # print(action)
+    #         env.step(action)
+    #     present = []
+    #     absent = []
+    #     invited = []
+    #     for v in env.G.nodes:
+    #         if env.G.nodes[v]['attr']==1:
+    #             present.append(v)
+    #             invited.append(v)
+    #         if env.G.nodes[v]['attr']==2:
+    #             absent.append(v)
+    #             invited.append(v)
+    #     #print('invited: ', invited)
+    #     #print('present: ', present)
+    #     #print('absent: ', absent)
+    #     #print(env.reward)
+    #     rewards.append(env.reward)
+    # print('average reward for random policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
+
+    # rewards = []
+    # for i in range(10):
+    #     env.reset()
+    #     actions = []
+    #     presents = []
+    #     while(env.done == False):
+    #         action=max_degree(env.feasible_actions, env.G, env.budget)
+    #         actions.append(action)
+    #         invited = action
+    #         present, _ = env.transition(action)
+    #         presents.append(present)
+    #         env.step(action)
+    #     rewards.append(env.reward) 
+    #     print('----------------------------------------------')
+    #     print('episode: ', i)
+    #     print('reward: ', env.reward)
+    #     print('invited: ', actions)
+    #     print('present: ', presents)
+    # print('average reward for maxdegree policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
 
     rewards = []
+    def f_multi(x):
+        s=list(x)
+        val,_=runIC_repeat(G=env.G, S=s, p=0.01, sample=1000)
+        return val
     for i in range(10):
         env.reset()
         actions = []
         presents = []
         while(env.done == False):
-            #print('step: ', env.t)
-            degree=nx.degree(G)
-            degree = [val for (node, val) in G.degree()]
-            # print(degree)
-            action=[]
-            for i in range(env.budget):
-                max_degree=0
-                for v in env.feasible_actions:
-                    if degree[v]>max_degree and v not in action:
-                        action_v=v
-                        max_degree=degree[v]
-                action.append(action_v)
+            action, obj=adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
+            action=list(action)
             actions.append(action)
             invited = action
             present, _ = env.transition(action)
-            presents.append(present)
+            presents+=present
             env.step(action)
         rewards.append(env.reward) 
         print('----------------------------------------------')
@@ -151,8 +166,7 @@ if __name__ == '__main__':
         print('reward: ', env.reward)
         print('invited: ', actions)
         print('present: ', presents)
-    print('average reward for maxdegree policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
-
+    print('average reward for greedy policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
 
 
 
