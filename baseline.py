@@ -56,7 +56,7 @@ def adaptive_greedy(items, budget, f, S_prev=[]):
             starting_objective = new_total
         else:
             heapq.heappush(upper_bounds, (-new_val, u))
-    return action, starting_objective
+    return list(action), starting_objective
 
 def max_degree(feasible_actions, G, budget):
     degree=nx.degree(G)

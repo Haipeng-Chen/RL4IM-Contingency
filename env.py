@@ -2,8 +2,12 @@ import numpy as np
 import networkx as nx
 import math
 import random
+import argparse
 #from influence import influence, parallel_influence
+
 from IC import runIC_repeat
+from IC import runDIC_repeat
+from IC import runSC_repeat 
 from baseline import *
 
 class NetworkEnv(object):
@@ -20,7 +24,7 @@ class NetworkEnv(object):
     note that the 2nd row of state will also be updated outside environment (in greedy_action_GCN())
     '''
     
-    def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.1, q=0.6):
+    def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.3, q=1, cascade='IC'):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
@@ -28,12 +32,12 @@ class NetworkEnv(object):
         self.propagate_p = propagate_p
         self.q = q
         self.T = T
+        self.cascade = cascade
         self.t = 0
         self.done = False
         self.reward = 0
         self.feasible_actions = list(range(self.N))
         self.state=np.zeros((2, self.N)) 
-        #print('initialized state: ',self.state)
         nx.set_node_attributes(self.G, 0, 'attr')
 
     def step(self, action):
@@ -51,7 +55,7 @@ class NetworkEnv(object):
         if self.t == self.T-1:
             seeds = []
             [seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
-            self.reward, _ = runIC_repeat(self.G, seeds, p=self.propagate_p, sample=1000)
+            self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade)
             next_state = None
             self.done = True
         else:
@@ -65,6 +69,19 @@ class NetworkEnv(object):
  
         return next_state, self.reward, self.done  #hp: revise 
     
+    def run_cascade(self, seeds, cascade='IC', sample=1000):
+        #print('running cascade')
+        #there may be better ways of passing the arguments
+        if cascade == 'IC':
+            reward, _ = runIC_repeat(self.G, seeds, p=self.propagate_p, sample=sample)
+        elif cascade == 'DIC':
+            reward, _ = runDIC_repeat(self.G, seeds, p=self.propagate_p, q=0.001, sample=sample)
+        elif cascade == 'LT':
+            reward, _ = runLT_repeat(self.G, seeds, l=0.01, sample=sample)
+        else:
+            reward, _ = runSC_repeat(self.G, seeds, d=1, sample=sample)
+        return reward
+ 
     #the simple state transition process
     def transition(self, invited):#q is probability being present
         present = []
@@ -84,8 +101,28 @@ class NetworkEnv(object):
         self.feasible_actions = list(range(self.N))
         nx.set_node_attributes(self.G, 0, 'attr')
 
+
+def arg_parse():
+    parser = argparse.ArgumentParser(description='Arguments of influence maximzation')
+    parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
+                help='graph index')
+    parser.add_argument('--baseline',dest='baseline', type=str, default='ada_greedy',
+                help='baseline')
+    parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
+                help='cascade model')
+    parser.add_argument('--greedy_sample_size',dest='greedy_sample_size', type=int, default=500,
+                help='sample size for value estimation of greedy algorithms')
+
+    return parser.parse_args()
+
 if __name__ == '__main__':
-    graph_index = 2
+
+    args = arg_parse()
+    graph_index = args.graph_index 
+    greedy_sample_size = args.greedy_sample_size
+    baseline = args.baseline
+    cascade = args.cascade
+
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
     path = 'graph_data/' + graph_name + '.txt'
@@ -94,79 +131,40 @@ if __name__ == '__main__':
     G = nx.relabel_nodes(G,mapping)
     print('selected graph: ', graph_name)
     print('graph size: ', len(G.nodes))
-    env=NetworkEnv(G=G)
+    env=NetworkEnv(G=G, cascade=cascade)
 
-
-    # rewards = [ ]
-    # env.reset()
-    # for i in range(10):
-    #     env.reset()
-    #     while(env.done == False):
-    #         #print('step: ', env.t)
-    #         action = random.sample(env.feasible_actions, env.budget) 
-    #         # print(action)
-    #         env.step(action)
-    #     present = []
-    #     absent = []
-    #     invited = []
-    #     for v in env.G.nodes:
-    #         if env.G.nodes[v]['attr']==1:
-    #             present.append(v)
-    #             invited.append(v)
-    #         if env.G.nodes[v]['attr']==2:
-    #             absent.append(v)
-    #             invited.append(v)
-    #     #print('invited: ', invited)
-    #     #print('present: ', present)
-    #     #print('absent: ', absent)
-    #     #print(env.reward)
-    #     rewards.append(env.reward)
-    # print('average reward for random policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
-
-    # rewards = []
-    # for i in range(10):
-    #     env.reset()
-    #     actions = []
-    #     presents = []
-    #     while(env.done == False):
-    #         action=max_degree(env.feasible_actions, env.G, env.budget)
-    #         actions.append(action)
-    #         invited = action
-    #         present, _ = env.transition(action)
-    #         presents.append(present)
-    #         env.step(action)
-    #     rewards.append(env.reward) 
-    #     print('----------------------------------------------')
-    #     print('episode: ', i)
-    #     print('reward: ', env.reward)
-    #     print('invited: ', actions)
-    #     print('present: ', presents)
-    # print('average reward for maxdegree policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
 
     rewards = []
     def f_multi(x):
-        s=list(x)
-        val,_=runIC_repeat(G=env.G, S=s, p=0.01, sample=1000)
+        s=list(x) 
+        #print('cascade model is: ', env.cascade)
+        val = env.run_cascade(seeds=s, cascade=env.cascade, sample=greedy_sample_size)
         return val
-    for i in range(10):
+
+    episodes = 50
+    for i in range(episodes):
+        print('----------------------------------------------')
+        print('episode: ', i)
         env.reset()
         actions = []
         presents = []
         while(env.done == False):
-            action, obj=adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
-            action=list(action)
+            if baseline == 'random':
+                action = random.sample(env.feasible_actions, env.budget) 
+            elif baseline == 'maxdegree':
+                action = max_degree(env.feasible_actions, env.G, env.budget)
+            else:
+                action, _ =adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
             actions.append(action)
             invited = action
             present, _ = env.transition(action)
             presents+=present
             env.step(action)
         rewards.append(env.reward) 
-        print('----------------------------------------------')
-        print('episode: ', i)
         print('reward: ', env.reward)
         print('invited: ', actions)
         print('present: ', presents)
-    print('average reward for greedy policy is: {}, std is: {}'.format(sum(rewards)/10, np.std(rewards)))
+    print('average reward for greedy policy is: {}, std is: {}'.format(np.mean(rewards), np.std(rewards)))
 
 
 

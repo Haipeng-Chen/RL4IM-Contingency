@@ -73,7 +73,7 @@ def runLT (G, S, l=0.01 ):
     ''' Runs independent cascade model.
     Input: G -- networkx graph object
     S -- initial list of vertices
-    l -- weights
+    l -- weight #revise?s
     Output: T -- resulted influenced set of vertices (including S)
     '''
     
@@ -145,6 +145,19 @@ def runIC_repeat(G, S, p=0.01, sample=1000):
     infl_std = np.std(infl_list)
 
     return infl_mean, infl_std 
+
+def runDIC_repeat(G, S, p=0.01, q=0.001, sample=1000):
+    infl_list = []
+    for i in range(sample):
+        #if i%100==0:
+            #print('i in runIC_repeat: ', i)
+        T = runDIC(G, S, p=p, q=q)
+        influence = len(T)
+        infl_list.append(influence)
+    infl_mean = np.mean(infl_list)
+    infl_std = np.std(infl_list)
+
+    return infl_mean, infl_std
 
 def runLT_repeat(G, S, l=0.01, sample=1000):
     infl_list = []

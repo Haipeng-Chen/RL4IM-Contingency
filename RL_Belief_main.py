@@ -10,6 +10,7 @@ import time
 import random
 import networkx as nx
 from tqdm import tqdm, trange
+import argparse
 
 from matplotlib import pyplot as plt
 
@@ -27,7 +28,7 @@ from sklearn.ensemble import ExtraTreesRegressor
 
 from gcn import NaiveGCN
 from env import NetworkEnv
-
+from baseline import *
 
 #Q2: Use NaiveGCN for now, change it later
 
@@ -40,11 +41,12 @@ def is_fitted(sklearn_regressor):
     return hasattr(sklearn_regressor, 'n_outputs_')
 
 class FQI(object):
-    def __init__(self, graph, regressor=None):
+    def __init__(self, graph, cascade='DIC', regressor=None):
         """Initialize simulator and regressor. Can optionally pass a custom
         `regressor` model (which must implement `fit` and `predict` -- you can
         use this to try different models like linear regression or NNs)"""
-        self.simulator = NetworkEnv(G=graph)
+        self.env = NetworkEnv(G=graph, cascade=cascade)
+        print('cascade model is: ', self.env.cascade)
         self.regressor = regressor or ExtraTreesRegressor()
     
     def state_action(self, state, action):
@@ -53,7 +55,7 @@ class FQI(object):
         #the output is a 3xN ndarray
         state=state.copy()
         action = action
-        np_action = np.zeros((1, self.simulator.N))
+        np_action = np.zeros((1, self.env.N))
         for n in action:
             np_action[0][n]=1
         state_action  = np.concatenate((state, np_action), axis=0)
@@ -72,11 +74,11 @@ class FQI(object):
     #not used
     def greedy_action(self, state):
         action = []
-        possible_actions = self.simulator.possible_nodes
-        if len(possible_actions)>int(self.simulator.budget):
+        possible_actions = self.env.possible_nodes
+        if len(possible_actions)>int(self.env.budget):
             np.random.shuffle(possible_actions)
             Q_values = self.Q([state]*len(possible_actions), [[j] for j in possible_actions]) # enumerate all the possible nodes
-            index=Q_values.argsort()[-int(self.simulator.budget):]
+            index=Q_values.argsort()[-int(self.env.budget):]
             next_action=[possible_actions[v] for v in index]
         else:
             next_action=np.array(possible_actions)
@@ -86,9 +88,15 @@ class FQI(object):
         #k is the number of chosen actions
         assert len(feasible_actions)>0
         action = random.choice(feasible_actions)
-        #action = random.sample(feasible_actions,int(min(len(feasible_actions),self.simulator.budget)))
+        #action = random.sample(feasible_actions,int(min(len(feasible_actions),self.env.budget)))
         return action
-    
+
+    def warm_start_action(self, feasible_actions):
+        assert len(feasible_actions)>0
+        #TODO: make it able to toogle
+        action = max_degree(feasible_actions, self.env.G, self.env.budget) 
+        return action   
+ 
     #not used
     def policy(self, state, eps=0.1):
         if np.random.rand() < eps:
@@ -100,13 +108,13 @@ class FQI(object):
     def run_episode(self, eps=0.1, discount=0.99):
         S, A, R = [], [], []
         cumulative_reward = 0
-        self.simulator.reset()
-        state = self.simulator.state
-        for t in range(self.simulator.T):    
-            state = self.simulator.state
+        self.env.reset()
+        state = self.env.state
+        for t in range(self.env.T):    
+            state = self.env.state
             S.append(state)
             action = self.policy(state, eps)
-            state_, reward=self.simulator.step(action=action)#Transition Happen 
+            state_, reward=self.env.step(action=action)#Transition Happen 
             state=state_
             A.append(action)
             R.append(reward)
@@ -166,12 +174,12 @@ class Memory_belief:
 
 
 class DQN(FQI):
-    def __init__(self, graph, lr_primary=0.001, lr_secondary=0.001):
-        FQI.__init__(self, graph)
+    def __init__(self, graph, cascade='IC', lr_primary=0.001, lr_secondary=0.001):
+        FQI.__init__(self, graph, cascade=cascade)
         self.feature_size = 3 
         self.net = NaiveGCN(node_feature_size=self.feature_size)
         self.net_list=[] #nets for secondary agents 
-        for i in range(int(self.simulator.budget)): 
+        for i in range(int(self.env.budget)): 
             self.net_list.append(NaiveGCN(node_feature_size=self.feature_size))
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr_primary)
         self.edge_index = torch.Tensor(list(nx.DiGraph(graph).edges())).long().t() #this is a 2 x num_edges tensor where each column is an edge
@@ -179,7 +187,7 @@ class DQN(FQI):
         self.replay_memory = []
         self.optimizer_list=[]
         self.replay_memory_list = []
-        for i in range(int(self.simulator.budget)):
+        for i in range(int(self.env.budget)):
             self.optimizer_list.append(optim.Adam(self.net_list[i].parameters(), lr=lr_secondary))
             self.replay_memory_list.append([])
 
@@ -208,25 +216,24 @@ class DQN(FQI):
 
     #def batch_predict_rewards(self, states, actions, netid='primary'):
             
-    '''
-    def Q_GCN(self, state, action, netid='primary'):
-        #TODO: remove it later. it is the same as predict_rewards
-        graph_pred = self.predict_rewards(state, action, netid)
-        #y_pred = sum(node_pred[action]) # manually handle action selection
-        return graph_pred
-    '''
-
-    def greedy_action_GCN(self, state, eps):
+    def greedy_action_GCN(self, state, eps, eps_wstart=0):
         #series of action selection for secondary agents
         pri_action=[]
         sec_state = state
-        possible_actions = self.simulator.feasible_actions.copy()
-        for i in range(int(self.simulator.budget)): 
+        possible_actions = self.env.feasible_actions.copy()
+        #print('eps warm start is: ', eps_wstart)
+        for i in range(int(self.env.budget)): 
             assert len(possible_actions) > 1
             chosen_sec_action = None
-            if np.random.rand() < eps:
+            p = np.random.rand()
+            if p < eps: #[0, eps)
+                #print('choosing random action')
                 chosen_sec_action = self.random_action(possible_actions) 
+            elif p < eps+eps_wstart: #[eps, eps+eps_wstart) #warm start
+                print('choosing baseline action')
+                chosen_sec_action = self.warm_start_action(possible_actions)
             else:
+                #print('choosing RL action')
                 #opt_sec_action = None
                 max_reward = -1000
                 for sec_action in possible_actions:
@@ -236,10 +243,6 @@ class DQN(FQI):
                     if sec_action_reward > max_reward:
                         max_reward = sec_action_reward
                         chosen_sec_action = sec_action 
-            #print('netid is: ', i)
-            #print('secondary state is ', sec_state)
-            #print('chosen secondary action is ', chosen_sec_action)
-            #print('predicted secondary max_reward: ', max_reward)
             pri_action.append(chosen_sec_action)
             possible_actions.remove(chosen_sec_action)
             sec_state[1][chosen_sec_action]=1 
@@ -267,16 +270,6 @@ class DQN(FQI):
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
                 #loss = self.loss_fn(prediction, target) #TODO: revise to batch loss
-                '''
-                if done:
-                    print('netid is: ', netid)
-                    #print('state is: ', state)
-                    #print('action is: ', action)
-                    print('Terminal state?', done)
-                    print('Prediction: ', prediction.item())
-                    print('Target: ', target.item())
-                    print('one sample mse loss is: ', loss.item())
-                '''
                 #print('netid is: ', netid)
                 #print('state is: ', state)
                 #print('action is: ', action)
@@ -294,17 +287,17 @@ class DQN(FQI):
                     target = torch.tensor(float(reward), requires_grad=True) #the problem is some nodes at the final step will not add a TD term in target
                 else:
                     next_state = memory.next_state.copy()
-                    next_action = self.greedy_action_GCN(next_state, eps=0)
+                    next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0)
                     prediction = self.predict_rewards(state, action, netid= netid)
                     target = reward + discount * self.predict_rewards(next_state, next_action, netid= netid)
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
 
-        elif netid < self.simulator.budget-1:
+        elif netid < self.env.budget-1:
             for memory in batch_memory:
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
                 next_state = memory.next_state.copy()
-                next_action = self.greedy_action_GCN(next_state, eps=0)
+                next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0)
                 #prediction = self.Q_GCN(state, action, netid= netid)
                 prediction = self.predict_rewards(state, action, netid= netid)
                 #next_prediction = self.Q_GCN(next_state, next_action, netid= netid+1)
@@ -333,7 +326,7 @@ class DQN(FQI):
                 else:
                     #when last secondary agent and not last main time step, update target using the first agent's (netid=0) Q network
                     next_state = memory.next_state.copy()
-                    next_action = self.greedy_action_GCN(next_state, eps=0)
+                    next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0)
                     #prediction = self.Q_GCN(state, action, netid= netid)
                     prediction = self.predict_rewards(state, action, netid= netid)
                     #target = reward + discount * self.Q_GCN(next_state, next_action, netid= 0) #hp: may also be updated using primary agent's Q network
@@ -341,16 +334,6 @@ class DQN(FQI):
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
                 #loss = self.loss_fn(prediction, target)
-                '''
-                if done:
-                    print('netid is: ', netid)
-                    #print('state is: ', state)
-                    #print('action is: ', action)
-                    print('Terminal state?', done)
-                    print('Prediction: ', prediction.item())
-                    print('Target: ', target.item())
-                    print('one sample mse loss is: ', loss.item())
-                '''
                 #print('netid is: ',netid)
                 #print('Terminal state?', done) 
                 #print('state is: ', state)
@@ -367,7 +350,7 @@ class DQN(FQI):
         #return loss #hp: only loss is returned?
         return batch_loss
 
-    def fit_GCN(self, num_episodes=100, num_epochs=10, max_eps=0.3, min_eps=0.1, eps_decay=False, batch_size = 16, discount=1, logdir=None):  
+    def fit_GCN(self, num_episodes=100, num_epochs=10, max_eps=0.3, min_eps=0.1, eps_decay=False, eps_wstart=0, batch_size = 16, discount=1, logdir=None):  
         if logdir == None:
             writer = SummaryWriter()
         else:
@@ -384,15 +367,15 @@ class DQN(FQI):
                     eps=max(max_eps-0.005*episode, min_eps)
                 else:
                     eps=min_eps
-                S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps, discount=discount)
+                S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps,eps_wstart=eps_wstart, discount=discount)
                 writer.add_scalar('cumulative reward', cumulative_reward, episode)
                 #hp: the names of variables are misleading. Change it to primary-secondary
                 new_memory = []
                 new_memory_list=[]
                 sec_new_memory = [] ########
-                for _ in range(int(self.simulator.budget)):
+                for _ in range(int(self.env.budget)):
                     new_memory_list.append([])
-                horizon = self.simulator.T
+                horizon = self.env.T
 
                 #----------------------------store memory---------------------------------
                 for t in range(horizon):
@@ -401,7 +384,7 @@ class DQN(FQI):
                     new_memory.append(Memory(S[t], A[t], R[t], NextS[t], D[t]))
                     #act=[]
                     sta = S[t].copy()
-                    for i in range(int(self.simulator.budget)):
+                    for i in range(int(self.env.budget)):
                         old_sta = sta.copy()
                         #rew=float(self.predict_rewards(sta, act, netid='primary')[0]) #this could leads to high bias; maybe try it later
                         done = False
@@ -410,7 +393,7 @@ class DQN(FQI):
                             sta[1][A[t][i]] = 1
                             next_sta = sta
                             done = False
-                        elif i<self.simulator.budget-1:
+                        elif i<self.env.budget-1:
                             rew = 0
                             sta[1][A[t][i]] = 1
                             next_sta = sta
@@ -423,7 +406,7 @@ class DQN(FQI):
                         #new_memory_list[i].append(Memory(old_sta, [A[t][i]], rew, next_sta, D[t])) 
                 self.replay_memory += new_memory
                 self.sec_replay_memory += sec_new_memory
-                for i in range(int(self.simulator.budget)):
+                for i in range(int(self.env.budget)):
                     self.replay_memory_list[i]+=new_memory_list[i]
 
                 #----------------------------update Q---------------------------------
@@ -441,7 +424,7 @@ class DQN(FQI):
                     self.optimizer.step()
                 if len(self.replay_memory) > self.memory_size:
                     self.replay_memory = self.replay_memory[-self.memory_size:]
-                for i in range(int(self.simulator.budget)):
+                for i in range(int(self.env.budget)):
                     if len(self.replay_memory_list[i]) >= batch_size:
                         batch_memory=self.replay_memory_list[i][-batch_size:].copy()
                         #batch_memory = np.random.choice(self.replay_memory_list[i], batch_size)
@@ -471,18 +454,18 @@ class DQN(FQI):
         return cumulative_reward_list,true_cumulative_reward_list
     
     
-
     
-    def run_episode_GCN(self, eps=0.1, discount=0.99):
+    
+    def run_episode_GCN(self, eps=0.1, eps_wstart=0, discount=0.99):
         S, A, R, NextS, D = [], [], [], [], []#D is for done -- indicator of terminal state
         cumulative_reward = 0
         a=0
-        self.simulator.reset()
-        for t in range(self.simulator.T): 
-            state = self.simulator.state.copy()
+        self.env.reset()
+        for t in range(self.env.T): 
+            state = self.env.state.copy()
             S.append(state)
-            action = self.greedy_action_GCN(state, eps)
-            next_state, reward, done = self.simulator.step(action=action)#Transition Happen
+            action = self.greedy_action_GCN(state, eps, eps_wstart)
+            next_state, reward, done = self.env.step(action=action)#Transition Happen
             A.append(action)
             R.append(reward)
             NextS.append(next_state)
@@ -493,16 +476,6 @@ class DQN(FQI):
         print('episode total reward is: ', cumulative_reward)
         return S, A, R, NextS, D, cumulative_reward
     
-    '''
-    def policy_GCN(self, state, eps=0.1):
-        s=state.copy()
-        if np.random.rand() < eps:
-            return self.random_action()
-        else:
-            return self.greedy_action_GCN(s) 
-    '''
-
-
 def get_graph(graph_index):
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
@@ -512,18 +485,54 @@ def get_graph(graph_index):
     g = nx.relabel_nodes(G,mapping)
     return g, graph_name
 
+def arg_parse():
+    parser = argparse.ArgumentParser(description='Arguments of influence maximzation')
+    parser.add_argument('--batch_size', dest='batch_size', type=int, default=32,
+                help='batch size')
+    parser.add_argument('--eps_decay', dest='eps_decay', type= bool, default=False, 
+                help='is epsilon decaying?')
+    parser.add_argument('--eps_wstart', dest='eps_wstart', type=float, default=0, 
+                help='epsilon for warm start')
+    parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
+                help='graph index')
+    parser.add_argument('--baseline',dest='baseline', type=str, default='ada_greedy',
+                help='baseline')
+    parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
+                help='cascade model')
+    parser.add_argument('--greedy_sample_size',dest='greedy_sample_size', type=int, default=500,
+                help='sample size for value estimation of greedy algorithms')
+    parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=100,
+                help='number of training episodes')
+    parser.add_argument('--logdir', dest='logdir', type=str, default=None, 
+                help='log directory of tensorboard')
+
+    #--------------------args rarely changed-------------------------------
+    parser.add_argument('--discount', dest='discount', type=float, default=1.0, 
+                help='discount factor')
+    parser.add_argument('--First_time', dest='First_time', type=bool, default=True, 
+                help='Is this the first time training?')
+    #parser.add_argument(' ', dest=' ', type= , default= , 
+                #help=' ')
+
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
-    #logdir = 'eps-decay+last-16'
-    logdir = None
-    batch_size = 16 
-    eps_decay = True 
-    discount=1
-    First_time=True
-    graph_index=2
+    args = arg_parse()
+    logdir = args.logdir
+    batch_size = args.batch_size
+    eps_decay = args.eps_decay
+    eps_wstart = args.eps_wstart
+    discount = args.discount
+    First_time = args.First_time
+    graph_index = args.graph_index
+    cascade = args.cascade
+    num_episodes = args.num_episodes
     g, graph_name=get_graph(graph_index)
     if First_time:
-        model=DQN(graph=g)
-        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=100, num_epochs=1, max_eps=0.5, min_eps=0.1, discount=1, logdir=logdir, batch_size=batch_size, eps_decay=eps_decay)
+        model=DQN(graph=g, cascade=cascade)
+        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=num_episodes, num_epochs=1, max_eps=0.5, min_eps=0.1, 
+                        discount=discount, eps_wstart=eps_wstart, logdir=logdir, batch_size=batch_size, eps_decay=eps_decay)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,true_cumulative_reward_list], f)
     else:
@@ -537,7 +546,6 @@ if __name__ == '__main__':
     for episode in range(10):
         print('---------------------------------------------------------------')
         print('test episode: ', episode)
-        #model.simulator.Temperature=0
         S, A, R, _, _, cumulative_reward = model.run_episode_GCN(eps=0, discount=discount)
         cumulative_rewards.append(cumulative_reward)
     print('average reward:', np.mean(cumulative_rewards))
