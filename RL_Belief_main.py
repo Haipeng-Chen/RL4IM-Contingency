@@ -91,7 +91,7 @@ class FQI(object):
         #action = random.sample(feasible_actions,int(min(len(feasible_actions),self.env.budget)))
         return action
 
-    def warm_start_action(self, feasible_actions):
+    def warm_start_actions(self, feasible_actions):
         assert len(feasible_actions)>0
         #TODO: make it able to toogle
         action = max_degree(feasible_actions, self.env.G, self.env.budget) 
@@ -191,7 +191,7 @@ class DQN(FQI):
             self.optimizer_list.append(optim.Adam(self.net_list[i].parameters(), lr=lr_secondary))
             self.replay_memory_list.append([])
 
-        #shared scondary network ###########
+        #shared scondary network 
         self.sec_net = NaiveGCN(node_feature_size=self.feature_size) ######
         self.sec_optimizer = optim.Adam(self.sec_net.parameters(), lr=lr_secondary) ########
         self.sec_replay_memory = [] ########
@@ -222,30 +222,32 @@ class DQN(FQI):
         sec_state = state
         possible_actions = self.env.feasible_actions.copy()
         #print('eps warm start is: ', eps_wstart)
-        for i in range(int(self.env.budget)): 
+        #TODO: get baseline actions if it decides to use warmstart
+        if np.random.rand() < eps_wstart: #warm start action
             assert len(possible_actions) > 1
-            chosen_sec_action = None
-            p = np.random.rand()
-            if p < eps: #[0, eps)
-                #print('choosing random action')
-                chosen_sec_action = self.random_action(possible_actions) 
-            elif p < eps+eps_wstart: #[eps, eps+eps_wstart) #warm start
-                print('choosing baseline action')
-                chosen_sec_action = self.warm_start_action(possible_actions)
-            else:
-                #print('choosing RL action')
-                #opt_sec_action = None
-                max_reward = -1000
-                for sec_action in possible_actions:
-                    sec_action_ = [sec_action]
-                    #sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid=i)
-                    sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid='secondary')
-                    if sec_action_reward > max_reward:
-                        max_reward = sec_action_reward
-                        chosen_sec_action = sec_action 
-            pri_action.append(chosen_sec_action)
-            possible_actions.remove(chosen_sec_action)
-            sec_state[1][chosen_sec_action]=1 
+            pri_action = self.warm_start_actions(possible_actions)
+        else:
+            for i in range(int(self.env.budget)): 
+                assert len(possible_actions) > 1
+                chosen_sec_action = None
+                p = np.random.rand()
+                if p < eps: #[0, eps)
+                    #print('choosing random action')
+                    chosen_sec_action = self.random_action(possible_actions) 
+                else:
+                    #print('choosing RL action')
+                    #opt_sec_action = None
+                    max_reward = -1000
+                    for sec_action in possible_actions:
+                        sec_action_ = [sec_action]
+                        #sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid=i)
+                        sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid='secondary')
+                        if sec_action_reward > max_reward:
+                            max_reward = sec_action_reward
+                            chosen_sec_action = sec_action 
+                pri_action.append(chosen_sec_action)
+                possible_actions.remove(chosen_sec_action)
+                sec_state[1][chosen_sec_action]=1 
         return pri_action
 
     def memory_loss(self, batch_memory, netid='primary', discount=1):
@@ -263,9 +265,7 @@ class DQN(FQI):
                 else:
                     next_state = memory.next_state.copy()
                     next_action = self.greedy_action_GCN(next_state, eps=0)
-                    #prediction = self.Q_GCN(state, action, netid= netid) 
                     prediction = self.predict_rewards(state, action, netid= netid)
-                    #target = reward + discount * self.Q_GCN(next_state, next_action, netid= netid) #hp: can revise to maintain a diff. net for each main step like secondary agents
                     target = reward + discount * self.predict_rewards(next_state, next_action, netid= netid)
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
@@ -277,12 +277,11 @@ class DQN(FQI):
                 #print('Prediction: ', prediction.item())
                 #print('Target: ', target.item())
                 #print('one sample mse loss is: ', loss.item())
-                #loss_list.append(loss)
 
         elif netid == 'secondary':
             for memory in batch_memory:
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
-                if done: #TODO: for secondary agents, it will only be done at the final node not the final step, revise it later
+                if done: 
                     prediction = self.predict_rewards(state, action, netid= netid)
                     target = torch.tensor(float(reward), requires_grad=True) #the problem is some nodes at the final step will not add a TD term in target
                 else:
@@ -293,64 +292,39 @@ class DQN(FQI):
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
 
+        '''
+        #removed as only one sec net is used
         elif netid < self.env.budget-1:
             for memory in batch_memory:
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
                 next_state = memory.next_state.copy()
                 next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0)
-                #prediction = self.Q_GCN(state, action, netid= netid)
                 prediction = self.predict_rewards(state, action, netid= netid)
-                #next_prediction = self.Q_GCN(next_state, next_action, netid= netid+1)
                 next_prediction = self.predict_rewards(state, action, netid= netid+1)
-                #target = torch.tensor(float(reward), requires_grad=True) + discount * self.Q_GCN(next_state, next_action, netid= netid+1) 
                 target = torch.tensor(float(reward), requires_grad=True) + discount * self.predict_rewards(next_state, next_action, netid= netid+1)
-                #loss = self.loss_fn(prediction, target)
-                #print('netid is: ',netid)
-                #print('Terminal state?', done) 
-                #print('state is: ', state)
-                #print('action is: ', action)
-                #print('Prediction: ', prediction.item())
-                #print('next prediction: ',next_prediction.item())
-                #print('Target: ', target.item())
-                #print('one sample mse loss is: ', loss.item())
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
-                #loss_list.append(loss)
         else:
             for memory in batch_memory:
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
                 if done:
-                    #prediction = self.Q_GCN(state, action, netid= netid)
                     prediction = self.predict_rewards(state, action, netid= netid)
                     target = torch.tensor(reward, requires_grad=True)
                 else:
                     #when last secondary agent and not last main time step, update target using the first agent's (netid=0) Q network
                     next_state = memory.next_state.copy()
                     next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0)
-                    #prediction = self.Q_GCN(state, action, netid= netid)
                     prediction = self.predict_rewards(state, action, netid= netid)
-                    #target = reward + discount * self.Q_GCN(next_state, next_action, netid= 0) #hp: may also be updated using primary agent's Q network
                     target = reward + discount * self.predict_rewards(next_state, next_action, netid= 0)
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
-                #loss = self.loss_fn(prediction, target)
-                #print('netid is: ',netid)
-                #print('Terminal state?', done) 
-                #print('state is: ', state)
-                #print('action is: ', action)
-                #print('Prediction: ', prediction.item())
-                #print('Target: ', target.item())
-                #print('one sample mse loss is: ', loss.item())
-                #loss_list.append(loss) 
+        '''
         batch_prediction = torch.stack(prediction_list)
         batch_target = torch.stack(target_list)
         batch_loss = self.loss_fn(batch_prediction, batch_target)
-        #total_loss = sum(loss_list)
-        #print(batch_loss)
-        #return loss #hp: only loss is returned?
         return batch_loss
 
-    def fit_GCN(self, num_episodes=100, num_epochs=10, max_eps=0.3, min_eps=0.1, eps_decay=False, eps_wstart=0, batch_size = 16, discount=1, logdir=None):  
+    def fit_GCN(self, num_episodes=100, num_epochs=10, max_eps=0.3, min_eps=0.1, eps_decay=True, eps_wstart=0, batch_size = 16, discount=1, logdir=None):  
         if logdir == None:
             writer = SummaryWriter()
         else:
@@ -358,17 +332,23 @@ class DQN(FQI):
         best_value=0
         for epoch in range(num_epochs):#hp: remove epoch later? 
             loss_list = []
-            cumulative_reward_list = [] #cumulative_reward_list: Reward assigned while training 
+            cumulative_reward_list = [] #cumulative_reward_list: Reward assigned while training, potentially with discount and auxilliary 
             true_cumulative_reward_list = [] #true_cumulative_reward_list: Reward assigned while testing 
             for episode in range(num_episodes):
                 print('---------------------------------------------------------------')
                 print('train episode: ', episode)
                 if eps_decay:
                     eps=max(max_eps-0.005*episode, min_eps)
+                    eps_wstart=max(eps_wstart-0.005, 0)
                 else:
                     eps=min_eps
+                    eps_wstart=min_eps
+                print('eps in this episode is: ', eps)
+                print('eps_wstart in this episode is: ', eps_wstart)
                 S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps,eps_wstart=eps_wstart, discount=discount)
                 writer.add_scalar('cumulative reward', cumulative_reward, episode)
+                print('action in this episode is: ', A)
+                print('episode total reward is: ', cumulative_reward)
                 #hp: the names of variables are misleading. Change it to primary-secondary
                 new_memory = []
                 new_memory_list=[]
@@ -379,10 +359,7 @@ class DQN(FQI):
 
                 #----------------------------store memory---------------------------------
                 for t in range(horizon):
-                    #print('time step: ', t)
-                    #print(S[t], A[t], R[t], NextS[t], D[t])
                     new_memory.append(Memory(S[t], A[t], R[t], NextS[t], D[t]))
-                    #act=[]
                     sta = S[t].copy()
                     for i in range(int(self.env.budget)):
                         old_sta = sta.copy()
@@ -404,14 +381,15 @@ class DQN(FQI):
                             done = True
                         sec_new_memory.append(Memory(old_sta, [A[t][i]], rew, next_sta, done))
                         #new_memory_list[i].append(Memory(old_sta, [A[t][i]], rew, next_sta, D[t])) 
-                self.replay_memory += new_memory
+                #self.replay_memory += new_memory
                 self.sec_replay_memory += sec_new_memory
-                for i in range(int(self.env.budget)):
-                    self.replay_memory_list[i]+=new_memory_list[i]
+                #for i in range(int(self.env.budget)):
+                    #self.replay_memory_list[i]+=new_memory_list[i]
 
                 #----------------------------update Q---------------------------------
                 #hp: revise to update every time step
-                '''############ removing update of primary net and multiple seconary nets
+                '''
+                #remove update of primary net and multiple seconary nets
                 if len(self.replay_memory) >= batch_size:
                     #batch_memory = np.random.choice(self.replay_memory, batch_size)
                     batch_memory = self.replay_memory[-batch_size:].copy()
@@ -471,9 +449,6 @@ class DQN(FQI):
             NextS.append(next_state)
             D.append(done)
             cumulative_reward += reward * (discount**t)
-        print('epsilon value in this episode is: ', eps)
-        print('action in this episode is: ', A)
-        print('episode total reward is: ', cumulative_reward)
         return S, A, R, NextS, D, cumulative_reward
     
 def get_graph(graph_index):
@@ -505,6 +480,10 @@ def arg_parse():
                 help='number of training episodes')
     parser.add_argument('--logdir', dest='logdir', type=str, default=None, 
                 help='log directory of tensorboard')
+    parser.add_argument('--max_eps', dest='max_eps', type=float, default=0.3, 
+                help='maximum probability for exploring random action')
+    parser.add_argument('--min_eps', dest='min_eps', type=float, default=0.1, 
+                help='minium probability for exploring random action')
 
     #--------------------args rarely changed-------------------------------
     parser.add_argument('--discount', dest='discount', type=float, default=1.0, 
@@ -521,6 +500,8 @@ if __name__ == '__main__':
     args = arg_parse()
     logdir = args.logdir
     batch_size = args.batch_size
+    max_eps = args.max_eps
+    min_eps = args.min_eps
     eps_decay = args.eps_decay
     eps_wstart = args.eps_wstart
     discount = args.discount
@@ -531,7 +512,7 @@ if __name__ == '__main__':
     g, graph_name=get_graph(graph_index)
     if First_time:
         model=DQN(graph=g, cascade=cascade)
-        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=num_episodes, num_epochs=1, max_eps=0.5, min_eps=0.1, 
+        cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=num_episodes, num_epochs=1, max_eps=max_eps, min_eps=min_eps, 
                         discount=discount, eps_wstart=eps_wstart, logdir=logdir, batch_size=batch_size, eps_decay=eps_decay)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,true_cumulative_reward_list], f)
