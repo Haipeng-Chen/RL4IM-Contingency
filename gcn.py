@@ -6,12 +6,15 @@ from torch_geometric.nn import GCNConv, GraphConv, SAGEConv, GatedGraphConv
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import add_self_loops, degree
 
+import pdb
+
 aggregation_function_generation = 'mean' # either mean or add
 aggregation_function = 'mean' # either mean or add
 
 class NaiveGCN(nn.Module):
     def __init__(self, node_feature_size, gcn_hidden_layer_sizes=[8,16,8], nn_hidden_layer_sizes=32, aggregation = 'sum'):
         super(NaiveGCN, self).__init__()
+       
         self.aggregation = aggregation
 
         r0 =node_feature_size
@@ -51,7 +54,7 @@ class NaiveGCN(nn.Module):
             x = torch.sum(x) 
         else:
             x = torch.max(x)
-        
+       
         return x
 
 

@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 import os
+import pdb
 import pickle
 import time
 import random
@@ -41,11 +42,11 @@ def is_fitted(sklearn_regressor):
     return hasattr(sklearn_regressor, 'n_outputs_')
 
 class FQI(object):
-    def __init__(self, graph, cascade='DIC', regressor=None):
+    def __init__(self, graph, cascade='DIC', T=4, budget_ratio=0.1, propagate_p=0.1, q=0.5, regressor=None):
         """Initialize simulator and regressor. Can optionally pass a custom
         `regressor` model (which must implement `fit` and `predict` -- you can
         use this to try different models like linear regression or NNs)"""
-        self.env = NetworkEnv(G=graph, cascade=cascade)
+        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
         print('cascade model is: ', self.env.cascade)
         self.regressor = regressor or ExtraTreesRegressor()
     
@@ -168,42 +169,30 @@ class Memory:
         self.next_state = next_state
         self.done = done
 
-class Memory_belief:
-    def __init__(self, state):
-        self.state = state
-
 
 class DQN(FQI):
-    def __init__(self, graph, cascade='IC', lr_primary=0.001, lr_secondary=0.001):
-        FQI.__init__(self, graph, cascade=cascade)
+    def __init__(self, graph, use_cuda=1, cascade='IC', lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, q=0.5):
+        FQI.__init__(self, graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
         self.feature_size = 3 
-        self.net = NaiveGCN(node_feature_size=self.feature_size)
-        self.net_list=[] #nets for secondary agents 
-        for i in range(int(self.env.budget)): 
-            self.net_list.append(NaiveGCN(node_feature_size=self.feature_size))
-        self.optimizer = optim.Adam(self.net.parameters(), lr=lr_primary)
-        self.edge_index = torch.Tensor(list(nx.DiGraph(graph).edges())).long().t() #this is a 2 x num_edges tensor where each column is an edge
-        self.loss_fn = nn.MSELoss()
-        self.replay_memory = []
-        self.optimizer_list=[]
-        self.replay_memory_list = []
-        for i in range(int(self.env.budget)):
-            self.optimizer_list.append(optim.Adam(self.net_list[i].parameters(), lr=lr_secondary))
-            self.replay_memory_list.append([])
-
+        #self.net = NaiveGCN(node_feature_size=self.feature_size)
+        #self.optimizer = optim.Adam(self.net.parameters(), lr=lr_primary)
+        #self.replay_memory = []
+        self.use_cuda = use_cuda and torch.cuda.is_available()
+        self.device = torch.device('cuda') if self.use_cuda else torch.device('cpu')
+        print('device is: ', self.device)
         #shared scondary network 
-        self.sec_net = NaiveGCN(node_feature_size=self.feature_size) ######
-        self.sec_optimizer = optim.Adam(self.sec_net.parameters(), lr=lr_secondary) ########
-        self.sec_replay_memory = [] ########
+        self.edge_index = torch.Tensor(list(nx.DiGraph(graph).edges())).long().t() #this is a 2 x num_edges tensor where each column is an edge
+        self.edge_index = self.edge_index.to(self.device)
+        self.loss_fn = nn.MSELoss()
+        self.sec_net = NaiveGCN(node_feature_size=self.feature_size)
+        self.sec_net.to(self.device)
+        self.sec_optimizer = optim.Adam(self.sec_net.parameters(), lr=lr_secondary)
+        self.sec_replay_memory = [] 
         self.memory_size = 1024
 
     def predict_rewards(self, state, action, netid='primary'): 
         #hp: split it into predict_rewards_primary and predict_rewards_secondary? when action becomes an embedding, they might be handled differently?
-        #features = np.concatenate([[self.state_action(state, action)],[state]], axis=0).T #hp: revise later
         features = self.state_action(state, action).T
-        #print('netid: ', netid)
-        #print('action is: ', action)
-        #print('feature dimension: ', features.shape)
         if netid == 'primary':
             net = self.net
         elif netid == 'secondary':
@@ -211,7 +200,9 @@ class DQN(FQI):
         else:
             net = self.net_list[netid]
         #net = self.net if netid == 'primary' else self.net_list[netid]
-        graph_pred = net(torch.Tensor(features), self.edge_index) #.detach().numpy()
+        features = torch.Tensor(features).to(self.device) 
+        #pdb.set_trace()
+        graph_pred = net(features, self.edge_index) 
         return graph_pred
 
     #def batch_predict_rewards(self, states, actions, netid='primary'):
@@ -221,8 +212,7 @@ class DQN(FQI):
         pri_action=[]
         sec_state = state
         possible_actions = self.env.feasible_actions.copy()
-        #print('eps warm start is: ', eps_wstart)
-        #TODO: get baseline actions if it decides to use warmstart
+        #get baseline actions if it decides to use warmstart
         if np.random.rand() < eps_wstart: #warm start action
             assert len(possible_actions) > 1
             pri_action = self.warm_start_actions(possible_actions)
@@ -261,66 +251,34 @@ class DQN(FQI):
                 if done:
                     #prediction = self.Q_GCN(state, action, netid= netid)
                     prediction = self.predict_rewards(state, action, netid= netid)
-                    target = torch.tensor(reward, requires_grad=True)
+                    target = torch.tensor(reward, requires_grad=True).to(self.device) ############
                 else:
                     next_state = memory.next_state.copy()
-                    next_action = self.greedy_action_GCN(next_state, eps=0)
-                    prediction = self.predict_rewards(state, action, netid= netid)
+                    next_action = self.greedy_action_GCN(next_state, eps=0) 
+                    prediction = self.predict_rewards(state, action, netid= netid)   
                     target = reward + discount * self.predict_rewards(next_state, next_action, netid= netid)
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
-                #loss = self.loss_fn(prediction, target) #TODO: revise to batch loss
-                #print('netid is: ', netid)
-                #print('state is: ', state)
-                #print('action is: ', action)
-                #print('Terminal state?', done)
-                #print('Prediction: ', prediction.item())
-                #print('Target: ', target.item())
-                #print('one sample mse loss is: ', loss.item())
 
         elif netid == 'secondary':
             for memory in batch_memory:
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
                 if done: 
                     prediction = self.predict_rewards(state, action, netid= netid)
-                    target = torch.tensor(float(reward), requires_grad=True) #the problem is some nodes at the final step will not add a TD term in target
+                    target = torch.tensor(float(reward), requires_grad=True).to(self.device) ################### 
                 else:
                     next_state = memory.next_state.copy()
-                    next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0)
+                    next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0) #TODO: this is wrong, next action should be a single node 
                     prediction = self.predict_rewards(state, action, netid= netid)
                     target = reward + discount * self.predict_rewards(next_state, next_action, netid= netid)
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
-
-        '''
-        #removed as only one sec net is used
-        elif netid < self.env.budget-1:
-            for memory in batch_memory:
-                state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
-                next_state = memory.next_state.copy()
-                next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0)
-                prediction = self.predict_rewards(state, action, netid= netid)
-                next_prediction = self.predict_rewards(state, action, netid= netid+1)
-                target = torch.tensor(float(reward), requires_grad=True) + discount * self.predict_rewards(next_state, next_action, netid= netid+1)
-                prediction_list.append(prediction.view(1))
-                target_list.append(target.view(1))
         else:
-            for memory in batch_memory:
-                state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
-                if done:
-                    prediction = self.predict_rewards(state, action, netid= netid)
-                    target = torch.tensor(reward, requires_grad=True)
-                else:
-                    #when last secondary agent and not last main time step, update target using the first agent's (netid=0) Q network
-                    next_state = memory.next_state.copy()
-                    next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0)
-                    prediction = self.predict_rewards(state, action, netid= netid)
-                    target = reward + discount * self.predict_rewards(next_state, next_action, netid= 0)
-                prediction_list.append(prediction.view(1))
-                target_list.append(target.view(1))
-        '''
+            assert(False)
         batch_prediction = torch.stack(prediction_list)
+        #batch_prediction.to(self.device)
         batch_target = torch.stack(target_list)
+        #batch_target.to(self.device)
         batch_loss = self.loss_fn(batch_prediction, batch_target)
         return batch_loss
 
@@ -337,6 +295,12 @@ class DQN(FQI):
             for episode in range(num_episodes):
                 print('---------------------------------------------------------------')
                 print('train episode: ', episode)
+                if episode == 4:
+                    start_time = time.time()
+                if episode == 14:
+                    end_time = time.time()
+                    runtime = end_time - start_time
+                    print('runtime is: ', runtime)
                 if eps_decay:
                     eps=max(max_eps-0.005*episode, min_eps)
                     eps_wstart=max(eps_wstart-0.005, 0)
@@ -347,19 +311,24 @@ class DQN(FQI):
                 print('eps_wstart in this episode is: ', eps_wstart)
                 S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps,eps_wstart=eps_wstart, discount=discount)
                 writer.add_scalar('cumulative reward', cumulative_reward, episode)
+                presents = []
+                for action in A:
+                    present, _ = self.env.transition(action)
+                    presents+=present
                 print('action in this episode is: ', A)
+                print('present: ', presents)
                 print('episode total reward is: ', cumulative_reward)
                 #hp: the names of variables are misleading. Change it to primary-secondary
-                new_memory = []
-                new_memory_list=[]
+                #new_memory = []
+                #new_memory_list=[]
                 sec_new_memory = [] ########
-                for _ in range(int(self.env.budget)):
-                    new_memory_list.append([])
+                #for _ in range(int(self.env.budget)):
+                    #new_memory_list.append([])
                 horizon = self.env.T
 
                 #----------------------------store memory---------------------------------
                 for t in range(horizon):
-                    new_memory.append(Memory(S[t], A[t], R[t], NextS[t], D[t]))
+                    #new_memory.append(Memory(S[t], A[t], R[t], NextS[t], D[t]))
                     sta = S[t].copy()
                     for i in range(int(self.env.budget)):
                         old_sta = sta.copy()
@@ -380,16 +349,12 @@ class DQN(FQI):
                             rew = R[horizon-1]
                             done = True
                         sec_new_memory.append(Memory(old_sta, [A[t][i]], rew, next_sta, done))
-                        #new_memory_list[i].append(Memory(old_sta, [A[t][i]], rew, next_sta, D[t])) 
-                #self.replay_memory += new_memory
                 self.sec_replay_memory += sec_new_memory
-                #for i in range(int(self.env.budget)):
-                    #self.replay_memory_list[i]+=new_memory_list[i]
 
                 #----------------------------update Q---------------------------------
                 #hp: revise to update every time step
                 '''
-                #remove update of primary net and multiple seconary nets
+                #remove update of primary net 
                 if len(self.replay_memory) >= batch_size:
                     #batch_memory = np.random.choice(self.replay_memory, batch_size)
                     batch_memory = self.replay_memory[-batch_size:].copy()
@@ -402,19 +367,6 @@ class DQN(FQI):
                     self.optimizer.step()
                 if len(self.replay_memory) > self.memory_size:
                     self.replay_memory = self.replay_memory[-self.memory_size:]
-                for i in range(int(self.env.budget)):
-                    if len(self.replay_memory_list[i]) >= batch_size:
-                        batch_memory=self.replay_memory_list[i][-batch_size:].copy()
-                        #batch_memory = np.random.choice(self.replay_memory_list[i], batch_size)
-                        #print(batch_memory[0].state.shape, batch_memory[0].action)
-                        self.optimizer_list[i].zero_grad()
-                        loss = self.memory_loss(batch_memory,netid=i, discount=discount)
-                        print('secondary {} loss is: {}'.format(i, loss.item()))
-                        writer.add_scalar('secondary {} loss'.format(i), loss.item(), episode)
-                        loss.backward()
-                        self.optimizer_list[i].step()
-                    if len(self.replay_memory_list[i]) > self.memory_size:
-                        self.replay_memory_list[i] = self.replay_memory_list[i][-self.memory_size:]
                 '''
                 if len(self.sec_replay_memory) >= batch_size:
                     #batch_memory = np.random.choice(self.sec_replay_memory, batch_size)
@@ -428,7 +380,6 @@ class DQN(FQI):
                 if len(self.sec_replay_memory) > self.memory_size:
                     self.sec_replay_memory = self.sec_replay_memory[-self.memory_size:]
                 cumulative_reward_list.append(cumulative_reward)
-            #print('Epoch {}, MSE loss: {}, average train reward: {}, discount test reward: {}'.format(epoch, np.mean(loss_list), np.mean(cumulative_reward_list), np.mean(true_cumulative_reward_list)))
         return cumulative_reward_list,true_cumulative_reward_list
     
     
@@ -462,6 +413,8 @@ def get_graph(graph_index):
 
 def arg_parse():
     parser = argparse.ArgumentParser(description='Arguments of influence maximzation')
+    parser.add_argument('--use_cuda',dest='use_cuda', type=int, default=1,
+                help='1 to use cuda 0 to not')
     parser.add_argument('--batch_size', dest='batch_size', type=int, default=32,
                 help='batch size')
     parser.add_argument('--eps_decay', dest='eps_decay', type= bool, default=False, 
@@ -485,6 +438,16 @@ def arg_parse():
     parser.add_argument('--min_eps', dest='min_eps', type=float, default=0.1, 
                 help='minium probability for exploring random action')
 
+    #____________________environment args--------------------------------------------
+    parser.add_argument('--T', dest='T', type=int, default=4, 
+                help='time horizon')
+    parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06, 
+                help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
+    parser.add_argument('--propagate_p', dest='propagate_p', type=float, default=0.1, 
+                help='influence propagation probability')
+    parser.add_argument('--q', dest='q', type=float, default=1, 
+                help='probability of invited node being present')
+                            
     #--------------------args rarely changed-------------------------------
     parser.add_argument('--discount', dest='discount', type=float, default=1.0, 
                 help='discount factor')
@@ -499,6 +462,8 @@ def arg_parse():
 if __name__ == '__main__':
     args = arg_parse()
     logdir = args.logdir
+    use_cuda = args.use_cuda
+    print('use cuda: ', use_cuda)    
     batch_size = args.batch_size
     max_eps = args.max_eps
     min_eps = args.min_eps
@@ -509,9 +474,15 @@ if __name__ == '__main__':
     graph_index = args.graph_index
     cascade = args.cascade
     num_episodes = args.num_episodes
+
+    T = args.T
+    budget_ratio = args.budget_ratio
+    propagate_p = args.propagate_p
+    q = args.q
+    
     g, graph_name=get_graph(graph_index)
     if First_time:
-        model=DQN(graph=g, cascade=cascade)
+        model=DQN(graph=g, use_cuda=use_cuda, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
         cumulative_reward_list,true_cumulative_reward_list=model.fit_GCN(num_episodes=num_episodes, num_epochs=1, max_eps=max_eps, min_eps=min_eps, 
                         discount=discount, eps_wstart=eps_wstart, logdir=logdir, batch_size=batch_size, eps_decay=eps_decay)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
@@ -528,6 +499,8 @@ if __name__ == '__main__':
         print('---------------------------------------------------------------')
         print('test episode: ', episode)
         S, A, R, _, _, cumulative_reward = model.run_episode_GCN(eps=0, discount=discount)
+        print('action in this episode is: ', A)
+        print('episode total reward is: ', cumulative_reward)
         cumulative_rewards.append(cumulative_reward)
     print('average reward:', np.mean(cumulative_rewards))
     print('reward std:', np.std(cumulative_rewards))
