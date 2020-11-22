@@ -18,10 +18,14 @@ class NetworkEnv(object):
 
     G is a nx graph
 
-    node 'attr': a trinary value where 0 is not-selected; 1 is selected and present; 2 is selected but not present; I am planning to put the state and action embedding outside environment #hp: removed this
+    node 'attr': a trinary value where 0 is not-selected; 1 is selected and present; 2 is selected but not present; I am planning to put the state and action embedding outside environment 
 
-    state is a 2xN binary ndarray, the first row means invited in previous main step and came (=1) or invited but not come (=0) or not invited (=0), second row means invited in previous sub step (=1) or not (=0)  
-    note that the 2nd row of state will also be updated outside environment (in greedy_action_GCN())
+    state is 3xN binary array, 
+    -- 1st row: invited in previous main step and came (=1), 
+    -- 2nd row: invited but not come (=1); 
+    -- 3rd row: invited in previous sub step (=1) or not (=0) --- it is only useful in states in the sub steps, not updated in env  
+    -- elements (=0) on both 1st and 2nd rows are not invited and thus are feasible actions
+    note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     
     def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.3, q=1, cascade='IC'):
@@ -37,7 +41,7 @@ class NetworkEnv(object):
         self.done = False
         self.reward = 0
         self.feasible_actions = list(range(self.N))
-        self.state=np.zeros((2, self.N)) 
+        self.state=np.zeros((3, self.N)) ############ 
         nx.set_node_attributes(self.G, 0, 'attr')
 
     def step(self, action):
@@ -47,11 +51,12 @@ class NetworkEnv(object):
         for v in present:
             self.G.nodes[v]['attr']=1
             self.state[0][v]=1
-            self.state[1][v]=0
+            #self.state[1][v]=0
         for v in absent:
             self.G.nodes[v]['attr']=2
-            self.state[0][v]=0
-            self.state[1][v]=0
+            #self.state[0][v]=0
+            self.state[1][v]=1
+        #self.state[2] = 0
         if self.t == self.T-1:
             seeds = []
             [seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
@@ -97,7 +102,7 @@ class NetworkEnv(object):
         self.t = 0
         self.done = False
         self.reward = 0
-        self.state=np.zeros((2, self.N))
+        self.state=np.zeros((3, self.N)) ########
         self.feasible_actions = list(range(self.N))
         nx.set_node_attributes(self.G, 0, 'attr')
 
