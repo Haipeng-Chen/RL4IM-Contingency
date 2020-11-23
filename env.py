@@ -109,10 +109,18 @@ class NetworkEnv(object):
 
 def arg_parse():
     parser = argparse.ArgumentParser(description='Arguments of influence maximzation')
+    parser.add_argument('--baseline',dest='baseline', type=str, default='ada_greedy',
+                help='baseline, could be ada_greedy, random, maxdegree')
     parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
                 help='graph index')
-    parser.add_argument('--baseline',dest='baseline', type=str, default='ada_greedy',
-                help='baseline')
+    parser.add_argument('--T', dest='T', type=int, default=4,
+                help='time horizon')
+    parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06,
+                help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
+    parser.add_argument('--propagate_p', dest='propagate_p', type=float, default=0.1,
+                help='influence propagation probability')
+    parser.add_argument('--q', dest='q', type=float, default=1,
+                help='probability of invited node being present')
     parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
                 help='cascade model')
     parser.add_argument('--greedy_sample_size',dest='greedy_sample_size', type=int, default=500,
@@ -124,9 +132,13 @@ if __name__ == '__main__':
 
     args = arg_parse()
     graph_index = args.graph_index 
-    greedy_sample_size = args.greedy_sample_size
     baseline = args.baseline
+    T = args.T
+    budget_ratio = args.budget_ratio
+    propagate_p = args.propagate_p
+    q = args.q
     cascade = args.cascade
+    greedy_sample_size = args.greedy_sample_size
 
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
@@ -136,7 +148,7 @@ if __name__ == '__main__':
     G = nx.relabel_nodes(G,mapping)
     print('selected graph: ', graph_name)
     print('graph size: ', len(G.nodes))
-    env=NetworkEnv(G=G, cascade=cascade)
+    env=NetworkEnv(G=G, T=T, budget_ratio=budget_ratio, propagate_p = propagate_p, q=q, cascade=cascade)
 
 
     rewards = []
@@ -158,8 +170,10 @@ if __name__ == '__main__':
                 action = random.sample(env.feasible_actions, env.budget) 
             elif baseline == 'maxdegree':
                 action = max_degree(env.feasible_actions, env.G, env.budget)
-            else:
+            elif baseline == 'ada_greedy':
                 action, _ =adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
+            else:
+                assert(False)
             actions.append(action)
             invited = action
             present, _ = env.transition(action)

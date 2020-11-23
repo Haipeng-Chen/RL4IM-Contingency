@@ -170,7 +170,7 @@ class Memory:
 
 
 class DQN(FQI):
-    def __init__(self, graph, use_cuda=1, cascade='IC', lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, q=0.5):
+    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, q=0.5):
         FQI.__init__(self, graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
         self.feature_size = 4 
         #self.net = NaiveGCN(node_feature_size=self.feature_size)
@@ -188,7 +188,8 @@ class DQN(FQI):
         self.sec_net.to(self.device)
         self.sec_optimizer = optim.Adam(self.sec_net.parameters(), lr=lr_secondary)
         self.sec_replay_memory = [] 
-        self.memory_size = 1024
+        self.memory_size = memory_size 
+        self.batch_size = batch_size
 
     def predict_rewards(self, state, action, netid='primary'): 
         #TODO: enable batch prediction: the output could be an array whose dimension equals the number of feasible actions
@@ -213,8 +214,11 @@ class DQN(FQI):
         pri_action=[]
         sec_state = state.copy()
         possible_actions = self.env.feasible_actions.copy()
-        #get baseline actions if it decides to use warmstart
-        if np.random.rand() < eps_wstart: #warm start action
+        if len(self.sec_replay_memory) < self.batch_size:
+            pri_action = self.warm_start_actions(possible_actions) if np.random.rand()<0.2 else list(np.random.choice(possible_actions, self.env.budget))
+            #print('action before training is: ', pri_action)
+            #pdb.set_trace()
+        elif np.random.rand() < eps_wstart: #warm start action
             assert len(possible_actions) > 1
             pri_action = self.warm_start_actions(possible_actions)
         else:
@@ -227,12 +231,18 @@ class DQN(FQI):
                 else:
                     #TODO: compress it using max etc; enable batch? 
                     max_reward = -1000
+                    sec_action_rewards = [] #########
                     for sec_action in possible_actions:
                         sec_action_ = [sec_action]
                         sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid='secondary')
+                        sec_action_rewards.append(sec_action_reward.item()) ########
                         if sec_action_reward > max_reward:
                             max_reward = sec_action_reward
-                            chosen_sec_action = sec_action 
+                            chosen_sec_action = sec_action
+                    if eps==0 and eps_wstart==0 and i==0:##########
+                        print('state is: ', sec_state)
+                        print('sec reward for each node is: ', sec_action_rewards)
+                        pdb.set_trace()
                 pri_action.append(chosen_sec_action)
                 possible_actions.remove(chosen_sec_action)
                 sec_state[2][chosen_sec_action]=1 
@@ -249,7 +259,7 @@ class DQN(FQI):
                 if done:
                     #prediction = self.Q_GCN(state, action, netid= netid)
                     prediction = self.predict_rewards(state, action, netid= netid)
-                    target = torch.tensor(reward, requires_grad=True).to(self.device) ############
+                    target = torch.tensor(reward, requires_grad=True).to(self.device) 
                 else:
                     next_state = memory.next_state.copy()
                     next_action = self.greedy_action_GCN(next_state, eps=0) ####### this is wrong -- feasible_actions are diff. 
@@ -263,35 +273,31 @@ class DQN(FQI):
                 state, action, reward, done = memory.state.copy(), memory.action.copy(), memory.reward, memory.done
                 if done: 
                     prediction = self.predict_rewards(state, action, netid= netid)
-                    target = torch.tensor(float(reward), requires_grad=True).to(self.device) ################### 
+                    target = torch.tensor(float(reward), requires_grad=True).to(self.device) 
                 else:
                     next_state = memory.next_state.copy()
-                    next_action = self.greedy_action_GCN(next_state, eps=0, eps_wstart=0) #TODO: this is wrong, next action should be a single node 
-                    '''
+                    #get feasible_actions from next_state
+                    m = np.sum(next_state, axis=0)
+                    feasible_actions = [i for i in range(len(m)) if m[i]==0]
                     max_reward = -1000
-                    for sec_action in possible_actions: ##############
-                        sec_action_ = [sec_action]
-                        #sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid=i)
-                        sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid='secondary')
-                        if sec_action_reward > max_reward:
-                            max_reward = sec_action_reward
-                            chosen_sec_action = sec_action
-                    ''' 
-                    
+                    #TODO: compress it like that in greedy_action_GCN()
+                    for next_action in feasible_actions: 
+                        next_action_ = [action]
+                        next_reward = self.predict_rewards(next_state, next_action_, netid='secondary')
+                        if next_reward > max_reward:
+                            max_reward = next_reward
                     prediction = self.predict_rewards(state, action, netid= netid)
-                    target = reward + discount * self.predict_rewards(next_state, next_action, netid= netid)
+                    target = reward + discount * max_reward
                 prediction_list.append(prediction.view(1))
                 target_list.append(target.view(1))
         else:
             assert(False)
         batch_prediction = torch.stack(prediction_list)
-        #batch_prediction.to(self.device)
         batch_target = torch.stack(target_list)
-        #batch_target.to(self.device)
         batch_loss = self.loss_fn(batch_prediction, batch_target)
         return batch_loss
 
-    def fit_GCN(self, batch_option='random', num_episodes=100, max_eps=0.3, min_eps=0.1, eps_decay=True, eps_wstart=0, batch_size = 16, discount=1, logdir=None):  
+    def fit_GCN(self, batch_option='random', num_episodes=100, max_eps=0.3, min_eps=0.1, eps_decay=True, eps_wstart=0, discount=1, logdir=None):  
         if logdir == None:
             writer = SummaryWriter()
         else:
@@ -303,12 +309,6 @@ class DQN(FQI):
         for episode in range(num_episodes):
             print('---------------------------------------------------------------')
             print('train episode: ', episode)
-            if episode == 0:
-                start_time = time.time()
-            if episode == num_episodes-1:
-                end_time = time.time()
-                runtime = end_time - start_time
-                print('runtime is: ', runtime)
             if eps_decay:
                 eps=max(max_eps-0.005*episode, min_eps)
                 eps_wstart=max(eps_wstart-0.005, 0)
@@ -340,15 +340,14 @@ class DQN(FQI):
                     old_sta = sta.copy()
                     #rew=float(self.predict_rewards(sta, act, netid='primary')[0]) #this could leads to high bias; maybe try it later
                     done = False
-                    if D[t] == False:  
+                    if i<self.env.budget-1:
                         rew = 0
                         sta[2][A[t][i]] = 1
-                        next_sta = sta
+                        next_sta = sta.copy()
                         done = False
-                    elif i<self.env.budget-1:
+                    elif D[t] == False:
                         rew = 0
-                        sta[2][A[t][i]] = 1
-                        next_sta = sta
+                        next_sta = S[t+1].copy()
                         done = False
                     else:
                         next_sta = None
@@ -361,9 +360,9 @@ class DQN(FQI):
             #hp: revise to update every time step
             '''
             #remove update of primary net 
-            if len(self.replay_memory) >= batch_size:
-                batch_memory = np.random.choice(self.replay_memory, batch_size)
-                #batch_memory = self.replay_memory[-batch_size:].copy()
+            if len(self.replay_memory) >= self.batch_size:
+                batch_memory = np.random.choice(self.replay_memory, self.batch_size)
+                #batch_memory = self.replay_memory[-self.batch_size:].copy()
                 self.optimizer.zero_grad()
                 loss = self.memory_loss(batch_memory, discount=discount)
                 print('primary loss is: ', loss.item())
@@ -374,13 +373,13 @@ class DQN(FQI):
                 self.replay_memory = self.replay_memory[-self.memory_size:]
             '''
             batch_option = batch_option 
-            if len(self.sec_replay_memory) >= batch_size:
+            if len(self.sec_replay_memory) >= self.batch_size:
                 if batch_option == 'random':
-                    batch_memory = np.random.choice(self.sec_replay_memory, batch_size) 
+                    batch_memory = np.random.choice(self.sec_replay_memory, self.batch_size) 
                 elif batch_option == 'last':
-                    batch_memory = self.sec_replay_memory[-batch_size:].copy()
+                    batch_memory = self.sec_replay_memory[-self.batch_size:].copy()
                 elif batch_option == 'mix':
-                    batch_memory = np.random.choice(self.sec_replay_memory, batch_size) if np.random.rand() < 0.5 else self.sec_replay_memory[-batch_size:].copy() 
+                    batch_memory = np.random.choice(self.sec_replay_memory, self.batch_size) if np.random.rand() < 0.5 else self.sec_replay_memory[-self.batch_size:].copy() 
                 else:
                     assert(False)
                 self.sec_optimizer.zero_grad()
@@ -427,34 +426,36 @@ def arg_parse():
                 help='1 to use cuda 0 to not')
     parser.add_argument('--logfile', dest='logfile', type=str, default='logs/log',
                 help='logfile for results ')
+    parser.add_argument('--logdir', dest='logdir', type=str, default=None,
+                help='log directory of tensorboard')
+    parser.add_argument('--First_time', dest='First_time', type=bool, default=True,
+                help='Is this the first time training?')
     
     #____________________hyper paras--------------------------------------------
     parser.add_argument('--batch_option', dest='batch_option', type=str, default='random',
                 help='option of batch sampling: random, last and mix')
-    parser.add_argument('--batch_size', dest='batch_size', type=int, default=32,
+    parser.add_argument('--memory_size', dest='memory_size', type=int, default=4096,
+                help='replay memory size')
+    parser.add_argument('--batch_size', dest='batch_size', type=int, default=128,
                 help='batch size')
     parser.add_argument('--eps_decay', dest='eps_decay', type= bool, default=False, 
                 help='is epsilon decaying?')
     parser.add_argument('--eps_wstart', dest='eps_wstart', type=float, default=0, 
                 help='epsilon for warm start')
-    parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
-                help='graph index')
-    parser.add_argument('--baseline',dest='baseline', type=str, default='ada_greedy',
-                help='baseline')
-    parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
-                help='cascade model')
-    parser.add_argument('--greedy_sample_size',dest='greedy_sample_size', type=int, default=500,
-                help='sample size for value estimation of greedy algorithms')
+    parser.add_argument('--ws_baseline',dest='ws_baseline', type=str, default='ada_greedy',
+                help='baseline for warm_start')
     parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=100,
                 help='number of training episodes')
-    parser.add_argument('--logdir', dest='logdir', type=str, default=None, 
-                help='log directory of tensorboard')
     parser.add_argument('--max_eps', dest='max_eps', type=float, default=0.3, 
                 help='maximum probability for exploring random action')
     parser.add_argument('--min_eps', dest='min_eps', type=float, default=0.1, 
                 help='minium probability for exploring random action')
+    parser.add_argument('--discount', dest='discount', type=float, default=1.0,
+                help='discount factor')
 
     #____________________environment args--------------------------------------------
+    parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
+                help='graph index')
     parser.add_argument('--T', dest='T', type=int, default=4, 
                 help='time horizon')
     parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06, 
@@ -463,12 +464,11 @@ def arg_parse():
                 help='influence propagation probability')
     parser.add_argument('--q', dest='q', type=float, default=1, 
                 help='probability of invited node being present')
+    parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
+                help='cascade model')
+    parser.add_argument('--greedy_sample_size',dest='greedy_sample_size', type=int, default=500,
+                help='sample size for value estimation of greedy algorithms')
                             
-    #--------------------args rarely changed-------------------------------
-    parser.add_argument('--discount', dest='discount', type=float, default=1.0, 
-                help='discount factor')
-    parser.add_argument('--First_time', dest='First_time', type=bool, default=True, 
-                help='Is this the first time training?')
     #parser.add_argument(' ', dest=' ', type= , default= , 
                 #help=' ')
 
@@ -481,6 +481,7 @@ if __name__ == '__main__':
     logfile = args.logfile
 
     use_cuda = args.use_cuda
+    memory_size = args.memory_size
     batch_size = args.batch_size
     batch_option = args.batch_option
     max_eps = args.max_eps
@@ -501,10 +502,12 @@ if __name__ == '__main__':
     g, graph_name=get_graph(graph_index)
     print('chosen graph: ', graph_name)
 
+
+    start_time = time.time()
     if First_time:
-        model=DQN(graph=g, use_cuda=use_cuda, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
+        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
         cumulative_reward_list = model.fit_GCN(batch_option=batch_option, num_episodes=num_episodes,  max_eps=max_eps, min_eps=min_eps, 
-                        discount=discount, eps_wstart=eps_wstart, logdir=logdir, batch_size=batch_size, eps_decay=eps_decay)
+                        discount=discount, eps_wstart=eps_wstart, logdir=logdir, eps_decay=eps_decay)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
             pickle.dump([model,cumulative_reward_list], f)
     else:
@@ -513,9 +516,13 @@ if __name__ == '__main__':
         model=X[0]
         cumulative_reward_list=X[1]
     cumulative_rewards = []
+    end_time = time.time()
+    runtime = end_time - start_time
+    print('runtime for training process is: ', runtime)
+
     [print() for _ in range(4)]
     print('testing')
-    for episode in range(10):
+    for episode in range(50):
         print('---------------------------------------------------------------')
         print('test episode: ', episode)
         S, A, R, _, _, cumulative_reward = model.run_episode_GCN(eps=0, discount=discount)
