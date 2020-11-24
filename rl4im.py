@@ -51,7 +51,7 @@ class FQI(object):
         self.regressor = regressor or ExtraTreesRegressor()
     
     def state_action(self, state, action):
-        #hp: it is a unique way of concatenating state and action, needs to use a more generalized way of representing it 
+        #TODO: move it to DQN()
         #the input action is a list of nodes, needs to first convert it into a 1xN ndarray 
         #the output is a 4xN ndarray
         state=state.copy()
@@ -62,103 +62,6 @@ class FQI(object):
         state_action  = np.concatenate((state, np_action), axis=0)
         return state_action 
     
-    #not used 
-    def Q(self, states, actions):
-        states, actions = np.array(states), np.array(actions)
-        if not is_fitted(self.regressor):
-            return np.zeros(len(states))
-        else:
-            X = np.array([self.state_action(state , action ) for (state,action) in zip(states,actions)])
-            y_pred = self.regressor.predict(X)
-            return y_pred    
-
-    #not used
-    def greedy_action(self, state):
-        action = []
-        possible_actions = self.env.possible_nodes
-        if len(possible_actions)>int(self.env.budget):
-            np.random.shuffle(possible_actions)
-            Q_values = self.Q([state]*len(possible_actions), [[j] for j in possible_actions]) # enumerate all the possible nodes
-            index=Q_values.argsort()[-int(self.env.budget):]
-            next_action=[possible_actions[v] for v in index]
-        else:
-            next_action=np.array(possible_actions)
-        return list(next_action)   
-   
-    def random_action(self, feasible_actions):
-        #k is the number of chosen actions
-        assert len(feasible_actions)>0
-        action = random.choice(feasible_actions)
-        #action = random.sample(feasible_actions,int(min(len(feasible_actions),self.env.budget)))
-        return action
-
-    def warm_start_actions(self, feasible_actions):
-        assert len(feasible_actions)>0
-        #TODO: make it able to toogle
-        action = max_degree(feasible_actions, self.env.G, self.env.budget) 
-        return action   
- 
-    #not used
-    def policy(self, state, eps=0.1):
-        if np.random.rand() < eps:
-            return self.random_action()
-        else:
-            return self.greedy_action(state) 
-    
-    #not used
-    def run_episode(self, eps=0.1, discount=0.99):
-        S, A, R = [], [], []
-        cumulative_reward = 0
-        self.env.reset()
-        state = self.env.state
-        for t in range(self.env.T):    
-            state = self.env.state
-            S.append(state)
-            action = self.policy(state, eps)
-            state_, reward=self.env.step(action=action)#Transition Happen 
-            state=state_
-            A.append(action)
-            R.append(reward)
-            cumulative_reward += reward * (discount**t)
-        return S, A, R, cumulative_reward
-
-
-    #not used
-    def fit_Q(self, episodes, num_iters=10, discount=0.99):
-        prev_S = []
-        next_S = []
-        rewards = []
-        for (S, A, R) in episodes:
-            horizon = len(S)
-            for i in range(horizon-1):
-                prev_S.append(list(self.state_action(S[i], A[i])) )
-                rewards.append(R[i])
-                next_S.append(S[i+1])
-                
-
-        prev_S = np.array(prev_S)
-        next_S = np.array(next_S)
-        rewards = np.array(rewards)
-
-        for iteration in range(num_iters):
-            best_actions = [self.greedy_action(state) for state in next_S]
-            Q_best = self.Q(next_S, best_actions)
-            y = list(rewards + discount * np.array(Q_best))
-            self.regressor.fit(prev_S, y)
-
-    #not used 
-    def fit(self, num_refits=10, num_episodes=10, discount=0.99, eps=0.1):
-        cumulative_rewards = np.zeros((num_refits, num_episodes))
-        for refit_iter in range(num_refits):
-            episodes = []
-            for episode_iter in range(num_episodes):
-                S, A, R, cumulative_reward = self.run_episode(eps=eps, discount=discount)
-                cumulative_rewards[refit_iter,episode_iter] = cumulative_reward
-                episodes.append((S, A, R))
-            self.fit_Q(episodes,discount=discount)
-
-        return episodes, cumulative_rewards    
-
 class Memory:
     #for primary agent done is for the last main step, for sec agent done is for last sub-step (node) in the last main step
     def __init__(self, state, action, reward, next_state, done):
@@ -170,7 +73,7 @@ class Memory:
 
 
 class DQN(FQI):
-    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, q=0.5):
+    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, q=0.5, greedy_sample_size=500):
         FQI.__init__(self, graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
         self.feature_size = 4 
         #self.net = NaiveGCN(node_feature_size=self.feature_size)
@@ -190,6 +93,7 @@ class DQN(FQI):
         self.sec_replay_memory = [] 
         self.memory_size = memory_size 
         self.batch_size = batch_size
+        self.greedy_sample_size = greedy_sample_size
 
     def predict_rewards(self, state, action, netid='primary'): 
         #TODO: enable batch prediction: the output could be an array whose dimension equals the number of feasible actions
@@ -203,54 +107,78 @@ class DQN(FQI):
             net = self.net_list[netid]
         #net = self.net if netid == 'primary' else self.net_list[netid]
         features = torch.Tensor(features).to(self.device) 
-        #pdb.set_trace()
         graph_pred = net(features, self.edge_index) 
         return graph_pred
 
     #def batch_predict_rewards(self, states, actions, netid='primary'):
+
+    def random_action(self, feasible_actions):
+        #k is the number of chosen actions
+        assert len(feasible_actions)>0
+        action = random.choice(feasible_actions)
+        #action = random.sample(feasible_actions,int(min(len(feasible_actions),self.env.budget)))
+        return action
+
+    def f_multi(self, x): #TODO: define f_multi() in baseline and pass greedy_sample_size to ?
+        s=list(x)
+        #print('cascade model is: ', env.cascade)
+        val = self.env.run_cascade(seeds=s, cascade=self.env.cascade, sample=self.greedy_sample_size)
+        return val
+
+    def warm_start_actions(self, state, feasible_actions):
+        assert len(feasible_actions)>0
+        presents = [i for i in range(len(state[0])) if state[0][i]==1]#####could be used in printing in fit_GCN
+        p = np.random.rand()
+        if p<0.25:
+            print('choosing max degree')
+            action = max_degree(feasible_actions, self.env.G, self.env.budget) 
+        elif p<0.5:
+            print('choosing random')
+            action = list(np.random.choice(feasible_actions, self.env.budget))
+        else:
+            print('choosing ada_greedy')
+            action, _ =  adaptive_greedy(feasible_actions,self.env.budget,self.f_multi,presents)
+        return action
             
-    def greedy_action_GCN(self, state, eps, eps_wstart=0):
+    def policy(self, state, eps, eps_wstart=0):
         #series of action selection for secondary agents
         pri_action=[]
         sec_state = state.copy()
-        possible_actions = self.env.feasible_actions.copy()
+        feasible_actions = self.env.feasible_actions.copy()
         if len(self.sec_replay_memory) < self.batch_size:
-            pri_action = self.warm_start_actions(possible_actions) if np.random.rand()<0.2 else list(np.random.choice(possible_actions, self.env.budget))
-            #print('action before training is: ', pri_action)
-            #pdb.set_trace()
+            print('using warm-start actions')
+            pri_action = self.warm_start_actions(sec_state, feasible_actions)
         elif np.random.rand() < eps_wstart: #warm start action
-            assert len(possible_actions) > 1
-            pri_action = self.warm_start_actions(possible_actions)
+            assert len(feasible_actions) > 1
+            pri_action = self.warm_start_actions(sec_state, feasible_actions)
         else:
             for i in range(int(self.env.budget)): 
-                assert len(possible_actions) > 1
+                assert len(feasible_actions) > 1
                 chosen_sec_action = None
                 p = np.random.rand()
                 if p < eps: 
-                    chosen_sec_action = self.random_action(possible_actions) 
+                    chosen_sec_action = self.random_action(feasible_actions) 
                 else:
                     #TODO: compress it using max etc; enable batch? 
                     max_reward = -1000
                     sec_action_rewards = [] #########
-                    for sec_action in possible_actions:
+                    for sec_action in feasible_actions:
                         sec_action_ = [sec_action]
                         sec_action_reward = self.predict_rewards(sec_state, sec_action_, netid='secondary')
                         sec_action_rewards.append(sec_action_reward.item()) ########
                         if sec_action_reward > max_reward:
                             max_reward = sec_action_reward
                             chosen_sec_action = sec_action
-                    if eps==0 and eps_wstart==0 and i==0:##########
-                        print('state is: ', sec_state)
-                        print('sec reward for each node is: ', sec_action_rewards)
-                        pdb.set_trace()
+                    #if eps==0 and eps_wstart==0 and i==0:##########
+                        #print('state is: ', sec_state)
+                        #print('sec reward for each node is: ', sec_action_rewards)
                 pri_action.append(chosen_sec_action)
-                possible_actions.remove(chosen_sec_action)
+                feasible_actions.remove(chosen_sec_action)
                 sec_state[2][chosen_sec_action]=1 
         return pri_action
 
     def memory_loss(self, batch_memory, netid='primary', discount=1):
         #hp: revise it to batch-based loss computation
-        #TODO: this is ineffieicnt -- memories should be stored right after agent interacts with environment (in each main step of run_GCN_episode())
         prediction_list = [] 
         target_list = []
         if netid == 'primary':
@@ -262,7 +190,7 @@ class DQN(FQI):
                     target = torch.tensor(reward, requires_grad=True).to(self.device) 
                 else:
                     next_state = memory.next_state.copy()
-                    next_action = self.greedy_action_GCN(next_state, eps=0) ####### this is wrong -- feasible_actions are diff. 
+                    next_action = self.policy(next_state, eps=0) ####### this is wrong -- feasible_actions are diff. 
                     prediction = self.predict_rewards(state, action, netid= netid)   
                     target = reward + discount * self.predict_rewards(next_state, next_action, netid= netid)
                 prediction_list.append(prediction.view(1))
@@ -280,7 +208,7 @@ class DQN(FQI):
                     m = np.sum(next_state, axis=0)
                     feasible_actions = [i for i in range(len(m)) if m[i]==0]
                     max_reward = -1000
-                    #TODO: compress it like that in greedy_action_GCN()
+                    #TODO: compress it like that in policy()
                     for next_action in feasible_actions: 
                         next_action_ = [action]
                         next_reward = self.predict_rewards(next_state, next_action_, netid='secondary')
@@ -297,7 +225,7 @@ class DQN(FQI):
         batch_loss = self.loss_fn(batch_prediction, batch_target)
         return batch_loss
 
-    def fit_GCN(self, batch_option='random', num_episodes=100, max_eps=0.3, min_eps=0.1, eps_decay=True, eps_wstart=0, discount=1, logdir=None):  
+    def fit_GCN(self, batch_option='random', num_episodes=100, max_eps=0.3, min_eps=0.1, eps_decay=False, eps_wstart=0.1, discount=1, logdir=None):  
         if logdir == None:
             writer = SummaryWriter()
         else:
@@ -311,26 +239,21 @@ class DQN(FQI):
             print('train episode: ', episode)
             if eps_decay:
                 eps=max(max_eps-0.005*episode, min_eps)
-                eps_wstart=max(eps_wstart-0.005, 0)
+                #eps_wstart=max(eps_wstart-0.005, 0)
             else:
                 eps=min_eps
-                eps_wstart=min_eps
+                #eps_wstart=min_eps
             print('eps in this episode is: ', eps)
             print('eps_wstart in this episode is: ', eps_wstart)
             S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps,eps_wstart=eps_wstart, discount=discount)
             writer.add_scalar('cumulative reward', cumulative_reward, episode)
-            '''
-            presents = []
-            for action in A:
-                present, _ = self.env.transition(action)
-                presents+=present
-            '''#########
+            horizon = self.env.T
+            presents = [i for i in range(len(S[horizon-1][0])) if S[horizon-1][0][i]==1] 
             print('action in this episode is: ', A)
-            #print('present: ', presents)
+            print('present: ', presents)
             print('episode total reward is: ', cumulative_reward)
             #new_memory = []
             sec_new_memory = [] 
-            horizon = self.env.T
 
             #----------------------------store memory---------------------------------
             for t in range(horizon):
@@ -402,7 +325,7 @@ class DQN(FQI):
         for t in range(self.env.T): 
             state = self.env.state.copy()
             S.append(state)
-            action = self.greedy_action_GCN(state, eps, eps_wstart)
+            action = self.policy(state, eps, eps_wstart)
             next_state, reward, done = self.env.step(action=action)
             A.append(action)
             R.append(reward)
@@ -428,8 +351,8 @@ def arg_parse():
                 help='logfile for results ')
     parser.add_argument('--logdir', dest='logdir', type=str, default=None,
                 help='log directory of tensorboard')
-    parser.add_argument('--First_time', dest='First_time', type=bool, default=True,
-                help='Is this the first time training?')
+    parser.add_argument('--First_time', dest='First_time', type=int , default=1,
+                help='Is this the first time training? 1 yes 0 no')
     
     #____________________hyper paras--------------------------------------------
     parser.add_argument('--batch_option', dest='batch_option', type=str, default='random',
@@ -438,7 +361,7 @@ def arg_parse():
                 help='replay memory size')
     parser.add_argument('--batch_size', dest='batch_size', type=int, default=128,
                 help='batch size')
-    parser.add_argument('--eps_decay', dest='eps_decay', type= bool, default=False, 
+    parser.add_argument('--eps_decay', dest='eps_decay', type= int, default=0, 
                 help='is epsilon decaying?')
     parser.add_argument('--eps_wstart', dest='eps_wstart', type=float, default=0, 
                 help='epsilon for warm start')
@@ -479,6 +402,7 @@ if __name__ == '__main__':
     args = arg_parse()
     logdir = args.logdir
     logfile = args.logfile
+    First_time = args.First_time
 
     use_cuda = args.use_cuda
     memory_size = args.memory_size
@@ -489,11 +413,11 @@ if __name__ == '__main__':
     eps_decay = args.eps_decay
     eps_wstart = args.eps_wstart
     discount = args.discount
-    First_time = args.First_time
-    graph_index = args.graph_index
     cascade = args.cascade
     num_episodes = args.num_episodes
+    greedy_sample_size = args.greedy_sample_size
 
+    graph_index = args.graph_index
     T = args.T
     budget_ratio = args.budget_ratio
     propagate_p = args.propagate_p
@@ -502,10 +426,9 @@ if __name__ == '__main__':
     g, graph_name=get_graph(graph_index)
     print('chosen graph: ', graph_name)
 
-
     start_time = time.time()
     if First_time:
-        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
+        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q, greedy_sample_size=greedy_sample_size)
         cumulative_reward_list = model.fit_GCN(batch_option=batch_option, num_episodes=num_episodes,  max_eps=max_eps, min_eps=min_eps, 
                         discount=discount, eps_wstart=eps_wstart, logdir=logdir, eps_decay=eps_decay)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
