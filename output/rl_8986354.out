@@ -1,0 +1,2030 @@
+chosen graph:  India
+cascade model is:  DIC
+device is:  cuda
+---------------------------------------------------------------
+train episode:  0
+eps in this episode is:  0.3
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing random
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[83, 59, 62], [182, 147, 6], [201, 52, 156], [169, 50, 173]]
+present:  [52, 59, 83, 201]
+episode total reward is:  5.62
+---------------------------------------------------------------
+train episode:  1
+eps in this episode is:  0.295
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+action in this episode is:  [[59, 50, 83], [176, 156, 150], [170, 173, 62], [16, 130, 128]]
+present:  [50, 62, 150, 156, 173, 176]
+episode total reward is:  32.608
+---------------------------------------------------------------
+train episode:  2
+eps in this episode is:  0.29
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing random
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+action in this episode is:  [[133, 191, 45], [62, 83, 59], [50, 156, 167], [142, 64, 199]]
+present:  [45, 59, 156, 167, 191]
+episode total reward is:  11.268
+---------------------------------------------------------------
+train episode:  3
+eps in this episode is:  0.285
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing random
+action in this episode is:  [[62, 83, 59], [24, 169, 110], [89, 148, 70], [114, 140, 25]]
+present:  [24, 62, 83, 110, 148]
+episode total reward is:  28.923
+---------------------------------------------------------------
+train episode:  4
+eps in this episode is:  0.27999999999999997
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing random
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[16, 131, 189], [129, 83, 95], [170, 50, 62], [9, 59, 6]]
+present:  [16, 50, 83, 95, 129, 170, 189]
+episode total reward is:  43.288
+---------------------------------------------------------------
+train episode:  5
+eps in this episode is:  0.27499999999999997
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing random
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[185, 56, 184], [170, 59, 175], [96, 112, 92], [93, 62, 95]]
+present:  [56, 59, 92, 185]
+episode total reward is:  32.697
+---------------------------------------------------------------
+train episode:  6
+eps in this episode is:  0.27
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing random
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[197, 160, 172], [9, 59, 62], [83, 75, 165], [18, 6, 95]]
+present:  [9]
+episode total reward is:  4.418
+---------------------------------------------------------------
+train episode:  7
+eps in this episode is:  0.265
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing random
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing max degree
+action in this episode is:  [[201, 71, 82], [129, 62, 95], [102, 172, 68], [83, 59, 93]]
+present:  [102, 129, 172]
+episode total reward is:  15.924
+---------------------------------------------------------------
+train episode:  8
+eps in this episode is:  0.26
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing random
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing max degree
+action in this episode is:  [[62, 83, 59], [12, 112, 48], [24, 50, 167], [93, 95, 82]]
+present:  [12]
+episode total reward is:  7.445
+---------------------------------------------------------------
+train episode:  9
+eps in this episode is:  0.255
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing random
+action in this episode is:  [[24, 148, 62], [173, 165, 95], [83, 59, 93], [68, 38, 32]]
+present:  [59, 62, 83, 148]
+episode total reward is:  15.301
+---------------------------------------------------------------
+train episode:  10
+eps in this episode is:  0.25
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[62, 83, 59], [169, 75, 141], [124, 13, 175], [167, 170, 95]]
+present:  [62, 83, 141]
+episode total reward is:  23.473
+---------------------------------------------------------------
+train episode:  11
+eps in this episode is:  0.245
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[173, 174, 95], [170, 59, 62], [83, 93, 50], [82, 3, 165]]
+present:  [170, 173, 174]
+episode total reward is:  31.799
+---------------------------------------------------------------
+train episode:  12
+eps in this episode is:  0.24
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing random
+action in this episode is:  [[93, 174, 95], [50, 173, 62], [83, 59, 24], [70, 0, 45]]
+present:  [59, 95, 173]
+episode total reward is:  15.005
+---------------------------------------------------------------
+train episode:  13
+eps in this episode is:  0.235
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing random
+action in this episode is:  [[62, 83, 59], [12, 174, 6], [190, 131, 160], [54, 41, 85]]
+present:  [6, 83, 131]
+episode total reward is:  5.814
+---------------------------------------------------------------
+train episode:  14
+eps in this episode is:  0.22999999999999998
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing random
+using warm-start actions
+choosing random
+action in this episode is:  [[59, 83, 75], [145, 5, 47], [29, 114, 175], [136, 123, 173]]
+present:  [5, 75, 83, 145]
+episode total reward is:  9.598
+---------------------------------------------------------------
+train episode:  15
+eps in this episode is:  0.22499999999999998
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing random
+using warm-start actions
+choosing random
+action in this episode is:  [[50, 19, 62], [129, 148, 28], [84, 47, 162], [134, 125, 116]]
+present:  [19, 28, 47, 148]
+episode total reward is:  5.762
+---------------------------------------------------------------
+train episode:  16
+eps in this episode is:  0.21999999999999997
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing random
+using warm-start actions
+choosing random
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing max degree
+action in this episode is:  [[76, 198, 162], [31, 16, 132], [62, 83, 59], [93, 50, 24]]
+present:  [31, 59, 83, 132]
+episode total reward is:  15.644
+---------------------------------------------------------------
+train episode:  17
+eps in this episode is:  0.21499999999999997
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing max degree
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[83, 59, 62], [93, 50, 24], [167, 174, 95], [129, 169, 13]]
+present:  [59, 83, 93, 95, 167]
+episode total reward is:  36.364
+---------------------------------------------------------------
+train episode:  18
+eps in this episode is:  0.21
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+action in this episode is:  [[83, 93, 6], [9, 173, 62], [129, 50, 95], [112, 153, 101]]
+present:  [6, 9, 62, 83, 93, 173]
+episode total reward is:  34.673
+---------------------------------------------------------------
+train episode:  19
+eps in this episode is:  0.205
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[167, 59, 95], [83, 62, 6], [169, 26, 9], [170, 93, 165]]
+present:  [6, 26, 169]
+episode total reward is:  13.045
+---------------------------------------------------------------
+train episode:  20
+eps in this episode is:  0.19999999999999998
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing random
+using warm-start actions
+choosing max degree
+action in this episode is:  [[170, 59, 60], [9, 62, 167], [111, 14, 183], [83, 93, 50]]
+present:  [9, 14, 62, 167, 170, 183]
+episode total reward is:  41.643
+---------------------------------------------------------------
+train episode:  21
+eps in this episode is:  0.195
+eps_wstart in this episode is:  0.1
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+using warm-start actions
+choosing ada_greedy
+action in this episode is:  [[26, 95, 175], [170, 59, 173], [176, 83, 62], [169, 50, 3]]
+present:  [59, 83, 173, 175]
+episode total reward is:  34.286
+secondary loss is:  206.20628356933594
+---------------------------------------------------------------
+train episode:  22
+eps in this episode is:  0.19
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 59, 107], [193, 200, 182], [129, 10, 62], [166, 61, 196]]
+present:  [59]
+episode total reward is:  4.124
+secondary loss is:  229.8106231689453
+---------------------------------------------------------------
+train episode:  23
+eps in this episode is:  0.185
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[92, 200, 56], [159, 132, 98], [182, 166, 61], [196, 197, 116]]
+present:  [98, 182, 200]
+episode total reward is:  3.008
+secondary loss is:  168.7810821533203
+---------------------------------------------------------------
+train episode:  24
+eps in this episode is:  0.18
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [62, 83, 59]]
+present:  [61, 108, 147, 166, 182]
+episode total reward is:  19.15
+secondary loss is:  158.58941650390625
+---------------------------------------------------------------
+train episode:  25
+eps in this episode is:  0.175
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[105, 92, 200], [182, 166, 99], [187, 61, 196], [197, 53, 108]]
+present:  [99, 166, 182, 187, 196]
+episode total reward is:  5.111
+secondary loss is:  113.33856201171875
+---------------------------------------------------------------
+train episode:  26
+eps in this episode is:  0.16999999999999998
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 177, 200], [182, 166, 61], [196, 197, 108], [147, 190, 105]]
+present:  [61, 92, 108, 177, 182]
+episode total reward is:  11.193
+secondary loss is:  95.10362243652344
+---------------------------------------------------------------
+train episode:  27
+eps in this episode is:  0.16499999999999998
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [69, 88, 166], [61, 196, 131], [197, 108, 147]]
+present:  [88, 166, 182, 200]
+episode total reward is:  5.011
+secondary loss is:  115.9764404296875
+---------------------------------------------------------------
+train episode:  28
+eps in this episode is:  0.15999999999999998
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 174]]
+present:  [166, 196]
+episode total reward is:  3.008
+secondary loss is:  98.9503402709961
+---------------------------------------------------------------
+train episode:  29
+eps in this episode is:  0.155
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[173, 92, 200], [182, 166, 61], [196, 197, 19], [24, 18, 62]]
+present:  [19, 61, 173, 182, 197]
+episode total reward is:  9.747
+secondary loss is:  73.0737533569336
+---------------------------------------------------------------
+train episode:  30
+eps in this episode is:  0.15
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 95]]
+present:  [61, 92, 147, 166, 196, 197]
+episode total reward is:  12.326
+secondary loss is:  54.78230285644531
+---------------------------------------------------------------
+train episode:  31
+eps in this episode is:  0.145
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 163, 200], [182, 166, 61], [196, 5, 197], [108, 147, 190]]
+present:  [5, 61, 163, 196]
+episode total reward is:  7.168
+secondary loss is:  36.300445556640625
+---------------------------------------------------------------
+train episode:  32
+eps in this episode is:  0.13999999999999999
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 32, 140], [61, 193, 196], [43, 197, 108]]
+present:  [140, 193, 196, 200]
+episode total reward is:  5.148
+secondary loss is:  14.223634719848633
+---------------------------------------------------------------
+train episode:  33
+eps in this episode is:  0.13499999999999998
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[62, 83, 59], [92, 200, 182], [166, 61, 196], [197, 108, 147]]
+present:  [59, 61, 62, 166, 182, 196]
+episode total reward is:  15.302
+secondary loss is:  23.836700439453125
+---------------------------------------------------------------
+train episode:  34
+eps in this episode is:  0.12999999999999998
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [152, 165, 28], [166, 79, 61], [196, 197, 108]]
+present:  [61, 79, 92, 152, 165, 166, 182, 200]
+episode total reward is:  14.779
+secondary loss is:  15.997211456298828
+---------------------------------------------------------------
+train episode:  35
+eps in this episode is:  0.12499999999999997
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [139, 166, 61], [196, 197, 108], [147, 190, 194]]
+present:  [61, 108, 139, 196, 200]
+episode total reward is:  5.008
+secondary loss is:  11.111650466918945
+---------------------------------------------------------------
+train episode:  36
+eps in this episode is:  0.12
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 92, 196]
+episode total reward is:  5.01
+secondary loss is:  15.887475967407227
+---------------------------------------------------------------
+train episode:  37
+eps in this episode is:  0.11499999999999999
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[169, 170, 50], [92, 200, 94], [182, 166, 61], [196, 197, 108]]
+present:  [92, 166, 169, 170, 182, 200]
+episode total reward is:  17.173
+secondary loss is:  7.985913276672363
+---------------------------------------------------------------
+train episode:  38
+eps in this episode is:  0.10999999999999999
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[2, 92, 200], [182, 9, 166], [138, 187, 61], [196, 197, 118]]
+present:  [9, 92, 138, 166, 182, 200]
+episode total reward is:  8.438
+secondary loss is:  5.248957633972168
+---------------------------------------------------------------
+train episode:  39
+eps in this episode is:  0.10499999999999998
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 92, 182, 196]
+episode total reward is:  6.106
+secondary loss is:  19.36945343017578
+---------------------------------------------------------------
+train episode:  40
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[92, 200, 182], [178, 112, 84], [166, 61, 196], [197, 108, 147]]
+present:  [84, 112, 178, 196, 200]
+episode total reward is:  8.938
+secondary loss is:  10.580951690673828
+---------------------------------------------------------------
+train episode:  41
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [59, 173, 95], [166, 61, 196], [197, 108, 147]]
+present:  [92, 95, 173]
+episode total reward is:  13.882
+secondary loss is:  41.22514343261719
+---------------------------------------------------------------
+train episode:  42
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 5], [147, 190, 105]]
+present:  [5, 92, 197]
+episode total reward is:  4.018
+secondary loss is:  11.862425804138184
+---------------------------------------------------------------
+train episode:  43
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[62, 83, 59], [92, 200, 182], [166, 61, 196], [75, 197, 108]]
+present:  [62, 83, 196, 200]
+episode total reward is:  5.883
+secondary loss is:  27.411441802978516
+---------------------------------------------------------------
+train episode:  44
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+choosing ada_greedy
+choosing max degree
+action in this episode is:  [[3, 174, 62], [92, 200, 182], [24, 170, 59], [83, 93, 50]]
+present:  [3, 59, 62, 174, 200]
+episode total reward is:  35.328
+secondary loss is:  19.081466674804688
+---------------------------------------------------------------
+train episode:  45
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[46, 92, 200], [182, 166, 61], [196, 197, 110], [108, 147, 190]]
+present:  [46, 166, 200]
+episode total reward is:  5.01
+secondary loss is:  30.596683502197266
+---------------------------------------------------------------
+train episode:  46
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 15], [182, 47, 166], [61, 196, 197], [108, 147, 190]]
+present:  [15, 47, 61, 182, 197, 200]
+episode total reward is:  6.285
+secondary loss is:  18.472936630249023
+---------------------------------------------------------------
+train episode:  47
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[171, 92, 200], [182, 138, 166], [61, 196, 197], [108, 147, 190]]
+present:  [61, 138, 200]
+episode total reward is:  4.124
+secondary loss is:  54.90690231323242
+---------------------------------------------------------------
+train episode:  48
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 117], [182, 166, 61], [196, 197, 108], [147, 190, 105]]
+present:  [182, 197, 200]
+episode total reward is:  4.008
+secondary loss is:  22.327083587646484
+---------------------------------------------------------------
+train episode:  49
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 126, 108], [147, 190, 105]]
+present:  [61, 92, 126, 166, 200]
+episode total reward is:  8.023
+secondary loss is:  17.080930709838867
+---------------------------------------------------------------
+train episode:  50
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[60, 38, 34], [92, 200, 182], [166, 61, 196], [197, 108, 97]]
+present:  [92, 196, 200]
+episode total reward is:  5.01
+secondary loss is:  35.191986083984375
+---------------------------------------------------------------
+train episode:  51
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 157, 200], [182, 166, 61], [196, 197, 176], [108, 147, 190]]
+present:  [61, 157, 196, 197]
+episode total reward is:  6.127
+secondary loss is:  24.638736724853516
+---------------------------------------------------------------
+train episode:  52
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [83, 59, 62], [195, 197, 108]]
+present:  [59, 61, 83, 92]
+episode total reward is:  5.896
+secondary loss is:  10.82204818725586
+---------------------------------------------------------------
+train episode:  53
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [50, 83, 167], [166, 61, 196], [197, 108, 147]]
+present:  [50, 83, 92, 166, 200]
+episode total reward is:  10.803
+secondary loss is:  12.761768341064453
+---------------------------------------------------------------
+train episode:  54
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[186, 92, 200], [182, 166, 61], [196, 197, 152], [108, 147, 190]]
+present:  [61, 152, 166, 186, 196]
+episode total reward is:  5.015
+secondary loss is:  10.929708480834961
+---------------------------------------------------------------
+train episode:  55
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [62, 83, 59]]
+present:  [92, 147, 182, 196, 197, 200]
+episode total reward is:  21.328
+secondary loss is:  8.524499893188477
+---------------------------------------------------------------
+train episode:  56
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [92, 108, 200]
+episode total reward is:  5.279
+secondary loss is:  12.981332778930664
+---------------------------------------------------------------
+train episode:  57
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 185], [13, 173, 62], [182, 166, 61], [196, 197, 108]]
+present:  [13, 61, 92, 166, 185, 200]
+episode total reward is:  7.153
+secondary loss is:  12.510210037231445
+---------------------------------------------------------------
+train episode:  58
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 97], [196, 185, 197], [108, 147, 190]]
+present:  [61, 92, 166, 185, 196, 197]
+episode total reward is:  9.7
+secondary loss is:  4.647831916809082
+---------------------------------------------------------------
+train episode:  59
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[129, 62, 95], [92, 200, 182], [166, 61, 196], [197, 108, 117]]
+present:  [61, 62, 92, 166, 182, 196]
+episode total reward is:  10.812
+secondary loss is:  7.777899265289307
+---------------------------------------------------------------
+train episode:  60
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [142, 197, 108], [147, 190, 105]]
+present:  [142, 166, 196, 197, 200]
+episode total reward is:  7.175
+secondary loss is:  8.799129486083984
+---------------------------------------------------------------
+train episode:  61
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 155, 61], [196, 197, 108], [147, 190, 105]]
+present:  [92, 166, 182]
+episode total reward is:  5.063
+secondary loss is:  8.456205368041992
+---------------------------------------------------------------
+train episode:  62
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[2, 92, 200], [182, 166, 61], [0, 196, 197], [108, 147, 102]]
+present:  [2, 92, 166, 182, 197]
+episode total reward is:  7.027
+secondary loss is:  6.460505962371826
+---------------------------------------------------------------
+train episode:  63
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 122], [196, 82, 197], [108, 147, 190]]
+present:  [82, 166, 182, 196, 200]
+episode total reward is:  6.024
+secondary loss is:  10.293412208557129
+---------------------------------------------------------------
+train episode:  64
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[92, 200, 182], [24, 47, 177], [166, 61, 196], [197, 108, 147]]
+present:  [47, 61, 92, 166, 182]
+episode total reward is:  7.365
+secondary loss is:  12.193893432617188
+---------------------------------------------------------------
+train episode:  65
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [108, 182, 196]
+episode total reward is:  4.008
+secondary loss is:  10.849635124206543
+---------------------------------------------------------------
+train episode:  66
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[62, 83, 174], [92, 200, 182], [22, 191, 166], [61, 196, 197]]
+present:  [62, 92, 166, 174, 182, 200]
+episode total reward is:  13.842
+secondary loss is:  7.540592670440674
+---------------------------------------------------------------
+train episode:  67
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [200]
+episode total reward is:  4.008
+secondary loss is:  12.063575744628906
+---------------------------------------------------------------
+train episode:  68
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 91], [147, 190, 105]]
+present:  [91, 92, 108, 196, 200]
+episode total reward is:  9.06
+secondary loss is:  9.68543529510498
+---------------------------------------------------------------
+train episode:  69
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[62, 83, 59], [92, 200, 182], [90, 196, 166], [61, 197, 108]]
+present:  [62, 83, 182]
+episode total reward is:  6.582
+secondary loss is:  9.769137382507324
+---------------------------------------------------------------
+train episode:  70
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 191, 61], [196, 197, 108], [147, 190, 105]]
+present:  [166, 182, 200]
+episode total reward is:  4.011
+secondary loss is:  10.62745475769043
+---------------------------------------------------------------
+train episode:  71
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 69], [196, 186, 197], [108, 147, 190]]
+present:  [61, 69, 92, 182, 186, 197]
+episode total reward is:  7.439
+secondary loss is:  4.838837623596191
+---------------------------------------------------------------
+train episode:  72
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 59], [169, 62, 167]]
+present:  [59, 108, 166, 200]
+episode total reward is:  15.267
+secondary loss is:  5.932027339935303
+---------------------------------------------------------------
+train episode:  73
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[62, 83, 59], [92, 53, 200], [182, 166, 61], [196, 197, 108]]
+present:  [59, 62, 166, 182, 200]
+episode total reward is:  9.256
+secondary loss is:  6.735947608947754
+---------------------------------------------------------------
+train episode:  74
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[199, 92, 200], [62, 83, 59], [182, 166, 61], [196, 197, 108]]
+present:  [59, 62, 166]
+episode total reward is:  6.267
+secondary loss is:  10.886547088623047
+---------------------------------------------------------------
+train episode:  75
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[62, 83, 59], [92, 200, 182], [166, 61, 196], [197, 25, 108]]
+present:  [59, 83, 166, 200]
+episode total reward is:  7.481
+secondary loss is:  9.5982027053833
+---------------------------------------------------------------
+train episode:  76
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [108, 182, 197, 200]
+episode total reward is:  6.005
+secondary loss is:  4.46846866607666
+---------------------------------------------------------------
+train episode:  77
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[144, 59, 83], [92, 200, 182], [166, 61, 196], [197, 108, 147]]
+present:  [61, 92, 144, 166, 182, 196]
+episode total reward is:  8.266
+secondary loss is:  6.6262969970703125
+---------------------------------------------------------------
+train episode:  78
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [182, 200]
+episode total reward is:  4.007
+secondary loss is:  12.08903694152832
+---------------------------------------------------------------
+train episode:  79
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [92, 147]
+episode total reward is:  3.013
+secondary loss is:  9.022940635681152
+---------------------------------------------------------------
+train episode:  80
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 94], [196, 197, 8], [108, 147, 177]]
+present:  [8, 61, 92, 94, 182]
+episode total reward is:  17.953
+secondary loss is:  3.5186996459960938
+---------------------------------------------------------------
+train episode:  81
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 127, 200], [182, 166, 61], [196, 197, 108], [195, 147, 190]]
+present:  [61, 197, 200]
+episode total reward is:  3.003
+secondary loss is:  11.027924537658691
+---------------------------------------------------------------
+train episode:  82
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 70], [182, 63, 166], [61, 196, 197], [108, 147, 7]]
+present:  [92, 166, 182, 200]
+episode total reward is:  6.021
+secondary loss is:  4.636726379394531
+---------------------------------------------------------------
+train episode:  83
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [24, 83, 174], [9, 59, 62], [166, 15, 61]]
+present:  [24, 59, 83, 174, 182, 200]
+episode total reward is:  32.446
+secondary loss is:  4.3319501876831055
+---------------------------------------------------------------
+train episode:  84
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 1], [58, 182, 166], [61, 196, 197], [108, 147, 190]]
+present:  [1, 58, 61, 92, 196, 197, 200]
+episode total reward is:  9.295
+secondary loss is:  1.831403136253357
+---------------------------------------------------------------
+train episode:  85
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[53, 92, 200], [182, 166, 61], [196, 197, 108], [147, 190, 105]]
+present:  [92, 182, 197, 200]
+episode total reward is:  6.013
+secondary loss is:  14.448553085327148
+---------------------------------------------------------------
+train episode:  86
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 200, 182], [62, 83, 59], [166, 61, 196], [197, 108, 147]]
+present:  [61, 62, 92, 166, 182]
+episode total reward is:  7.507
+secondary loss is:  5.1944098472595215
+---------------------------------------------------------------
+train episode:  87
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[99, 46, 92], [200, 182, 166], [61, 196, 197], [108, 147, 190]]
+present:  [46, 61, 99, 166, 182, 196, 200]
+episode total reward is:  8.211
+secondary loss is:  6.674332618713379
+---------------------------------------------------------------
+train episode:  88
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 134], [196, 197, 108], [147, 190, 105]]
+present:  [200]
+episode total reward is:  3.005
+secondary loss is:  3.780888319015503
+---------------------------------------------------------------
+train episode:  89
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 99, 108], [147, 190, 105]]
+present:  [92, 99, 108, 182, 196, 200]
+episode total reward is:  7.317
+secondary loss is:  3.1971230506896973
+---------------------------------------------------------------
+train episode:  90
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 164], [147, 190, 105]]
+present:  [92, 164, 166, 197]
+episode total reward is:  6.027
+secondary loss is:  6.695168495178223
+---------------------------------------------------------------
+train episode:  91
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 108, 196, 197, 200]
+episode total reward is:  7.115
+secondary loss is:  8.33726978302002
+---------------------------------------------------------------
+train episode:  92
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 108, 147, 166, 182, 196, 197]
+episode total reward is:  11.491
+secondary loss is:  4.944864749908447
+---------------------------------------------------------------
+train episode:  93
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [60, 197, 108], [147, 190, 105]]
+present:  [166, 182, 196, 200]
+episode total reward is:  7.015
+secondary loss is:  9.737442970275879
+---------------------------------------------------------------
+train episode:  94
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 160], [182, 39, 166], [61, 196, 197], [108, 147, 190]]
+present:  [92, 160]
+episode total reward is:  4.013
+secondary loss is:  8.429712295532227
+---------------------------------------------------------------
+train episode:  95
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [93, 62, 167], [197, 108, 147]]
+present:  [62, 93, 167, 196, 200]
+episode total reward is:  14.709
+secondary loss is:  0.8359488248825073
+---------------------------------------------------------------
+train episode:  96
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [116, 166, 61], [196, 197, 108], [147, 190, 18]]
+present:  [92, 108, 116, 166, 182, 196, 197]
+episode total reward is:  7.174
+secondary loss is:  1.1337389945983887
+---------------------------------------------------------------
+train episode:  97
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 108, 147, 166, 196]
+episode total reward is:  6.589
+secondary loss is:  4.53560209274292
+---------------------------------------------------------------
+train episode:  98
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 58]]
+present:  [61, 108, 166, 182, 196, 197]
+episode total reward is:  9.736
+secondary loss is:  12.403711318969727
+---------------------------------------------------------------
+train episode:  99
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [33, 17, 133], [75, 62, 95]]
+present:  []
+episode total reward is:  7.096
+secondary loss is:  10.594154357910156
+---------------------------------------------------------------
+train episode:  100
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 32, 30], [200, 182, 166], [61, 196, 197], [108, 147, 190]]
+present:  [30, 32, 61, 182, 197, 200]
+episode total reward is:  7.126
+secondary loss is:  7.977216720581055
+---------------------------------------------------------------
+train episode:  101
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 38, 108], [147, 77, 190]]
+present:  [92, 108, 182]
+episode total reward is:  6.052
+secondary loss is:  14.47541618347168
+---------------------------------------------------------------
+train episode:  102
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [26, 62, 95]]
+present:  [92, 108, 147, 166, 196]
+episode total reward is:  25.454
+secondary loss is:  7.8870086669921875
+---------------------------------------------------------------
+train episode:  103
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 147, 166, 200]
+episode total reward is:  4.01
+secondary loss is:  4.698989391326904
+---------------------------------------------------------------
+train episode:  104
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 92, 108, 182, 196, 197, 200]
+episode total reward is:  11.429
+secondary loss is:  7.1624555587768555
+---------------------------------------------------------------
+train episode:  105
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[12, 35, 102], [92, 200, 182], [166, 61, 196], [197, 108, 147]]
+present:  [12, 35, 61, 102, 166, 182, 196]
+episode total reward is:  13.986
+secondary loss is:  4.630779266357422
+---------------------------------------------------------------
+train episode:  106
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[160, 92, 200], [182, 166, 61], [196, 197, 108], [147, 190, 201]]
+present:  [61, 92, 108, 166, 200]
+episode total reward is:  5.011
+secondary loss is:  4.639610290527344
+---------------------------------------------------------------
+train episode:  107
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[177, 50, 62], [92, 200, 182], [166, 61, 196], [197, 85, 195]]
+present:  [50, 61, 62, 196, 200]
+episode total reward is:  14.052
+secondary loss is:  5.555394172668457
+---------------------------------------------------------------
+train episode:  108
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 157, 200], [181, 182, 166], [61, 196, 197], [108, 147, 190]]
+present:  [92, 157, 182, 200]
+episode total reward is:  4.008
+secondary loss is:  10.583757400512695
+---------------------------------------------------------------
+train episode:  109
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 81, 105]]
+present:  [108, 196, 197, 200]
+episode total reward is:  6.533
+secondary loss is:  3.4758338928222656
+---------------------------------------------------------------
+train episode:  110
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [131, 187, 85], [166, 61, 196], [197, 108, 147]]
+present:  [85, 92, 200]
+episode total reward is:  4.116
+secondary loss is:  8.220718383789062
+---------------------------------------------------------------
+train episode:  111
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 190], [182, 166, 61], [196, 197, 108], [147, 105, 154]]
+present:  [92, 166, 182, 196, 197]
+episode total reward is:  6.149
+secondary loss is:  4.85405158996582
+---------------------------------------------------------------
+train episode:  112
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 171, 108], [147, 190, 105]]
+present:  [92, 171, 182, 196, 197]
+episode total reward is:  7.206
+secondary loss is:  9.836002349853516
+---------------------------------------------------------------
+train episode:  113
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 51, 61], [196, 197, 108], [147, 96, 190]]
+present:  [51, 92, 182, 196, 197]
+episode total reward is:  6.12
+secondary loss is:  8.419384002685547
+---------------------------------------------------------------
+train episode:  114
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 112, 61], [196, 197, 108], [147, 190, 105]]
+present:  [112, 166, 196, 200]
+episode total reward is:  4.019
+secondary loss is:  4.2275519371032715
+---------------------------------------------------------------
+train episode:  115
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [31, 166, 61], [126, 196, 197], [108, 147, 190]]
+present:  [31, 92, 182, 196]
+episode total reward is:  7.531
+secondary loss is:  4.721602916717529
+---------------------------------------------------------------
+train episode:  116
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+choosing random
+action in this episode is:  [[24, 50, 93], [156, 133, 112], [92, 200, 182], [166, 44, 61]]
+present:  [50, 93, 182, 200]
+episode total reward is:  14.808
+secondary loss is:  2.5780160427093506
+---------------------------------------------------------------
+train episode:  117
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[169, 62, 95], [92, 200, 118], [182, 166, 61], [196, 197, 108]]
+present:  [61, 92, 118, 166, 169, 200]
+episode total reward is:  11.175
+secondary loss is:  6.75058650970459
+---------------------------------------------------------------
+train episode:  118
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 74]]
+present:  [147, 166]
+episode total reward is:  3.006
+secondary loss is:  6.4656853675842285
+---------------------------------------------------------------
+train episode:  119
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 162], [182, 166, 61], [196, 197, 108], [147, 190, 105]]
+present:  [61, 92, 108, 162, 182, 197, 200]
+episode total reward is:  8.478
+secondary loss is:  7.495460033416748
+---------------------------------------------------------------
+train episode:  120
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [47, 166, 61], [196, 197, 108], [147, 190, 105]]
+present:  [47, 61, 108, 166, 182, 196]
+episode total reward is:  12.157
+secondary loss is:  3.3493599891662598
+---------------------------------------------------------------
+train episode:  121
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[50, 62, 167], [199, 92, 200], [182, 166, 61], [196, 197, 108]]
+present:  [50, 62, 167, 182, 200]
+episode total reward is:  19.553
+secondary loss is:  5.796348571777344
+---------------------------------------------------------------
+train episode:  122
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [166, 182, 197, 200]
+episode total reward is:  6.013
+secondary loss is:  7.4723920822143555
+---------------------------------------------------------------
+train episode:  123
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [170, 190, 105]]
+present:  [108, 166, 196, 197]
+episode total reward is:  9.312
+secondary loss is:  9.099896430969238
+---------------------------------------------------------------
+train episode:  124
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 41, 200], [182, 166, 61], [62, 83, 59], [196, 21, 197]]
+present:  [41, 59, 61, 62, 83, 182]
+episode total reward is:  15.793
+secondary loss is:  5.4567060470581055
+---------------------------------------------------------------
+train episode:  125
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [63, 197, 108], [147, 190, 105]]
+present:  [92, 108, 166, 197, 200]
+episode total reward is:  6.018
+secondary loss is:  8.439102172851562
+---------------------------------------------------------------
+train episode:  126
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [108, 166, 182, 197, 200]
+episode total reward is:  7.341
+secondary loss is:  0.878039538860321
+---------------------------------------------------------------
+train episode:  127
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [83, 173, 175], [166, 61, 196], [50, 26, 167]]
+present:  [83, 92, 182]
+episode total reward is:  9.623
+secondary loss is:  7.838747978210449
+---------------------------------------------------------------
+train episode:  128
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 166, 196, 197, 200]
+episode total reward is:  7.151
+secondary loss is:  2.353408098220825
+---------------------------------------------------------------
+train episode:  129
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [183, 47, 198], [197, 108, 147]]
+present:  [61, 92, 183, 196]
+episode total reward is:  7.471
+secondary loss is:  8.577953338623047
+---------------------------------------------------------------
+train episode:  130
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [35, 190, 119]]
+present:  [166, 196, 197]
+episode total reward is:  5.231
+secondary loss is:  4.75880765914917
+---------------------------------------------------------------
+train episode:  131
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[92, 200, 123], [182, 166, 61], [80, 72, 184], [196, 197, 108]]
+present:  [61, 80, 123, 166, 182, 200]
+episode total reward is:  8.465
+secondary loss is:  6.1955885887146
+---------------------------------------------------------------
+train episode:  132
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 111, 61], [196, 197, 108], [147, 187, 190]]
+present:  [92, 196, 197]
+episode total reward is:  5.149
+secondary loss is:  14.181015968322754
+---------------------------------------------------------------
+train episode:  133
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 149, 105]]
+present:  [61, 92, 196]
+episode total reward is:  4.006
+secondary loss is:  4.804064750671387
+---------------------------------------------------------------
+train episode:  134
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [182, 196, 197]
+episode total reward is:  4.164
+secondary loss is:  1.6137030124664307
+---------------------------------------------------------------
+train episode:  135
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 152], [99, 196, 197], [108, 147, 190]]
+present:  [92, 152, 166, 182, 197, 200]
+episode total reward is:  9.241
+secondary loss is:  2.7090649604797363
+---------------------------------------------------------------
+train episode:  136
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 170, 61], [196, 139, 197], [108, 147, 190]]
+present:  [61, 166, 182, 196]
+episode total reward is:  6.372
+secondary loss is:  5.724977493286133
+---------------------------------------------------------------
+train episode:  137
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[137, 167, 22], [92, 200, 182], [166, 61, 191], [196, 197, 108]]
+present:  [22, 92, 137, 167, 182, 191, 200]
+episode total reward is:  9.224
+secondary loss is:  7.252484321594238
+---------------------------------------------------------------
+train episode:  138
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [108, 200]
+episode total reward is:  5.271
+secondary loss is:  1.5511109828948975
+---------------------------------------------------------------
+train episode:  139
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 182], [9, 83, 62], [166, 2, 61], [196, 197, 108]]
+present:  [62, 166]
+episode total reward is:  2.506
+secondary loss is:  1.251136064529419
+---------------------------------------------------------------
+train episode:  140
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 195, 114], [173, 108, 147]]
+present:  [61, 166, 196]
+episode total reward is:  3.005
+secondary loss is:  2.605781316757202
+---------------------------------------------------------------
+train episode:  141
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [62, 190, 105]]
+present:  [166, 182, 196, 200]
+episode total reward is:  9.066
+secondary loss is:  0.569561243057251
+---------------------------------------------------------------
+train episode:  142
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[83, 116, 169], [15, 92, 200], [182, 166, 61], [196, 197, 108]]
+present:  [116, 169, 182]
+episode total reward is:  6.568
+secondary loss is:  3.241337537765503
+---------------------------------------------------------------
+train episode:  143
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 77]]
+present:  [147, 182, 197]
+episode total reward is:  5.013
+secondary loss is:  1.2106883525848389
+---------------------------------------------------------------
+train episode:  144
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 157], [196, 197, 108], [147, 190, 105]]
+present:  [166, 197]
+episode total reward is:  3.003
+secondary loss is:  9.941332817077637
+---------------------------------------------------------------
+train episode:  145
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 170], [196, 197, 108], [1, 147, 190]]
+present:  [108, 182, 197]
+episode total reward is:  4.007
+secondary loss is:  2.791513442993164
+---------------------------------------------------------------
+train episode:  146
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 92, 108, 147, 166, 182, 200]
+episode total reward is:  8.425
+secondary loss is:  3.9358839988708496
+---------------------------------------------------------------
+train episode:  147
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+choosing random
+action in this episode is:  [[169, 93, 62], [92, 200, 182], [166, 61, 196], [145, 67, 20]]
+present:  [62, 92, 93, 196]
+episode total reward is:  18.581
+secondary loss is:  3.775408983230591
+---------------------------------------------------------------
+train episode:  148
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [180, 167, 166], [61, 196, 197], [108, 147, 190]]
+present:  [92, 182, 196, 200]
+episode total reward is:  5.007
+secondary loss is:  4.617732524871826
+---------------------------------------------------------------
+train episode:  149
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+choosing random
+action in this episode is:  [[92, 81, 200], [59, 53, 95], [57, 182, 166], [126, 188, 110]]
+present:  [53, 57, 59, 92, 166, 200]
+episode total reward is:  7.806
+secondary loss is:  1.0512715578079224
+---------------------------------------------------------------
+train episode:  150
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [108, 147, 166, 200]
+episode total reward is:  6.581
+secondary loss is:  6.420334815979004
+---------------------------------------------------------------
+train episode:  151
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 200, 182], [62, 83, 59], [166, 181, 61], [196, 197, 108]]
+present:  [59, 62, 83, 181, 182, 200]
+episode total reward is:  10.89
+secondary loss is:  6.073213577270508
+---------------------------------------------------------------
+train episode:  152
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 59, 108], [147, 190, 105]]
+present:  [59, 61, 92, 166, 182, 200]
+episode total reward is:  10.187
+secondary loss is:  3.65100359916687
+---------------------------------------------------------------
+train episode:  153
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 97, 200], [182, 166, 61], [196, 197, 108], [147, 190, 105]]
+present:  [61, 92, 97, 182]
+episode total reward is:  5.115
+secondary loss is:  10.184192657470703
+---------------------------------------------------------------
+train episode:  154
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 200, 44], [169, 170, 62], [182, 166, 61], [196, 197, 108]]
+present:  [62, 169, 170, 182, 200]
+episode total reward is:  20.311
+secondary loss is:  7.5081095695495605
+---------------------------------------------------------------
+train episode:  155
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 24, 200], [182, 176, 166], [61, 196, 197], [108, 147, 190]]
+present:  [24, 92]
+episode total reward is:  3.029
+secondary loss is:  4.301104545593262
+---------------------------------------------------------------
+train episode:  156
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 97, 61], [196, 197, 108], [147, 190, 105]]
+present:  [61, 97, 182, 196, 197, 200]
+episode total reward is:  7.429
+secondary loss is:  4.098002910614014
+---------------------------------------------------------------
+train episode:  157
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 21, 108], [147, 190, 105]]
+present:  [21, 61, 166, 196, 200]
+episode total reward is:  5.123
+secondary loss is:  4.375348091125488
+---------------------------------------------------------------
+train episode:  158
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [92, 108, 166, 182, 196, 197, 200]
+episode total reward is:  10.785
+secondary loss is:  2.712148427963257
+---------------------------------------------------------------
+train episode:  159
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[14, 197, 63], [92, 200, 182], [166, 61, 196], [108, 147, 190]]
+present:  [92, 166, 196, 197]
+episode total reward is:  6.135
+secondary loss is:  9.121258735656738
+---------------------------------------------------------------
+train episode:  160
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[101, 92, 200], [152, 33, 182], [166, 61, 196], [50, 173, 95]]
+present:  [61, 92, 101, 152, 196, 200]
+episode total reward is:  7.8
+secondary loss is:  5.550140380859375
+---------------------------------------------------------------
+train episode:  161
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing ada_greedy
+action in this episode is:  [[92, 138, 200], [182, 166, 61], [196, 197, 108], [170, 173, 62]]
+present:  [108, 138]
+episode total reward is:  2.14
+secondary loss is:  7.775325775146484
+---------------------------------------------------------------
+train episode:  162
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [93, 158, 29]]
+present:  [61, 108, 166, 196, 200]
+episode total reward is:  6.02
+secondary loss is:  7.711678981781006
+---------------------------------------------------------------
+train episode:  163
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 198, 108], [147, 190, 105]]
+present:  [92, 108, 166, 196, 198, 200]
+episode total reward is:  8.09
+secondary loss is:  4.215550422668457
+---------------------------------------------------------------
+train episode:  164
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 177, 200], [182, 166, 61], [196, 90, 197], [108, 147, 190]]
+present:  [61, 92, 166, 177, 200]
+episode total reward is:  9.521
+secondary loss is:  7.344212532043457
+---------------------------------------------------------------
+train episode:  165
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 67, 61], [196, 197, 108], [147, 190, 105]]
+present:  [61, 67, 92, 108, 197]
+episode total reward is:  5.149
+secondary loss is:  4.289070129394531
+---------------------------------------------------------------
+train episode:  166
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 200, 182], [62, 83, 59], [166, 7, 61], [196, 197, 108]]
+present:  [7, 59, 61, 83, 182]
+episode total reward is:  9.839
+secondary loss is:  11.280851364135742
+---------------------------------------------------------------
+train episode:  167
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 92, 108, 166, 197]
+episode total reward is:  6.01
+secondary loss is:  2.5109012126922607
+---------------------------------------------------------------
+train episode:  168
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [62, 83, 59]]
+present:  [166, 182, 196, 200]
+episode total reward is:  15.095
+secondary loss is:  3.354980707168579
+---------------------------------------------------------------
+train episode:  169
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 59], [147, 190, 105]]
+present:  [59, 61, 108, 182, 200]
+episode total reward is:  10.245
+secondary loss is:  5.96662712097168
+---------------------------------------------------------------
+train episode:  170
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [95, 197, 108], [147, 190, 105]]
+present:  [61, 92, 108, 182, 197]
+episode total reward is:  8.077
+secondary loss is:  0.6356943845748901
+---------------------------------------------------------------
+train episode:  171
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [62, 83, 59], [197, 108, 147]]
+present:  [61, 62, 92, 182, 196, 200]
+episode total reward is:  6.174
+secondary loss is:  5.5258708000183105
+---------------------------------------------------------------
+train episode:  172
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [62, 83, 59], [197, 108, 82]]
+present:  [61, 62, 166]
+episode total reward is:  6.067
+secondary loss is:  11.611823081970215
+---------------------------------------------------------------
+train episode:  173
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [147, 166, 196, 197]
+episode total reward is:  6.145
+secondary loss is:  7.938615798950195
+---------------------------------------------------------------
+train episode:  174
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [143, 197, 108], [83, 147, 190]]
+present:  [108, 143, 166, 200]
+episode total reward is:  5.141
+secondary loss is:  6.735159873962402
+---------------------------------------------------------------
+train episode:  175
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[74, 2, 106], [58, 92, 200], [182, 166, 10], [61, 196, 198]]
+present:  [2, 10, 58, 182, 200]
+episode total reward is:  9.445
+secondary loss is:  1.969827651977539
+---------------------------------------------------------------
+train episode:  176
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 157, 75], [200, 182, 109], [166, 61, 196], [197, 108, 147]]
+present:  [61, 75, 196, 200]
+episode total reward is:  10.539
+secondary loss is:  8.884500503540039
+---------------------------------------------------------------
+train episode:  177
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[195, 92, 57], [200, 182, 166], [89, 61, 196], [197, 108, 147]]
+present:  [57, 61, 195, 200]
+episode total reward is:  6.02
+secondary loss is:  1.7530559301376343
+---------------------------------------------------------------
+train episode:  178
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing random
+action in this episode is:  [[92, 200, 0], [182, 166, 61], [196, 197, 201], [83, 36, 158]]
+present:  [0, 166, 182, 196, 200, 201]
+episode total reward is:  8.798
+secondary loss is:  8.945096015930176
+---------------------------------------------------------------
+train episode:  179
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 109, 200], [182, 166, 61], [196, 197, 82], [108, 147, 135]]
+present:  [61, 82, 92, 109, 166, 196, 197, 200]
+episode total reward is:  9.918
+secondary loss is:  4.322716236114502
+---------------------------------------------------------------
+train episode:  180
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[50, 16, 92], [200, 182, 166], [61, 196, 197], [108, 147, 190]]
+present:  [61, 92, 182, 196, 197, 200]
+episode total reward is:  7.301
+secondary loss is:  9.99503231048584
+---------------------------------------------------------------
+train episode:  181
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[68, 92, 62], [118, 200, 182], [166, 61, 196], [197, 108, 147]]
+present:  [68, 92, 118, 166, 196, 200]
+episode total reward is:  8.391
+secondary loss is:  5.0410075187683105
+---------------------------------------------------------------
+train episode:  182
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 159, 108], [147, 190, 105]]
+present:  [92, 159, 166, 182, 197, 200]
+episode total reward is:  8.042
+secondary loss is:  4.1623735427856445
+---------------------------------------------------------------
+train episode:  183
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 182, 196, 200]
+episode total reward is:  6.191
+secondary loss is:  8.34521484375
+---------------------------------------------------------------
+train episode:  184
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+choosing max degree
+action in this episode is:  [[62, 83, 59], [92, 200, 182], [166, 61, 196], [197, 108, 147]]
+present:  [62, 92]
+episode total reward is:  2.036
+secondary loss is:  3.562265157699585
+---------------------------------------------------------------
+train episode:  185
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[73, 92, 129], [200, 182, 166], [61, 196, 197], [108, 147, 190]]
+present:  [73, 196, 197, 200]
+episode total reward is:  5.122
+secondary loss is:  5.997505187988281
+---------------------------------------------------------------
+train episode:  186
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 69], [196, 197, 165], [108, 147, 190]]
+present:  [61, 69, 92, 166, 182, 200]
+episode total reward is:  7.309
+secondary loss is:  9.82124137878418
+---------------------------------------------------------------
+train episode:  187
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[105, 92, 200], [182, 166, 61], [196, 197, 108], [147, 168, 190]]
+present:  [105, 108, 197]
+episode total reward is:  5.361
+secondary loss is:  3.616647243499756
+---------------------------------------------------------------
+train episode:  188
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [92, 108, 166, 182, 200]
+episode total reward is:  6.335
+secondary loss is:  2.1961169242858887
+---------------------------------------------------------------
+train episode:  189
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [61, 200]
+episode total reward is:  4.009
+secondary loss is:  1.1751368045806885
+---------------------------------------------------------------
+train episode:  190
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [152, 166, 61], [196, 197, 108], [147, 190, 105]]
+present:  [92, 108, 152, 182, 197, 200]
+episode total reward is:  9.505
+secondary loss is:  5.289493560791016
+---------------------------------------------------------------
+train episode:  191
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [183, 166, 61], [196, 18, 197], [108, 147, 190]]
+present:  [18, 92, 166, 182, 183, 197, 200]
+episode total reward is:  7.189
+secondary loss is:  0.8833084106445312
+---------------------------------------------------------------
+train episode:  192
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 83], [35, 182, 166], [61, 196, 197], [108, 147, 190]]
+present:  [35, 83, 197, 200]
+episode total reward is:  6.637
+secondary loss is:  3.287341833114624
+---------------------------------------------------------------
+train episode:  193
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 195, 200], [182, 166, 61], [196, 197, 108], [147, 190, 105]]
+present:  [61, 92, 200]
+episode total reward is:  6.066
+secondary loss is:  1.1749048233032227
+---------------------------------------------------------------
+train episode:  194
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [182, 196, 197]
+episode total reward is:  4.16
+secondary loss is:  3.319469451904297
+---------------------------------------------------------------
+train episode:  195
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 66], [196, 197, 108], [147, 2, 190]]
+present:  [61, 66, 197, 200]
+episode total reward is:  4.014
+secondary loss is:  1.948938250541687
+---------------------------------------------------------------
+train episode:  196
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 49], [147, 190, 105]]
+present:  [49, 92, 108, 166, 196, 197]
+episode total reward is:  7.453
+secondary loss is:  1.344836950302124
+---------------------------------------------------------------
+train episode:  197
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 9, 200], [182, 117, 166], [129, 61, 196], [197, 108, 51]]
+present:  [9, 61, 117, 182, 196]
+episode total reward is:  6.341
+secondary loss is:  3.554450035095215
+---------------------------------------------------------------
+train episode:  198
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 9, 123], [200, 182, 166], [61, 196, 197], [184, 108, 147]]
+present:  [61, 92, 123, 166, 197, 200]
+episode total reward is:  6.008
+secondary loss is:  13.870119094848633
+---------------------------------------------------------------
+train episode:  199
+eps in this episode is:  0.1
+eps_wstart in this episode is:  0.1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+present:  [147, 166, 182, 196]
+episode total reward is:  6.034
+secondary loss is:  3.984171152114868
+runtime for training process is:  8058.509631156921
+
+
+
+
+testing
+---------------------------------------------------------------
+test episode:  0
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  7.673
+---------------------------------------------------------------
+test episode:  1
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  9.204
+---------------------------------------------------------------
+test episode:  2
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  7.015
+---------------------------------------------------------------
+test episode:  3
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  8.016
+---------------------------------------------------------------
+test episode:  4
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.174
+---------------------------------------------------------------
+test episode:  5
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  8.737
+---------------------------------------------------------------
+test episode:  6
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.296
+---------------------------------------------------------------
+test episode:  7
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.013
+---------------------------------------------------------------
+test episode:  8
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.348
+---------------------------------------------------------------
+test episode:  9
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.131
+---------------------------------------------------------------
+test episode:  10
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  4.011
+---------------------------------------------------------------
+test episode:  11
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  8.627
+---------------------------------------------------------------
+test episode:  12
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  8.008
+---------------------------------------------------------------
+test episode:  13
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  4.007
+---------------------------------------------------------------
+test episode:  14
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  7.101
+---------------------------------------------------------------
+test episode:  15
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  4.013
+---------------------------------------------------------------
+test episode:  16
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  8.432
+---------------------------------------------------------------
+test episode:  17
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.127
+---------------------------------------------------------------
+test episode:  18
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  7.138
+---------------------------------------------------------------
+test episode:  19
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.012
+---------------------------------------------------------------
+test episode:  20
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  3.007
+---------------------------------------------------------------
+test episode:  21
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  7.139
+---------------------------------------------------------------
+test episode:  22
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.02
+---------------------------------------------------------------
+test episode:  23
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  9.198
+---------------------------------------------------------------
+test episode:  24
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.005
+---------------------------------------------------------------
+test episode:  25
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.296
+---------------------------------------------------------------
+test episode:  26
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.118
+---------------------------------------------------------------
+test episode:  27
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  7.429
+---------------------------------------------------------------
+test episode:  28
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  4.009
+---------------------------------------------------------------
+test episode:  29
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.168
+---------------------------------------------------------------
+test episode:  30
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  3.003
+---------------------------------------------------------------
+test episode:  31
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.018
+---------------------------------------------------------------
+test episode:  32
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  4.335
+---------------------------------------------------------------
+test episode:  33
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  9.767
+---------------------------------------------------------------
+test episode:  34
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  7.023
+---------------------------------------------------------------
+test episode:  35
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.021
+---------------------------------------------------------------
+test episode:  36
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  9.298
+---------------------------------------------------------------
+test episode:  37
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.105
+---------------------------------------------------------------
+test episode:  38
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.009
+---------------------------------------------------------------
+test episode:  39
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.027
+---------------------------------------------------------------
+test episode:  40
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.028
+---------------------------------------------------------------
+test episode:  41
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  3.013
+---------------------------------------------------------------
+test episode:  42
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.014
+---------------------------------------------------------------
+test episode:  43
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  6.021
+---------------------------------------------------------------
+test episode:  44
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  10.668
+---------------------------------------------------------------
+test episode:  45
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  11.072
+---------------------------------------------------------------
+test episode:  46
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  4.003
+---------------------------------------------------------------
+test episode:  47
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  4.022
+---------------------------------------------------------------
+test episode:  48
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.067
+---------------------------------------------------------------
+test episode:  49
+action in this episode is:  [[92, 200, 182], [166, 61, 196], [197, 108, 147], [190, 105, 154]]
+episode total reward is:  5.399
+average reward: 6.227700000000001
+reward std: 1.9612259048870428

@@ -23,14 +23,12 @@ class NaiveGCN(nn.Module):
 
         # Define the layers of gcn
         self.gcn1 = GraphConv(r0, r1, aggr=aggregation_function)
-        self.gcn2 = GraphConv(r1, r2, aggr=aggregation_function) #hp
-        #self.gcn3 = GraphConv(r2, r3, aggr=aggregation_function) #hp
-        # self.gcn4 = GraphConv(r3, r4, aggr=aggregation_function)
+        self.gcn2 = GraphConv(r1, r2, aggr=aggregation_function) 
+        self.gcn3 = GraphConv(r2, r3, aggr=aggregation_function) 
+        #self.gcn4 = GraphConv(r3, r4, aggr=aggregation_function)
 
         # Define the layers of NN to predict the attractiveness function for every node
-        #self.fc1 = nn.Linear(r3, n1) #hp
-        self.fc1 = nn.Linear(r2, n1) #hp
-        #self.fc1 = nn.Linear(r1, n1)#hp
+        self.fc1 = nn.Linear(r3, n1) #hp
         self.fc2 = nn.Linear(n1, 1)
         # self.fc3 = nn.Linear(n2, 1)
 
@@ -42,7 +40,7 @@ class NaiveGCN(nn.Module):
         #print('x dimension is: ', x.shape)
         x = self.activation(self.gcn1(x, edge_index))
         x = self.activation(self.gcn2(x, edge_index)) #hp
-        #x = self.activation(self.gcn3(x, edge_index)) #hp
+        x = self.activation(self.gcn3(x, edge_index)) #hp
         # x = self.activation(self.gcn4(x, edge_index))
 
         # x = self.dropout(x)

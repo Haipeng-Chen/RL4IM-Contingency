@@ -14,3 +14,5 @@
 # python rl4im.py --cascade 'DIC' --eps_decay True --eps_wstart 0.3 --propagate_p 0.3 --q 1 --use_cuda 1 --batch_size 128
 # python rl4im.py --cascade 'DIC' --eps_decay True --eps_wstart 0.3 --propagate_p 0.3 --q 0.5 --use_cuda 1 --batch_size 128
 # python rl4im.py --cascade 'DIC' --eps_decay False --eps_wstart 0.3 --propagate_p 0.3 --q 0.5 --use_cuda 1 --batch_size 128
+
+python rl4im.py --cascade 'DIC' --eps_decay 1 --eps_wstart 0.3 --propagate_p 0.3 --q 0.5 --use_cuda 1 --batch_size 128 

@@ -183,7 +183,7 @@ if __name__ == '__main__':
         print('reward: ', env.reward)
         print('invited: ', actions)
         print('present: ', presents)
-    print('average reward for greedy policy is: {}, std is: {}'.format(np.mean(rewards), np.std(rewards)))
+    print('average reward for {} policy is: {}, std is: {}'.format(baseline, np.mean(rewards), np.std(rewards)))
 
 
 
