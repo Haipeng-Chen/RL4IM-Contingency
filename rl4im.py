@@ -42,14 +42,15 @@ def is_fitted(sklearn_regressor):
     return hasattr(sklearn_regressor, 'n_outputs_')
 
 class FQI(object):
-    def __init__(self, graph, cascade='DIC', T=4, budget_ratio=0.1, propagate_p=0.1, q=0.5, regressor=None):
+    def __init__(self, graph, cascade='DIC', T=4, budget_ratio=0.1, propagate_p=0.1, l=0.05, q=0.5, regressor=None):
         """Initialize simulator and regressor. Can optionally pass a custom
         `regressor` model (which must implement `fit` and `predict` -- you can
         use this to try different models like linear regression or NNs)"""
-        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
+        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, q=q)
         print('cascade model is: ', self.env.cascade)
         self.regressor = regressor or ExtraTreesRegressor()
     
+    '''
     def state_action(self, state, action):
         #TODO: move it to DQN()
         #the input action is a list of nodes, needs to first convert it into a 1xN ndarray 
@@ -61,7 +62,8 @@ class FQI(object):
             np_action[0][n]=1
         state_action  = np.concatenate((state, np_action), axis=0)
         return state_action 
-    
+    '''
+
 class Memory:
     #for primary agent done is for the last main step, for sec agent done is for last sub-step (node) in the last main step
     def __init__(self, state, action, reward, next_state, done):
@@ -73,8 +75,8 @@ class Memory:
 
 
 class DQN(FQI):
-    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, q=0.5, greedy_sample_size=500):
-        FQI.__init__(self, graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q)
+    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, l=0.05, q=0.5, greedy_sample_size=500):
+        FQI.__init__(self, graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, q=q)
         self.feature_size = 4 
         #self.net = NaiveGCN(node_feature_size=self.feature_size)
         #self.optimizer = optim.Adam(self.net.parameters(), lr=lr_primary)
@@ -94,6 +96,18 @@ class DQN(FQI):
         self.memory_size = memory_size 
         self.batch_size = batch_size
         self.greedy_sample_size = greedy_sample_size
+
+    def state_action(self, state, action):
+        #TODO: move it to DQN()
+        #the input action is a list of nodes, needs to first convert it into a 1xN ndarray 
+        #the output is a 4xN ndarray
+        state=state.copy()
+        action = action
+        np_action = np.zeros((1, self.env.N))
+        for n in action:
+            np_action[0][n]=1
+        state_action  = np.concatenate((state, np_action), axis=0)
+        return state_action
 
     def predict_rewards(self, state, action, netid='primary'): 
         #TODO: enable batch prediction: the output could be an array whose dimension equals the number of feasible actions
@@ -239,10 +253,10 @@ class DQN(FQI):
             print('train episode: ', episode)
             if eps_decay:
                 eps=max(max_eps-0.005*episode, min_eps)
-                #eps_wstart=max(eps_wstart-0.005, 0)
+                eps_wstart=max(eps_wstart-0.005, 0)
             else:
                 eps=min_eps
-                #eps_wstart=min_eps
+                eps_wstart=min_eps
             print('eps in this episode is: ', eps)
             print('eps_wstart in this episode is: ', eps_wstart)
             S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps,eps_wstart=eps_wstart, discount=discount)
@@ -385,6 +399,8 @@ def arg_parse():
                 help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
     parser.add_argument('--propagate_p', dest='propagate_p', type=float, default=0.1, 
                 help='influence propagation probability')
+    parser.add_argument('--l', dest='l', type=float, default=0.05,
+                help='influence of each neighbor in LT cascade')
     parser.add_argument('--q', dest='q', type=float, default=1, 
                 help='probability of invited node being present')
     parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
@@ -421,26 +437,30 @@ if __name__ == '__main__':
     T = args.T
     budget_ratio = args.budget_ratio
     propagate_p = args.propagate_p
+    l = args.l
     q = args.q
     
     g, graph_name=get_graph(graph_index)
     print('chosen graph: ', graph_name)
+    print('#nodes: ', len(g.nodes))
+    print('#edges: ', len(g.edges))
 
     start_time = time.time()
     if First_time:
-        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, q=q, greedy_sample_size=greedy_sample_size)
-        cumulative_reward_list = model.fit_GCN(batch_option=batch_option, num_episodes=num_episodes,  max_eps=max_eps, min_eps=min_eps, 
+        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, q=q, greedy_sample_size=greedy_sample_size)
+        _ = model.fit_GCN(batch_option=batch_option, num_episodes=num_episodes,  max_eps=max_eps, min_eps=min_eps, 
                         discount=discount, eps_wstart=eps_wstart, logdir=logdir, eps_decay=eps_decay)
         with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
-            pickle.dump([model,cumulative_reward_list], f)
+            pickle.dump(model, f)
     else:
         with open('Graph={}.pickle'.format(graph_name), 'rb') as f:
-            X = pickle.load(f) 
-        model=X[0]
-        cumulative_reward_list=X[1]
+            model = pickle.load(f) 
     cumulative_rewards = []
     end_time = time.time()
     runtime = end_time - start_time
+    print()
+    print('---------------------------------------------------------------')
+    print()
     print('runtime for training process is: ', runtime)
 
     [print() for _ in range(4)]
@@ -452,6 +472,9 @@ if __name__ == '__main__':
         print('action in this episode is: ', A)
         print('episode total reward is: ', cumulative_reward)
         cumulative_rewards.append(cumulative_reward)
+    print()
+    print('---------------------------------------------------------------')
+    print()
     print('average reward:', np.mean(cumulative_rewards))
     print('reward std:', np.std(cumulative_rewards))
 

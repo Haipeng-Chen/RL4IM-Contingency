@@ -7,6 +7,7 @@ import argparse
 
 from IC import runIC_repeat
 from IC import runDIC_repeat
+from IC import runLT_repeat
 from IC import runSC_repeat 
 from baseline import *
 
@@ -28,20 +29,23 @@ class NetworkEnv(object):
     note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     
-    def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.3, q=1, cascade='IC'):
+    def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.1, l=0.05, q=1, cascade='IC', num_simul=1000):
         self.G = G
         self.N = len(self.G)
         self.budget = math.floor(self.N * budget_ratio/T)
         self.A = nx.to_numpy_matrix(self.G)  
         self.propagate_p = propagate_p
+        self.l = l
+        self.d = d
         self.q = q
         self.T = T
         self.cascade = cascade
+        self.num_simul = num_simul
         self.t = 0
         self.done = False
         self.reward = 0
         self.feasible_actions = list(range(self.N))
-        self.state=np.zeros((3, self.N)) ############ 
+        self.state=np.zeros((3, self.N)) 
         nx.set_node_attributes(self.G, 0, 'attr')
 
     def step(self, action):
@@ -60,7 +64,7 @@ class NetworkEnv(object):
         if self.t == self.T-1:
             seeds = []
             [seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
-            self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade)
+            self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
             next_state = None
             self.done = True
         else:
@@ -82,9 +86,11 @@ class NetworkEnv(object):
         elif cascade == 'DIC':
             reward, _ = runDIC_repeat(self.G, seeds, p=self.propagate_p, q=0.001, sample=sample)
         elif cascade == 'LT':
-            reward, _ = runLT_repeat(self.G, seeds, l=0.01, sample=sample)
+            reward, _ = runLT_repeat(self.G, seeds, l=self.l, sample=sample)
+        elif cascade == 'SC':
+            reward, _ = runSC_repeat(self.G, seeds, d=self.d, sample=sample)
         else:
-            reward, _ = runSC_repeat(self.G, seeds, d=1, sample=sample)
+            assert(False)
         return reward
  
     #the simple state transition process
@@ -117,12 +123,19 @@ def arg_parse():
                 help='time horizon')
     parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06,
                 help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
-    parser.add_argument('--propagate_p', dest='propagate_p', type=float, default=0.1,
-                help='influence propagation probability')
-    parser.add_argument('--q', dest='q', type=float, default=1,
-                help='probability of invited node being present')
+
     parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
                 help='cascade model')
+    parser.add_argument('--propagate_p', dest='propagate_p', type=float, default=0.1,
+                help='influence propagation probability')
+    parser.add_argument('--l', dest='l', type=float, default=0.05,
+                help='influence of each neighbor in LT cascade')
+    parser.add_argument('--d', dest='d', type=float, default=1,
+                help='d in SC cascade')
+    parser.add_argument('--q', dest='q', type=float, default=1,
+                help='probability of invited node being present')
+    parser.add_argument('--num_simul',dest='num_simul', type=int, default=1000,
+                help='number of simulations for env.step')
     parser.add_argument('--greedy_sample_size',dest='greedy_sample_size', type=int, default=500,
                 help='sample size for value estimation of greedy algorithms')
 
@@ -135,9 +148,12 @@ if __name__ == '__main__':
     baseline = args.baseline
     T = args.T
     budget_ratio = args.budget_ratio
-    propagate_p = args.propagate_p
-    q = args.q
     cascade = args.cascade
+    propagate_p = args.propagate_p
+    l = args.l
+    d = args.d
+    q = args.q
+    num_simul = args.num_simul
     greedy_sample_size = args.greedy_sample_size
 
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
@@ -147,8 +163,9 @@ if __name__ == '__main__':
     mapping = dict(zip(G.nodes(),range(len(G))))
     G = nx.relabel_nodes(G,mapping)
     print('selected graph: ', graph_name)
-    print('graph size: ', len(G.nodes))
-    env=NetworkEnv(G=G, T=T, budget_ratio=budget_ratio, propagate_p = propagate_p, q=q, cascade=cascade)
+    print('#nodes: ', len(G.nodes))
+    print('#edges: ', len(G.edges))
+    env=NetworkEnv(G=G, T=T, budget_ratio=budget_ratio, propagate_p = propagate_p, l=l, d=d, q=q, cascade=cascade)
 
 
     rewards = []

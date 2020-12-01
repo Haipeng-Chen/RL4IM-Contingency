@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -n 1               # Number of cores (-n)
 #SBATCH -N 1                # Ensure that all cores are on one Node (-N)
-#SBATCH -t 0-0:40          # Runtime in D-HH:MM, minimum of 10 minutes
+#SBATCH -t 0-2:00          # Runtime in D-HH:MM, minimum of 10 minutes
 #SBATCH -p tambe_gpu     # Partition to submit to
 #SBATCH --mem=1000           # Memory pool for all cores (see also --mem-per-cpu)
 #SBATCH -o output/baseline_%j.out  # File to which STDOUT will be written, %j inserts jobid
@@ -22,6 +22,32 @@
 #python env.py --cascade 'DIC' --propagate_p 0.3 --q 0.9 --baseline 'ada_greedy';
 
 # run Nov 30 Mon 12:38pm
-python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'random' --graph_index 3 --budget_ratio 0.06; 
-python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'maxdegree' --graph_index 3 --budget_ratio 0.06; 
-python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 10
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'random' --graph_index 3 --budget_ratio 0.06; 
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'maxdegree' --graph_index 3 --budget_ratio 0.06; 
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 10
+
+# run Nov 30 Mon 1.24pm
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 100
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 200
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 500
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 1000
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 1
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 10
+
+# run Nov 30 Mon 3.35pm
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 10
+#python env.py --cascade 'DIC' --propagate_p 0.1 --q 1 --baseline 'ada_greedy' --graph_index 3 --budget_ratio 0.06 --greedy_sample_size 100
+
+# Nov 30 Mon 3.45pm
+#python env.py --graph_index 4 --cascade 'DIC' --propagate_p 0.1 --q 1 --budget_ratio 0.06 --baseline 'ada_greedy' --greedy_sample_size 100
+#python env.py --graph_index 4 --cascade 'DIC' --propagate_p 0.1 --q 1 --budget_ratio 0.06 --baseline 'ada_greedy' --greedy_sample_size 200
+#python env.py --graph_index 4 --cascade 'DIC' --propagate_p 0.1 --q 1 --budget_ratio 0.06 --baseline 'ada_greedy' --greedy_sample_size 300
+#python env.py --graph_index 4 --cascade 'DIC' --propagate_p 0.1 --q 1 --budget_ratio 0.06 --baseline 'random'
+#python env.py --graph_index 4 --cascade 'DIC' --propagate_p 0.1 --q 1 --budget_ratio 0.06 --baseline 'maxdegree'
+
+# Dec 01 00.05am 
+#python env.py --graph_index 2 --cascade 'LT' --l  0.08 --q 1 --budget_ratio 0.06 --baseline 'ada_greedy' --num_simul 500 #added num_simul in env.step
+
+# Dec 01 00:38am 
+python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.06 --baseline 'ada_greedy' --num_simul 500 
+

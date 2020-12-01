@@ -4,6 +4,8 @@ import networkx as nx
 import numpy as np
 from baseline import *
 
+import pdb
+
 def runIC (G, S, p=0.01 ):
     ''' Runs independent cascade model.
     Input: G -- networkx graph object
@@ -68,7 +70,6 @@ def runDIC (G, S, p=0.01, q=0.001 ):
                          T.append(v)
     return T
 
-#hp: I have not considered >1 hop influences. This needs to be revised.
 def runLT (G, S, l=0.01 ):
     ''' Runs independent cascade model.
     Input: G -- networkx graph object
@@ -86,8 +87,9 @@ def runLT (G, S, l=0.01 ):
         for v in T:
             Current_influence[v]=1 #Set influenced nodes above threshold
         for u in T: 
-            for v in G[u] and v not in T: 
-                Current_influence[v]+=l #Add influence to neighbor
+            for v in G[u]:
+                if v not in T: 
+                    Current_influence[v]+=l #Add influence to neighbor
         NewT=[]
         for v in range(len(G)):
             if Current_influence[v]>Threshold[v]:

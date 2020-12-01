@@ -1,0 +1,6 @@
+usage: env.py [-h] [--baseline BASELINE] [--graph_index GRAPH_INDEX] [--T T]
+              [--budget_ratio BUDGET_RATIO] [--cascade CASCADE]
+              [--propagate_p PROPAGATE_P] [--l L] [--q Q]
+              [--num_simul NUM_SIMUL]
+              [--greedy_sample_size GREEDY_SAMPLE_SIZE]
+env.py: error: unrecognized arguments: -budget_ratio 0.06
