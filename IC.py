@@ -3,6 +3,7 @@ import random
 import networkx as nx
 import numpy as np
 from baseline import *
+from multiprocessing import Process, Manager
 
 import pdb
 
@@ -183,7 +184,27 @@ def runSC_repeat(G, S, d=1, sample=1000):
 
     return infl_mean, infl_std 
 
+def influence_wrapper(l,G,S,sample):
+    ans = runIC_repeat(G, S, p=0.01, sample=sample)
+    l.append(ans[0])
 
+def parallel_influence(G, S, times=10, sample=1000,PROCESSORS=4):
+    
+
+    
+    l = Manager().list()
+    processes = [Process(target=influence_wrapper, args=(l, G, S,sample)) for _ in range(times)]
+    i=0
+    while i<len(processes):
+        j = i+PROCESSORS if i+PROCESSORS < len(processes) else len(processes)-1
+        ps = processes[i:j]
+        for p in ps:
+            p.start()
+        for p in ps:
+            p.join()
+        i+= PROCESSORS
+    l = list(l)
+    return np.mean(l) ,np.std(l)
 
 if __name__ == '__main__':
     g = nx.erdos_renyi_graph(100,0.5)
@@ -195,11 +216,11 @@ if __name__ == '__main__':
         s=list(x)
         val,_=runIC_repeat(G=g, S=s, p=0.01, sample=1000)
         return val
-    S, obj=greedy(range(len(g)),budget,f_multi)
-    
+    # S, obj=greedy(range(len(g)),budget,f_multi)
     #T = runIC(g, S)
     #print(T)
-    infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
+    # infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
     # infl_mean, infl_std = runLT_repeat(g, S, l=0.01, sample=1000)
     # infl_mean, infl_std = runSC_repeat(g, S, d=0.5, sample=1000)
+    infl_mean, infl_std = parallel_influence(g, S, times=10, sample=10)
     print(infl_mean, infl_std)
