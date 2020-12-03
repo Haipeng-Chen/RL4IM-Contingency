@@ -6,6 +6,7 @@ from baseline import *
 from multiprocessing import Process, Manager
 
 import pdb
+import time
 
 def runIC (G, S, p=0.01 ):
     ''' Runs independent cascade model.
@@ -196,7 +197,7 @@ if __name__ == '__main__':
     g = nx.erdos_renyi_graph(100,0.5)
     #for u,v in g.edges():
         #g[u][v]['p'] = 0.02
-    budget=3
+    budget=40
     S = random.sample(g.nodes, budget)
     def f_multi(x):
         s=list(x)
@@ -205,8 +206,10 @@ if __name__ == '__main__':
     # S, obj=greedy(range(len(g)),budget,f_multi)
     #T = runIC(g, S)
     #print(T)
-    # infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
-    # infl_mean, infl_std = runLT_repeat(g, S, l=0.01, sample=1000)
-    # infl_mean, infl_std = runSC_repeat(g, S, d=0.5, sample=1000)
-    infl_mean, infl_std = parallel_influence(g, S, times=10, sample=10)
+    start_time = time.time()
+    #infl_mean, infl_std = runIC_repeat(g, S, p=0.1, sample=1000)
+    #infl_mean, infl_std = runLT_repeat(g, S, l=0.01, sample=1000)
+    infl_mean, infl_std = runSC_repeat(g, S, d=1, sample=1000)
+    #infl_mean, infl_std = parallel_influence(g, S, times=10, sample=10)
+    print('runtime is: ', time.time()-start_time)
     print(infl_mean, infl_std)
