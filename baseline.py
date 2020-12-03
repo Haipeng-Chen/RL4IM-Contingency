@@ -1,8 +1,9 @@
 # baselines for influence maximization, potentially include maxdegree, greedy and adaptive greedy
 import numpy as np
 import networkx as nx
+import operator
 
-def greedy(items, budget, f):
+def lazy_greedy(items, budget, f):
     '''
     Generic greedy algorithm to select budget number of items to maximize f.
     
@@ -18,6 +19,7 @@ def greedy(items, budget, f):
     S  = set()
     #greedy selection of K nodes
     while len(S) < budget:
+        print(len(S))
         val, u = heapq.heappop(upper_bounds)
         new_total = f(S.union(set([u])))
         new_val =  new_total - starting_objective
@@ -27,9 +29,24 @@ def greedy(items, budget, f):
             starting_objective = new_total
         else:
             heapq.heappush(upper_bounds, (-new_val, u))
-    return S, starting_objective
+    return list(S), starting_objective
 
-def adaptive_greedy(items, budget, f, S_prev=[]):
+def greedy(items, budget, f):
+    S = set()
+    for i in range(budget):
+        print(i)
+        Inf = dict() # influence for nodes not in S
+        for v in items:
+            if v not in S:
+                SS=S.copy()
+                Inf[v] = f(SS.union(set([v])))
+        # print(max(Inf.items(), key=operator.itemgetter(1)))
+        u, val = max(Inf.items(), key=operator.itemgetter(1))
+        starting_objective =val
+        S.add(u)
+    return list(S), starting_objective
+
+def lazy_adaptive_greedy(items, budget, f, S_prev=[]):
     '''
     Generic greedy algorithm to select budget number of items to maximize f.
     
@@ -57,6 +74,23 @@ def adaptive_greedy(items, budget, f, S_prev=[]):
         else:
             heapq.heappush(upper_bounds, (-new_val, u))
     return list(action), starting_objective
+
+def adaptive_greedy(items, budget, f, S_prev=[]):
+    action=set()
+    S = set(S_prev)
+    for i in range(budget):
+        Inf = dict() # influence for nodes not in S
+        for v in items:
+            if v not in S:
+                SS=S.copy()
+                Inf[v] = f(SS.union(set([v])))
+        # print(max(Inf.items(), key=operator.itemgetter(1)))
+        u, val = max(Inf.items(), key=operator.itemgetter(1))
+        starting_objective =val
+        S.add(u)
+        action.add(u)
+    return list(action), starting_objective
+
 
 def max_degree(feasible_actions, G, budget):
     degree=nx.degree(G)
