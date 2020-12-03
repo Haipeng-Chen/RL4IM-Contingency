@@ -86,8 +86,6 @@ def runLT (G, S, l=0.01 ):
     while(Any_Change): #loop until no newly infected
         Any_Change=False
         Current_influence=np.zeros(len(G)) #Reset influence
-        for v in T:
-            Current_influence[v]=1 #Set influenced nodes above threshold
         for u in T: 
             for v in G[u]:
                 if v not in T: 
@@ -111,8 +109,6 @@ def runSC (G, S, d=1 ):
         Any_Change=False
         Current_influence=np.zeros(len(G))
         Neighbor_fraction=np.zeros(len(G)) #fraction of neighbor got infected
-        for v in T:
-            Current_influence[v]=1
         for v in range(len(G)):
             if v not in T:
                 for u in G[v]:
@@ -122,6 +118,7 @@ def runSC (G, S, d=1 ):
                 Current_influence[v]=(Neighbor_fraction[v]/(2*d))**2/((Neighbor_fraction[v]/(2*d))**2+(1-Neighbor_fraction[v]/d)**2)
                 if Current_influence[v]>Threshold[v]:
                     T.append(v)
+                    Any_Change=True 
     return T
 
 
