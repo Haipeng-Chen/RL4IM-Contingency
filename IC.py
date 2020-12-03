@@ -6,7 +6,6 @@ from baseline import *
 from multiprocessing import Process, Manager
 
 import pdb
-import time
 
 def runIC (G, S, p=0.01 ):
     ''' Runs independent cascade model.
@@ -92,13 +91,9 @@ def runLT (G, S, l=0.01 ):
             for v in G[u]:
                 if v not in T: 
                     Current_influence[v]+=l #Add influence to neighbor
-        NewT=[]
-        for v in range(len(G)):
-            if Current_influence[v]>Threshold[v]:
-                NewT.append(v)
-        if len(NewT)>len(T):#If some nodes are newly infected
-            T = deepcopy(NewT)
-            Any_Change=True#Set change to true
+                    if Current_influence[v]>Threshold[v]:#If some nodes are newly infected
+                        T.append(v)
+                        Any_Change=True#Set change to true            
     return T
 
 def runSC (G, S, d=1 ):
@@ -191,6 +186,8 @@ def influence_wrapper(l,G,S,sample):
 
 def parallel_influence(G, S, times=10, sample=1000,PROCESSORS=4):
     
+
+    
     l = Manager().list()
     processes = [Process(target=influence_wrapper, args=(l, G, S,sample)) for _ in range(times)]
     i=0
@@ -218,10 +215,8 @@ if __name__ == '__main__':
     # S, obj=greedy(range(len(g)),budget,f_multi)
     #T = runIC(g, S)
     #print(T)
-    start_time = time.time()
-    infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
+    # infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
     # infl_mean, infl_std = runLT_repeat(g, S, l=0.01, sample=1000)
     # infl_mean, infl_std = runSC_repeat(g, S, d=0.5, sample=1000)
-    #infl_mean, infl_std = parallel_influence(g, S, times=5, sample=200)
-    print('runtime: ', time.time()-start_time)
+    infl_mean, infl_std = parallel_influence(g, S, times=10, sample=10)
     print(infl_mean, infl_std)
