@@ -49,5 +49,14 @@
 #python env.py --graph_index 2 --cascade 'LT' --l  0.08 --q 1 --budget_ratio 0.06 --baseline 'ada_greedy' --num_simul 500 #added num_simul in env.step
 
 # Dec 01 00:38am 
-python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.06 --baseline 'ada_greedy' --num_simul 500 
+#python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.06 --baseline 'ada_greedy' --num_simul 500 
+
+# Dec 03 4.05pm
+#python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.1 --baseline 'maxdegree' --num_simul 500
+#python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.1 --baseline 'maxdegree' --num_simul 200
+python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.1 --baseline 'maxdegree' --num_simul 100
+
+
+
+
 

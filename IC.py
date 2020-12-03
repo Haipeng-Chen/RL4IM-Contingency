@@ -6,6 +6,7 @@ from baseline import *
 from multiprocessing import Process, Manager
 
 import pdb
+import time
 
 def runIC (G, S, p=0.01 ):
     ''' Runs independent cascade model.
@@ -190,8 +191,6 @@ def influence_wrapper(l,G,S,sample):
 
 def parallel_influence(G, S, times=10, sample=1000,PROCESSORS=4):
     
-
-    
     l = Manager().list()
     processes = [Process(target=influence_wrapper, args=(l, G, S,sample)) for _ in range(times)]
     i=0
@@ -219,8 +218,10 @@ if __name__ == '__main__':
     # S, obj=greedy(range(len(g)),budget,f_multi)
     #T = runIC(g, S)
     #print(T)
-    # infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
+    start_time = time.time()
+    infl_mean, infl_std = runIC_repeat(g, S, p=0.01, sample=1000)
     # infl_mean, infl_std = runLT_repeat(g, S, l=0.01, sample=1000)
     # infl_mean, infl_std = runSC_repeat(g, S, d=0.5, sample=1000)
-    infl_mean, infl_std = parallel_influence(g, S, times=10, sample=10)
+    #infl_mean, infl_std = parallel_influence(g, S, times=5, sample=200)
+    print('runtime: ', time.time()-start_time)
     print(infl_mean, infl_std)
