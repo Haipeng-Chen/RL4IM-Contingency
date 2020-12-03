@@ -110,27 +110,17 @@ def runSC (G, S, d=1 ):
         Any_Change=False
         Current_influence=np.zeros(len(G))
         Neighbor_fraction=np.zeros(len(G)) #fraction of neighbor got infected
-        
+        for v in T:
+            Current_influence[v]=1
         for v in range(len(G)):
             if v not in T:
                 for u in G[v]:
                     if u in T:
                         Neighbor_fraction[v]+=1
-        for v in range(len(G)):
-            Neighbor_fraction[v]/=len(G[v])
-        # Count fraction of neighbor, a bit ugly
-        for v in range(len(G)):
-            Current_influence[v]=(Neighbor_fraction[v]/(2*d))**2/((Neighbor_fraction[v]/(2*d))**2+(1-Neighbor_fraction[v]/d)**2)
-        for v in T:
-            Current_influence[v]=1
-        # Calculate current accumulated thrshold, bellow same as LT
-        NewT=[]
-        for v in range(len(G)):
-            if Current_influence[v]>Threshold[v]:
-                NewT.append(v)
-        if len(NewT)>len(T):
-            T = deepcopy(NewT)
-            Any_Change=True
+                Neighbor_fraction[v]/=len(G[v])
+                Current_influence[v]=(Neighbor_fraction[v]/(2*d))**2/((Neighbor_fraction[v]/(2*d))**2+(1-Neighbor_fraction[v]/d)**2)
+                if Current_influence[v]>Threshold[v]:
+                    T.append(v)
     return T
 
 
