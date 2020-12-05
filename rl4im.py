@@ -31,38 +31,23 @@ from gcn import NaiveGCN
 from env import NetworkEnv
 from baseline import *
 
-#Q2: Use NaiveGCN for now, change it later
 
-
-
-
+'''
 def is_fitted(sklearn_regressor):
     """Helper function to determine if a regression model from scikit-learn has
     ever been `fit`"""
     return hasattr(sklearn_regressor, 'n_outputs_')
 
+
 class FQI(object):
-    def __init__(self, graph, cascade='DIC', T=4, budget_ratio=0.1, propagate_p=0.1, l=0.05, q=0.5, regressor=None):
+    def __init__(self, graph, cascade='DIC', T=4, budget_ratio=0.1, propagate_p=0.1, l=0.05, d=1, q=0.5, regressor=None):
         """Initialize simulator and regressor. Can optionally pass a custom
         `regressor` model (which must implement `fit` and `predict` -- you can
         use this to try different models like linear regression or NNs)"""
-        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, q=q)
+        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, d=d, q=q)
         print('cascade model is: ', self.env.cascade)
         self.regressor = regressor or ExtraTreesRegressor()
-    
-    '''
-    def state_action(self, state, action):
-        #TODO: move it to DQN()
-        #the input action is a list of nodes, needs to first convert it into a 1xN ndarray 
-        #the output is a 4xN ndarray
-        state=state.copy()
-        action = action
-        np_action = np.zeros((1, self.env.N))
-        for n in action:
-            np_action[0][n]=1
-        state_action  = np.concatenate((state, np_action), axis=0)
-        return state_action 
-    '''
+'''
 
 class Memory:
     #for primary agent done is for the last main step, for sec agent done is for last sub-step (node) in the last main step
@@ -74,9 +59,13 @@ class Memory:
         self.done = done
 
 
-class DQN(FQI):
-    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, l=0.05, q=0.5, greedy_sample_size=500):
-        FQI.__init__(self, graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, q=q)
+class DQN():
+    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, l=0.05, d=1, q=0.5, greedy_sample_size=500):
+        #FQI.__init__(self, graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, d=d, q=q)
+        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, d=d, q=q)
+        print('cascade model is: ', self.env.cascade)
+        #self.regressor = regressor or ExtraTreesRegressor()
+
         self.feature_size = 4 
         #self.net = NaiveGCN(node_feature_size=self.feature_size)
         #self.optimizer = optim.Adam(self.net.parameters(), lr=lr_primary)
@@ -140,6 +129,7 @@ class DQN(FQI):
         return val
 
     def warm_start_actions(self, state, feasible_actions):
+        #TODO: add other warm start methods such as max_betweeness etc
         assert len(feasible_actions)>0
         presents = [i for i in range(len(state[0])) if state[0][i]==1]#####could be used in printing in fit_GCN
         p = np.random.rand()
@@ -150,8 +140,8 @@ class DQN(FQI):
             print('choosing random')
             action = list(np.random.choice(feasible_actions, self.env.budget))
         else:
-            print('choosing ada_greedy')
-            action, _ =  adaptive_greedy(feasible_actions,self.env.budget,self.f_multi,presents)
+            print('choosing lazy_ada_greedy')
+            action, _ =  lazy_adaptive_greedy(feasible_actions,self.env.budget,self.f_multi,presents)
         return action
             
     def policy(self, state, eps, eps_wstart=0):
@@ -401,6 +391,8 @@ def arg_parse():
                 help='influence propagation probability')
     parser.add_argument('--l', dest='l', type=float, default=0.05,
                 help='influence of each neighbor in LT cascade')
+    parser.add_argument('--d', dest='d', type=float, default=1,
+                help='d in SC cascade')
     parser.add_argument('--q', dest='q', type=float, default=1, 
                 help='probability of invited node being present')
     parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
@@ -438,6 +430,7 @@ if __name__ == '__main__':
     budget_ratio = args.budget_ratio
     propagate_p = args.propagate_p
     l = args.l
+    d = args.d
     q = args.q
     
     g, graph_name=get_graph(graph_index)
@@ -447,13 +440,13 @@ if __name__ == '__main__':
 
     start_time = time.time()
     if First_time:
-        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, q=q, greedy_sample_size=greedy_sample_size)
+        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, d=d, q=q, greedy_sample_size=greedy_sample_size)
         _ = model.fit_GCN(batch_option=batch_option, num_episodes=num_episodes,  max_eps=max_eps, min_eps=min_eps, 
                         discount=discount, eps_wstart=eps_wstart, logdir=logdir, eps_decay=eps_decay)
-        with open('Graph={}.pickle'.format(graph_name), 'wb') as f:
+        with open('models/{}.pkl'.format(graph_name), 'wb') as f:
             pickle.dump(model, f)
     else:
-        with open('Graph={}.pickle'.format(graph_name), 'rb') as f:
+        with open('models/{}.pkl'.format(graph_name), 'rb') as f:
             model = pickle.load(f) 
     cumulative_rewards = []
     end_time = time.time()
@@ -465,7 +458,7 @@ if __name__ == '__main__':
 
     [print() for _ in range(4)]
     print('testing')
-    for episode in range(50):
+    for episode in range(20):
         print('---------------------------------------------------------------')
         print('test episode: ', episode)
         S, A, R, _, _, cumulative_reward = model.run_episode_GCN(eps=0, discount=discount)

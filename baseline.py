@@ -3,6 +3,9 @@ import numpy as np
 import networkx as nx
 import operator
 
+import time
+import pdb 
+
 def lazy_greedy(items, budget, f):
     '''
     Generic greedy algorithm to select budget number of items to maximize f.
@@ -19,7 +22,7 @@ def lazy_greedy(items, budget, f):
     S  = set()
     #greedy selection of K nodes
     while len(S) < budget:
-        print(len(S))
+        #print(len(S))
         val, u = heapq.heappop(upper_bounds)
         new_total = f(S.union(set([u])))
         new_val =  new_total - starting_objective
@@ -34,7 +37,7 @@ def lazy_greedy(items, budget, f):
 def greedy(items, budget, f):
     S = set()
     for i in range(budget):
-        print(i)
+        #print(i)
         Inf = dict() # influence for nodes not in S
         for v in items:
             if v not in S:
@@ -62,6 +65,7 @@ def lazy_adaptive_greedy(items, budget, f, S_prev=[]):
     action=set()
     S  = set(S_prev)
     #greedy selection of K nodes
+    start = time.time()
     while len(action) < budget:
         val, u = heapq.heappop(upper_bounds)
         new_total = f(S.union(set([u])))
@@ -73,6 +77,8 @@ def lazy_adaptive_greedy(items, budget, f, S_prev=[]):
             starting_objective = new_total
         else:
             heapq.heappush(upper_bounds, (-new_val, u))
+    #print('runtime for finding one greedy action set is: ',time.time()-start)
+    #pdb.set_trace()
     return list(action), starting_objective
 
 def adaptive_greedy(items, budget, f, S_prev=[]):
@@ -90,7 +96,6 @@ def adaptive_greedy(items, budget, f, S_prev=[]):
         S.add(u)
         action.add(u)
     return list(action), starting_objective
-
 
 def max_degree(feasible_actions, G, budget):
     degree=nx.degree(G)

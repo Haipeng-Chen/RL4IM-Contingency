@@ -11,6 +11,8 @@ from IC import runLT_repeat
 from IC import runSC_repeat 
 from baseline import *
 
+import time
+
 class NetworkEnv(object):
     '''
     Environment for peer leader selection process of influence maximization
@@ -156,6 +158,7 @@ if __name__ == '__main__':
     num_simul = args.num_simul
     greedy_sample_size = args.greedy_sample_size
 
+    print('something is happening')
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
     path = 'graph_data/' + graph_name + '.txt'
@@ -175,7 +178,9 @@ if __name__ == '__main__':
         val = env.run_cascade(seeds=s, cascade=env.cascade, sample=greedy_sample_size)
         return val
 
-    episodes = 50
+    episodes = 20 
+    runtime1 = 0
+    runtime2 = 0
     for i in range(episodes):
         print('----------------------------------------------')
         print('episode: ', i)
@@ -183,24 +188,31 @@ if __name__ == '__main__':
         actions = []
         presents = []
         while(env.done == False):
+            start = time.time()
             if baseline == 'random':
                 action = random.sample(env.feasible_actions, env.budget) 
             elif baseline == 'maxdegree':
                 action = max_degree(env.feasible_actions, env.G, env.budget)
             elif baseline == 'ada_greedy':
-                action, _ =adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
+                action, _ = adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
+            elif baseline == 'lazy_ada_greedy':
+                action, _ = lazy_adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
             else:
                 assert(False)
+            runtime1 += time.time()-start
+            start = time.time()
             actions.append(action)
             invited = action
             present, _ = env.transition(action)
             presents+=present
+            runtime2 += time.time()-start
             env.step(action)
         rewards.append(env.reward) 
         print('reward: ', env.reward)
         print('invited: ', actions)
         print('present: ', presents)
     print('average reward for {} policy is: {}, std is: {}'.format(baseline, np.mean(rewards), np.std(rewards)))
+    print('total runtime for action selection is: {}, total runtime for env.step is: {}'.format(runtime1, runtime2))
 
 
 

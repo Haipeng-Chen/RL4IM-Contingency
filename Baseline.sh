@@ -54,7 +54,32 @@
 # Dec 03 4.05pm
 #python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.1 --baseline 'maxdegree' --num_simul 500
 #python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.1 --baseline 'maxdegree' --num_simul 200
-python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.1 --baseline 'maxdegree' --num_simul 100
+#python env.py --graph_index 2 --cascade 'SC' --q 1 --budget_ratio 0.1 --baseline 'maxdegree' --num_simul 100
+
+# Dec 04 1.54pm
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.1 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 20
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.1 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 50
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.1 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 100
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.1 --baseline 'random' --num_simul 1000; python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.1 --baseline 'maxdegree' --num_simul 1000
+
+# Dec 04 5.43pm
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.1 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 20 # changed it to normal adaptive greedy, previously ada_greey is lazy_aga_greedy
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.1 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 10
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.1 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 5
+
+
+# Dec 04 11:25pm
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 20 
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'lazy_ada_greedy' --num_simul 1000 --greedy_sample_size 20
+#python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'random' --num_simul 1000; python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'maxdegree' --num_simul 1000
+#python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 20 
+#python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'lazy_ada_greedy' --num_simul 1000 --greedy_sample_size 50
+python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'random' --num_simul 1000; python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'maxdegree' --num_simul 1000
+
+
+
+
+
 
 
 

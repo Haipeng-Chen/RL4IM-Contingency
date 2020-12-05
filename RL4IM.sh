@@ -25,6 +25,20 @@
 # Nov 30 11:26pm
 #python rl4im.py --graph_index 2 --cascade 'LT' --eps_decay 1 --eps_wstart 0.3 --propagate_p 0.1 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 100
 #python rl4im.py --graph_index 2 --cascade 'LT' --eps_decay 1 --eps_wstart 0.3 --propagate_p 0.1 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 500
-python rl4im.py --graph_index 2 --cascade 'SC' --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 100
+#python rl4im.py --graph_index 2 --cascade 'SC' --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 100
 
+# Dec 04 1:44pm 
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.1 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 20
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.1 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 100
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.1 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 50
 
+# Dec 04 3.22pm 
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.1 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 256 --greedy_sample_size 50 # increase prob of choosing maxdegree in warm_start
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.1 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 50 
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.1 --eps_decay 1 --eps_wstart 0.1 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 50
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.1 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 50 # warnstartL 0.33; 0.33; 0.33
+
+# Dec 04 5.26pm
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.1 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 256 --greedy_sample_size 50 #change wstart prob back to 0.25, 0.25, 0.5
+#python rl4im.py --graph_index 2 --cascade 'SC' --budget_ratio 0.05 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 50 
+python rl4im.py --graph_index 3 --cascade 'SC' --budget_ratio 0.05 --eps_decay 1 --eps_wstart 0.3 --q 1 --use_cuda 1 --batch_size 128 --greedy_sample_size 50
