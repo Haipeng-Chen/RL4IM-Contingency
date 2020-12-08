@@ -31,10 +31,11 @@ class NetworkEnv(object):
     note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     
-    def __init__(self, G, T=4, budget_ratio=0.06, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000):
+    def __init__(self, G, T=1, budget=20, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000):
         self.G = G
         self.N = len(self.G)
-        self.budget = math.floor(self.N * budget_ratio/T)
+        #self.budget = math.floor(self.N * budget_ratio/T)
+        self.budget = budget
         self.A = nx.to_numpy_matrix(self.G)  
         self.propagate_p = propagate_p
         self.l = l
@@ -121,10 +122,12 @@ def arg_parse():
                 help='baseline, could be ada_greedy, random, maxdegree')
     parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
                 help='graph index')
-    parser.add_argument('--T', dest='T', type=int, default=4,
+    parser.add_argument('--T', dest='T', type=int, default=1,
                 help='time horizon')
-    parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06,
-                help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
+    #parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06,
+                #help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
+    parser.add_argument('--budget', dest='budget', type=int, default=20,
+                help='budget at each main step')
 
     parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
                 help='cascade model')
@@ -149,7 +152,8 @@ if __name__ == '__main__':
     graph_index = args.graph_index 
     baseline = args.baseline
     T = args.T
-    budget_ratio = args.budget_ratio
+    #budget_ratio = args.budget_ratio
+    budget = args.budget
     cascade = args.cascade
     propagate_p = args.propagate_p
     l = args.l
@@ -158,7 +162,6 @@ if __name__ == '__main__':
     num_simul = args.num_simul
     greedy_sample_size = args.greedy_sample_size
 
-    print('something is happening')
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
     path = 'graph_data/' + graph_name + '.txt'
@@ -168,7 +171,7 @@ if __name__ == '__main__':
     print('selected graph: ', graph_name)
     print('#nodes: ', len(G.nodes))
     print('#edges: ', len(G.edges))
-    env=NetworkEnv(G=G, T=T, budget_ratio=budget_ratio, propagate_p = propagate_p, l=l, d=d, q=q, cascade=cascade)
+    env=NetworkEnv(G=G, T=T, budget=budget, propagate_p = propagate_p, l=l, d=d, q=q, cascade=cascade)
 
 
     rewards = []
@@ -178,7 +181,7 @@ if __name__ == '__main__':
         val = env.run_cascade(seeds=s, cascade=env.cascade, sample=greedy_sample_size)
         return val
 
-    episodes = 20 
+    episodes = 5 
     runtime1 = 0
     runtime2 = 0
     for i in range(episodes):
@@ -211,6 +214,8 @@ if __name__ == '__main__':
         print('reward: ', env.reward)
         print('invited: ', actions)
         print('present: ', presents)
+    print()
+    print('----------------------------------------------')
     print('average reward for {} policy is: {}, std is: {}'.format(baseline, np.mean(rewards), np.std(rewards)))
     print('total runtime for action selection is: {}, total runtime for env.step is: {}'.format(runtime1, runtime2))
 

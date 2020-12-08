@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -n 1               # Number of cores (-n)
 #SBATCH -N 1                # Ensure that all cores are on one Node (-N)
-#SBATCH -t 0-2:00          # Runtime in D-HH:MM, minimum of 10 minutes
+#SBATCH -t 0-10:00          # Runtime in D-HH:MM, minimum of 10 minutes
 #SBATCH -p tambe_gpu     # Partition to submit to
 #SBATCH --mem=1000           # Memory pool for all cores (see also --mem-per-cpu)
 #SBATCH -o output/baseline_%j.out  # File to which STDOUT will be written, %j inserts jobid
@@ -74,12 +74,32 @@
 #python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'random' --num_simul 1000; python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'maxdegree' --num_simul 1000
 #python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 20 
 #python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'lazy_ada_greedy' --num_simul 1000 --greedy_sample_size 50
-python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'random' --num_simul 1000; python env.py --graph_index 2 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'maxdegree' --num_simul 1000
+#python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'random' --num_simul 1000; 
 
 
+# Dec 05 10:20pm
+#python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'maxdegree' --num_simul 1000
+#python env.py --graph_index 3 --cascade 'SC' --l 0.1 --propagate_p 0.3 --d 1 --q 1 --budget_ratio 0.05 --baseline 'lazy_ada_greedy' --num_simul 1000 --greedy_sample_size 50
 
+# not run Dec 05
+#python env.py --graph_index 2 --cascade 'DIC' --l 0.1 --propagate_p 0.2 --d 1 --q 1 --budget_ratio 0.05 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 20 
+#python env.py --graph_index 2 --cascade 'DIC' --l 0.1 --propagate_p 0.2 --d 1 --q 1 --budget_ratio 0.05 --baseline 'lazy_ada_greedy' --num_simul 1000 --greedy_sample_size 50
+#python env.py --graph_index 2 --cascade 'DIC' --l 0.1 --propagate_p 0.2 --d 1 --q 1 --budget_ratio 0.05 --baseline 'random' --num_simul 1000; python env.py --graph_index 2 --cascade 'DIC' --l 0.1 --propagate_p 0.2 --d 1 --q 1 --budget_ratio 0.05 --baseline 'maxdegree' --num_simul 1000
 
+# Dec 06 10.25pm important baseline setting
+#python env.py --graph_index 2 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.2 --d 1 --q 1 --budget 20 --baseline 'lazy_ada_greedy' --num_simul 1000 --greedy_sample_size 50
+#python env.py --graph_index 2 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.2 --d 1 --q 1 --budget 20 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 50
+#python env.py --graph_index 2 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.2 --d 1 --q 1 --budget 20 --baseline 'ada_greedy' --num_simul 1000; python env.py --graph_index 2 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.2 --d 1 --q 1 --budget 20 --baseline 'maxdegree' --num_simul 1000 
 
+# Dec 06 10.30pm  
+#python env.py --graph_index 3 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.1 --d 1 --q 1 --budget 20 --baseline 'lazy_ada_greedy' --num_simul 1000 --greedy_sample_size 50
+#python env.py --graph_index 3 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.1 --d 1 --q 1 --budget 20 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 50
+#python env.py --graph_index 3 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.1 --d 1 --q 1 --budget 20 --baseline 'random' --num_simul 1000; python env.py --graph_index 3 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.1 --d 1 --q 1 --budget 20 --baseline 'maxdegree' --num_simul 1000
+
+# Dec 06 10.33pm
+#python env.py --graph_index 4 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.1 --d 1 --q 1 --budget 20 --baseline 'lazy_ada_greedy' --num_simul 1000 --greedy_sample_size 25
+#python env.py --graph_index 4 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.1 --d 1 --q 1 --budget 20 --baseline 'ada_greedy' --num_simul 1000 --greedy_sample_size 25
+python env.py --graph_index 4 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.1 --d 1 --q 1 --budget 20 --baseline 'random' --num_simul 1000; python env.py --graph_index 4 --cascade 'DIC' --T 1 --l 0.1 --propagate_p 0.1 --d 1 --q 1 --budget 20 --baseline 'maxdegree' --num_simul 1000
 
 
 

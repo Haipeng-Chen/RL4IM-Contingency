@@ -32,22 +32,6 @@ from env import NetworkEnv
 from baseline import *
 
 
-'''
-def is_fitted(sklearn_regressor):
-    """Helper function to determine if a regression model from scikit-learn has
-    ever been `fit`"""
-    return hasattr(sklearn_regressor, 'n_outputs_')
-
-
-class FQI(object):
-    def __init__(self, graph, cascade='DIC', T=4, budget_ratio=0.1, propagate_p=0.1, l=0.05, d=1, q=0.5, regressor=None):
-        """Initialize simulator and regressor. Can optionally pass a custom
-        `regressor` model (which must implement `fit` and `predict` -- you can
-        use this to try different models like linear regression or NNs)"""
-        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, d=d, q=q)
-        print('cascade model is: ', self.env.cascade)
-        self.regressor = regressor or ExtraTreesRegressor()
-'''
 
 class Memory:
     #for primary agent done is for the last main step, for sec agent done is for last sub-step (node) in the last main step
@@ -60,11 +44,9 @@ class Memory:
 
 
 class DQN():
-    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget_ratio=0.1, propagate_p=0.1, l=0.05, d=1, q=0.5, greedy_sample_size=500):
-        #FQI.__init__(self, graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, d=d, q=q)
-        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, d=d, q=q)
+    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget=20, propagate_p=0.1, l=0.05, d=1, q=0.5, greedy_sample_size=500, save_freq=100):
+        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget=budget, propagate_p=propagate_p, l=l, d=d, q=q)
         print('cascade model is: ', self.env.cascade)
-        #self.regressor = regressor or ExtraTreesRegressor()
 
         self.feature_size = 4 
         #self.net = NaiveGCN(node_feature_size=self.feature_size)
@@ -85,6 +67,7 @@ class DQN():
         self.memory_size = memory_size 
         self.batch_size = batch_size
         self.greedy_sample_size = greedy_sample_size
+        self.save_freq = save_freq
 
     def state_action(self, state, action):
         #TODO: move it to DQN()
@@ -133,15 +116,26 @@ class DQN():
         assert len(feasible_actions)>0
         presents = [i for i in range(len(state[0])) if state[0][i]==1]#####could be used in printing in fit_GCN
         p = np.random.rand()
-        if p<0.25:
+        if p<0:
             print('choosing max degree')
             action = max_degree(feasible_actions, self.env.G, self.env.budget) 
+        elif p<0.01:
+            print('choosing random')
+            action = list(np.random.choice(feasible_actions, self.env.budget))
+        else:
+            print('choosing lazy_ada_greedy')
+            action, _ =  adaptive_greedy(feasible_actions,self.env.budget,self.f_multi,presents)
+        '''
+        if p<0.25:
+            print('choosing max degree')
+            action = max_degree(feasible_actions, self.env.G, self.env.budget)
         elif p<0.5:
             print('choosing random')
             action = list(np.random.choice(feasible_actions, self.env.budget))
         else:
             print('choosing lazy_ada_greedy')
             action, _ =  lazy_adaptive_greedy(feasible_actions,self.env.budget,self.f_multi,presents)
+        '''
         return action
             
     def policy(self, state, eps, eps_wstart=0):
@@ -236,7 +230,7 @@ class DQN():
             writer = SummaryWriter(os.path.join('runs', logdir))
         best_value=0
         loss_list = []
-        cumulative_reward_list = [] 
+        #cumulative_reward_list = [] 
         #true_cumulative_reward_list = [] 
         for episode in range(num_episodes):
             print('---------------------------------------------------------------')
@@ -315,10 +309,13 @@ class DQN():
                 writer.add_scalar('secondary loss', loss.item(), episode)
                 loss.backward()
                 self.sec_optimizer.step()
+                torch.cuda.empty_cache()
             if len(self.sec_replay_memory) > self.memory_size:
                 self.sec_replay_memory = self.sec_replay_memory[-self.memory_size:]
-            cumulative_reward_list.append(cumulative_reward)
-        return cumulative_reward_list
+            if (episode+1)%self.save_freq == 0:
+                with open('models/{}_{}.pkl'.format(graph_name,episode), 'wb') as f:
+                    pickle.dump(model, f)
+
     
     
     def run_episode_GCN(self, eps=0.1, eps_wstart=0, discount=0.99):
@@ -379,14 +376,18 @@ def arg_parse():
                 help='minium probability for exploring random action')
     parser.add_argument('--discount', dest='discount', type=float, default=1.0,
                 help='discount factor')
+    parser.add_argument('--save_freq', dest='save_freq', type=int, default=100,
+                help='frequency (in episodes) of saving models')
 
     #____________________environment args--------------------------------------------
     parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
                 help='graph index')
     parser.add_argument('--T', dest='T', type=int, default=4, 
                 help='time horizon')
-    parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06, 
-                help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
+    #parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06, 
+                #help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
+    parser.add_argument('--budget', dest='budget', type=int, default=20,
+                help='budget at each main step')
     parser.add_argument('--propagate_p', dest='propagate_p', type=float, default=0.1, 
                 help='influence propagation probability')
     parser.add_argument('--l', dest='l', type=float, default=0.05,
@@ -424,10 +425,12 @@ if __name__ == '__main__':
     cascade = args.cascade
     num_episodes = args.num_episodes
     greedy_sample_size = args.greedy_sample_size
+    save_freq = args.save_freq
 
     graph_index = args.graph_index
     T = args.T
-    budget_ratio = args.budget_ratio
+    #budget_ratio = args.budget_ratio
+    budget = args.budget
     propagate_p = args.propagate_p
     l = args.l
     d = args.d
@@ -440,13 +443,13 @@ if __name__ == '__main__':
 
     start_time = time.time()
     if First_time:
-        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget_ratio=budget_ratio, propagate_p=propagate_p, l=l, d=d, q=q, greedy_sample_size=greedy_sample_size)
-        _ = model.fit_GCN(batch_option=batch_option, num_episodes=num_episodes,  max_eps=max_eps, min_eps=min_eps, 
+        model=DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget=budget, propagate_p=propagate_p, l=l, d=d, q=q, greedy_sample_size=greedy_sample_size, save_freq=save_freq)
+        model.fit_GCN(batch_option=batch_option, num_episodes=num_episodes,  max_eps=max_eps, min_eps=min_eps, 
                         discount=discount, eps_wstart=eps_wstart, logdir=logdir, eps_decay=eps_decay)
-        with open('models/{}.pkl'.format(graph_name), 'wb') as f:
-            pickle.dump(model, f)
+        #with open('models/{}.pkl'.format(graph_name), 'wb') as f:
+            #pickle.dump(model, f)
     else:
-        with open('models/{}.pkl'.format(graph_name), 'rb') as f:
+        with open('models/{}_{}.pkl'.format(graph_name, num_episodes-1), 'rb') as f:
             model = pickle.load(f) 
     cumulative_rewards = []
     end_time = time.time()
@@ -458,7 +461,7 @@ if __name__ == '__main__':
 
     [print() for _ in range(4)]
     print('testing')
-    for episode in range(20):
+    for episode in range(5):
         print('---------------------------------------------------------------')
         print('test episode: ', episode)
         S, A, R, _, _, cumulative_reward = model.run_episode_GCN(eps=0, discount=discount)
