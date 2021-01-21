@@ -1,10 +1,12 @@
 # baselines for influence maximization, potentially include maxdegree, greedy and adaptive greedy
+import pdb 
+import time
+
+import operator
 import numpy as np
 import networkx as nx
-import operator
 
-import time
-import pdb 
+
 
 def lazy_greedy(items, budget, f):
     '''
@@ -34,6 +36,7 @@ def lazy_greedy(items, budget, f):
             heapq.heappush(upper_bounds, (-new_val, u))
     return list(S), starting_objective
 
+
 def greedy(items, budget, f):
     S = set()
     for i in range(budget):
@@ -48,6 +51,7 @@ def greedy(items, budget, f):
         starting_objective =val
         S.add(u)
     return list(S), starting_objective
+
 
 def lazy_adaptive_greedy(items, budget, f, S_prev=[]):
     '''
@@ -81,6 +85,7 @@ def lazy_adaptive_greedy(items, budget, f, S_prev=[]):
     #pdb.set_trace()
     return list(action), starting_objective
 
+
 def adaptive_greedy(items, budget, f, S_prev=[]):
     action=set()
     S = set(S_prev)
@@ -96,6 +101,7 @@ def adaptive_greedy(items, budget, f, S_prev=[]):
         S.add(u)
         action.add(u)
     return list(action), starting_objective
+
 
 def max_degree(feasible_actions, G, budget):
     degree=nx.degree(G)

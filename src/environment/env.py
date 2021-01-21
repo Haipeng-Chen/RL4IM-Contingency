@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import networkx as nx
 import math
@@ -5,11 +6,11 @@ import random
 import argparse
 #from influence import influence, parallel_influence
 
-from IC import runIC_repeat
-from IC import runDIC_repeat
-from IC import runLT_repeat
-from IC import runSC_repeat 
-from baseline import *
+from src.IC import runIC_repeat
+from src.IC import runDIC_repeat
+from src.IC import runLT_repeat
+from src.IC import runSC_repeat 
+from src.agent.baseline import *
 
 import time
 
@@ -164,8 +165,7 @@ if __name__ == '__main__':
 
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
-    path = 'graph_data/' + graph_name + '.txt'
-    G = nx.read_edgelist(path, nodetype=int)
+    G = nx.read_edgelist(os.path.join('data', 'graph_data', graph_name + '.txt'), nodetype=int)
     mapping = dict(zip(G.nodes(),range(len(G))))
     G = nx.relabel_nodes(G,mapping)
     print('selected graph: ', graph_name)

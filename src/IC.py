@@ -1,12 +1,15 @@
-from copy import deepcopy
-import random
-import networkx as nx
-import numpy as np
-from baseline import *
-from multiprocessing import Process, Manager
-
 import pdb
 import time
+import random
+
+import numpy as np
+import networkx as nx
+
+from multiprocessing import Process, Manager
+from copy import deepcopy
+
+from src.agent.baseline import *
+
 
 def runIC (G, S, p=0.01 ):
     ''' Runs independent cascade model.

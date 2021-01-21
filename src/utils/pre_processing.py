@@ -6,6 +6,7 @@ import seaborn as sns
 from expts.gendata import gen_sbm
 from expts.gengraph import random_sbm
 
+
 #code for graph analysis
 def analyze_graph():
     data_path = 'data/rand_sbm'
@@ -25,6 +26,7 @@ def analyze_graph():
             node_number.append(len(graph.nodes))
             f.close()
     print(node_number)
+
 
 def visualize_graph():
     #data_path = "data/mammal/rob.pkl"
@@ -68,6 +70,7 @@ def combine_graph():
         with open(new_data_path,'wb') as f:
             pk.dump(graph, f)
             f.close()
+
 
 def generate_graph(num=10,n=500, c=5, p_w=0.02, p_b=0.005, std=20, output_file="data/rand_sbm/rand_sbm"):
 

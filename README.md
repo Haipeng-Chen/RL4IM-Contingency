@@ -1,8 +1,11 @@
-default command lines:
+Default command lines:
 
-python env.py --baseline 'random' --cascade 'DIC'
+```python
+python main.py
+```
 
-python RL_Belief_main.py --cascade 'DIC' --eps_decay True
+and 
 
-
-# TODO 2021年01月20日 Use COLGE and this env to run experiments
+```python
+python -m src.environment.env --baseline 'random' --cascade 'DIC'
+```
