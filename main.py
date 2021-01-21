@@ -24,6 +24,7 @@ from torch_geometric.nn import GCNConv, GraphConv, SAGEConv, GatedGraphConv
 
 from src.agent.dqn import DQN
 from src.network.gcn import NaiveGCN
+from src.environment.graph import Graph
 from src.environment.env import NetworkEnv
 from src.agent.baseline import lazy_greedy, greedy, lazy_adaptive_greedy, adaptive_greedy, max_degree
 
@@ -41,10 +42,11 @@ class Memory:
 def get_graph(graph_index):
     graph_list = ['test_graph', 'Hospital', 'India', 'Exhibition', 'Flu', 'irvine', 'Escorts', 'Epinions']
     graph_name = graph_list[graph_index]
-    G = nx.read_edgelist(os.path.join('data', 'graph_data', graph_name + '.txt'), nodetype=int)
-    mapping = dict(zip(G.nodes(),range(len(G))))
-    g = nx.relabel_nodes(G,mapping)
-    return g, graph_name
+    g = nx.read_edgelist(os.path.join('data', 'graph_data', graph_name + '.txt'), nodetype=int)
+    G = Graph.create_graph(g)
+    mapping = dict(zip(G.nodes(), range(len(G))))
+    g = nx.relabel_nodes(G.g, mapping)
+    return G, g, graph_name
 
 
 def arg_parse():
@@ -136,7 +138,7 @@ if __name__ == '__main__':
     d = args.d
     q = args.q
     
-    g, graph_name = get_graph(graph_index)
+    G, g, graph_name = get_graph(graph_index)
     print('chosen graph: ', graph_name)
     print('#nodes: ', len(g.nodes))
     print('#edges: ', len(g.edges))
