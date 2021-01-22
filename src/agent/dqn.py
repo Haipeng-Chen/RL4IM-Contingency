@@ -28,6 +28,16 @@ from src.environment.env import NetworkEnv
 from src.agent.baseline import *
 
 
+class Memory:
+    #for primary agent done is for the last main step, for sec agent done is for last sub-step (node) in the last main step
+    def __init__(self, state, action, reward, next_state, done):
+        self.state = state
+        self.action = action
+        self.reward = reward
+        self.next_state = next_state
+        self.done = done
+
+
 class DQN:
     def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget=20, propagate_p=0.1, l=0.05, d=1, q=0.5, greedy_sample_size=500, save_freq=100):
         self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget=budget, propagate_p=propagate_p, l=l, d=d, q=q)
