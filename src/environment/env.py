@@ -1,10 +1,13 @@
 import os
-import numpy as np
-import networkx as nx
 import math
+import time
 import random
 import argparse
 #from influence import influence, parallel_influence
+
+import pulp
+import numpy as np
+import networkx as nx
 
 from src.IC import runIC_repeat
 from src.IC import runDIC_repeat
@@ -12,7 +15,6 @@ from src.IC import runLT_repeat
 from src.IC import runSC_repeat 
 from src.agent.baseline import *
 
-import time
 
 class NetworkEnv(object):
     '''
@@ -32,8 +34,9 @@ class NetworkEnv(object):
     note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     
-    def __init__(self, G, T=1, budget=20, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000):
+    def __init__(self, G, T=1, budget=20, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None):
         self.G = G
+        self.graphs = graphs
         self.N = len(self.G)
         #self.budget = math.floor(self.N * budget_ratio/T)
         self.budget = budget
@@ -49,13 +52,14 @@ class NetworkEnv(object):
         self.done = False
         self.reward = 0
         self.feasible_actions = list(range(self.N))
-        self.state=np.zeros((3, self.N)) 
+        self.state = np.zeros((3, self.N))
+        self.observation = self.state
         nx.set_node_attributes(self.G, 0, 'attr')
 
     def step(self, action):
         invited = action
         present, absent = self.transition(invited)
-        state=self.state.copy()
+        state = self.state.copy()
         for v in present:
             self.G.nodes[v]['attr']=1
             self.state[0][v]=1
@@ -78,8 +82,7 @@ class NetworkEnv(object):
             feasible_actions_cp = self.feasible_actions.copy()
             self.feasible_actions = [i for i in feasible_actions_cp if i not in invited]
             self.t += 1
-            
- 
+        
         return next_state, self.reward, self.done  #hp: revise 
     
     def run_cascade(self, seeds, cascade='IC', sample=1000):
@@ -106,15 +109,109 @@ class NetworkEnv(object):
         #[present.append(i) for i in invited if random.random() <= q]
         return present, absent
 
-
     def reset(self):
         self.A = nx.to_numpy_matrix(self.G)
         self.t = 0
         self.done = False
         self.reward = 0
-        self.state=np.zeros((3, self.N)) ########
+        self.state = np.zeros((3, self.N)) ########
+        self.observation = self.state
         self.feasible_actions = list(range(self.N))
         nx.set_node_attributes(self.G, 0, 'attr')
+
+    def observe(self):
+        """Returns the current observation that the agent can make
+                 of the environment, if applicable.
+        """
+        return self.observation
+
+
+class Environment(NetworkEnv):
+    def __init__(self, G, T=1, budget=20, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None, name='MVC'):
+        super().__init__(G=G, 
+                         T=T, 
+                         budget=budget, 
+                         propagate_p=propagate_p,
+                         l=l,
+                         d=d,
+                         q=q,
+                         cascade=cascade,
+                         num_simul=num_simul,
+                         graphs=graphs)
+        self.name = name
+        self.graph_init = G
+
+    def get_approx(self):
+        if self.name == "MVC":
+            cover_edge=[]
+            edges= list(self.graph_init.edges())
+            while len(edges) > 0:
+                edge = edges[np.random.choice(len(edges))]
+                cover_edge.append(edge[0])
+                cover_edge.append(edge[1])
+                to_remove=[]
+                for edge_ in edges:
+                    if edge_[0]==edge[0] or edge_[0]==edge[1]:
+                        to_remove.append(edge_)
+                    else:
+                        if edge_[1]==edge[1] or edge_[1]==edge[0]:
+                            to_remove.append(edge_)
+                for i in to_remove:
+                    edges.remove(i)
+            return len(cover_edge)
+
+        elif self.name=="MAXCUT":
+            return 1
+        else:
+            return 'you pass a wrong environment name'
+
+    def get_optimal_sol(self):
+        if self.name =="MVC":
+            x = list(range(self.graph_init.g.number_of_nodes()))
+            xv = pulp.LpVariable.dicts('is_opti', x,
+                                       lowBound=0,
+                                       upBound=1,
+                                       cat=pulp.LpInteger)
+
+            mdl = pulp.LpProblem("MVC", pulp.LpMinimize)
+            mdl += sum(xv[k] for k in xv)
+            for edge in self.graph_init.edges():
+                mdl += xv[edge[0]] + xv[edge[1]] >= 1, "constraint :" + str(edge)
+            mdl.solve()
+
+            #print("Status:", pulp.LpStatus[mdl.status])
+            optimal=0
+            for x in xv:
+                optimal += xv[x].value()
+                #print(xv[x].value())
+            return optimal
+
+        elif self.name=="MAXCUT":
+            x = list(range(self.graph_init.g.number_of_nodes()))
+            e = list(self.graph_init.edges())
+            xv = pulp.LpVariable.dicts('is_opti', x,
+                                       lowBound=0,
+                                       upBound=1,
+                                       cat=pulp.LpInteger)
+            ev = pulp.LpVariable.dicts('ev', e,
+                                       lowBound=0,
+                                       upBound=1,
+                                       cat=pulp.LpInteger)
+
+            mdl = pulp.LpProblem("MVC", pulp.LpMaximize)
+
+            mdl += sum(ev[k] for k in ev)
+
+            for i in e:
+                mdl+= ev[i] <= xv[i[0]]+xv[i[1]]
+
+            for i in e:
+                mdl+= ev[i]<= 2 -(xv[i[0]]+xv[i[1]])
+
+            #pulp.LpSolverDefault.msg = 1
+            mdl.solve()
+            # print("Status:", pulp.LpStatus[mdl.status])
+            return mdl.objective.value()
 
 
 def arg_parse():
@@ -147,8 +244,9 @@ def arg_parse():
 
     return parser.parse_args()
 
-if __name__ == '__main__':
 
+# THE FOLLOWING CODE ARE FOR TESTING
+if __name__ == '__main__':
     args = arg_parse()
     graph_index = args.graph_index 
     baseline = args.baseline
@@ -218,8 +316,3 @@ if __name__ == '__main__':
     print('----------------------------------------------')
     print('average reward for {} policy is: {}, std is: {}'.format(baseline, np.mean(rewards), np.std(rewards)))
     print('total runtime for action selection is: {}, total runtime for env.step is: {}'.format(runtime1, runtime2))
-
-
-
-
-

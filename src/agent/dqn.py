@@ -44,8 +44,28 @@ class Memory:
 
 
 class DQN:
-    def __init__(self, graph, use_cuda=1, cascade='IC', memory_size=4096, batch_size=128,  lr_primary=0.001, lr_secondary=0.001, T=4, budget=20, propagate_p=0.1, l=0.05, d=1, q=0.5, greedy_sample_size=500, save_freq=100):
-        self.env = NetworkEnv(G=graph, cascade=cascade, T=T, budget=budget, propagate_p=propagate_p, l=l, d=d, q=q)
+    def __init__(self, 
+                 graph, 
+                 use_cuda=1, 
+                 cascade='IC',
+                 memory_size=4096,
+                 batch_size=128,
+                 lr_primary=0.001,
+                 lr_secondary=0.001,
+                 T=4, budget=20,
+                 propagate_p=0.1,
+                 l=0.05,
+                 d=1,
+                 q=0.5,
+                 greedy_sample_size=500,
+                 save_freq=100, 
+                 env_config=None):
+
+        assert env_config is not None, ValueError('env_config should be a dict')
+        
+        self.env_config = env_config
+        
+        self.env = self.env_config['env']
         print('cascade model is: ', self.env.cascade)
 
         self.feature_size = 4 
@@ -245,11 +265,11 @@ class DQN:
             print('---------------------------------------------------------------')
             print('train episode: ', episode)
             if eps_decay:
-                eps=max(max_eps-0.005*episode, min_eps)
-                eps_wstart=max(eps_wstart-0.005, 0)
+                eps = max(max_eps-0.005*episode, min_eps)
+                eps_wstart = max(eps_wstart-0.005, 0)
             else:
-                eps=min_eps
-                eps_wstart=min_eps
+                eps = min_eps
+                eps_wstart = min_eps
             print('eps in this episode is: ', eps)
             print('eps_wstart in this episode is: ', eps_wstart)
             S, A, R, NextS, D, cumulative_reward = self.run_episode_GCN(eps=eps,eps_wstart=eps_wstart, discount=discount)
@@ -267,6 +287,7 @@ class DQN:
                 #new_memory.append(Memory(S[t], A[t], R[t], NextS[t], D[t]))
                 sta = S[t].copy()
                 for i in range(int(self.env.budget)):
+                    st = time.time()
                     old_sta = sta.copy()
                     #rew=float(self.predict_rewards(sta, act, netid='primary')[0]) #this could leads to high bias; maybe try it later
                     done = False
@@ -284,6 +305,9 @@ class DQN:
                         rew = R[horizon-1]
                         done = True
                     sec_new_memory.append(Memory(old_sta, [A[t][i]], rew, next_sta, done))
+                    
+                    print(f'[INFO] Horizon: {t}/{horizon}, budget: {i}/{self.env.budget}, sec: {(time.time()-st):.2f}')
+
             self.sec_replay_memory += sec_new_memory
 
             #----------------------------update Q---------------------------------
@@ -331,7 +355,8 @@ class DQN:
         cumulative_reward = 0
         a=0
         self.env.reset()
-        for t in range(self.env.T): 
+        for t in tqdm(range(self.env.T)):
+            st = time.time()
             state = self.env.state.copy()
             S.append(state)
             action = self.policy(state, eps, eps_wstart)
@@ -341,4 +366,5 @@ class DQN:
             NextS.append(next_state)
             D.append(done)
             cumulative_reward += reward * (discount**t)
+            print(f">>>> Current Episode: A: {A}, R: {R}, Sec: {(time.time()-st):.2f}")
         return S, A, R, NextS, D, cumulative_reward
