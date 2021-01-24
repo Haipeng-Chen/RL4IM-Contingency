@@ -36,3 +36,6 @@ class Graph:
 
     def adj(self):
         return nx.adjacency_matrix(self.g)
+
+    def __len__(self):
+        return len(self.g)

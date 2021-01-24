@@ -29,22 +29,12 @@ from src.environment.env import NetworkEnv
 from src.agent.baseline import lazy_greedy, greedy, lazy_adaptive_greedy, adaptive_greedy, max_degree
 
 
-class Memory:
-    #for primary agent done is for the last main step, for sec agent done is for last sub-step (node) in the last main step
-    def __init__(self, state, action, reward, next_state, done):
-        self.state = state
-        self.action = action
-        self.reward = reward
-        self.next_state = next_state
-        self.done = done
-
-
 def get_graph(graph_index):
     graph_list = ['test_graph', 'Hospital', 'India', 'Exhibition', 'Flu', 'irvine', 'Escorts', 'Epinions']
     graph_name = graph_list[graph_index]
     g = nx.read_edgelist(os.path.join('data', 'graph_data', graph_name + '.txt'), nodetype=int)
     G = Graph.create_graph(g)
-    mapping = dict(zip(G.nodes(), range(len(G))))
+    mapping = dict(zip(g.nodes(), range(len(g))))
     g = nx.relabel_nodes(G.g, mapping)
     return G, g, graph_name
 
@@ -145,9 +135,27 @@ if __name__ == '__main__':
 
     start_time = time.time()
     if First_time:
-        model = DQN(graph=g, use_cuda=use_cuda, memory_size=memory_size, batch_size=batch_size, cascade=cascade, T=T, budget=budget, propagate_p=propagate_p, l=l, d=d, q=q, greedy_sample_size=greedy_sample_size, save_freq=save_freq)
-        model.fit_GCN(batch_option=batch_option, num_episodes=num_episodes,  max_eps=max_eps, min_eps=min_eps, 
-                        discount=discount, eps_wstart=eps_wstart, logdir=logdir, eps_decay=eps_decay)
+        model = DQN(graph=g, 
+                    use_cuda=use_cuda, 
+                    memory_size=memory_size, 
+                    batch_size=batch_size, 
+                    cascade=cascade, 
+                    T=T, 
+                    budget=budget, 
+                    propagate_p=propagate_p, 
+                    l=l, 
+                    d=d, 
+                    q=q, 
+                    greedy_sample_size=greedy_sample_size, 
+                    save_freq=save_freq)
+        model.fit_GCN(batch_option=batch_option,
+                      num_episodes=num_episodes,
+                      max_eps=max_eps, min_eps=min_eps,
+                      discount=discount,
+                      eps_wstart=eps_wstart,
+                      logdir=logdir,
+                      graph_name=graph_name,
+                      eps_decay=eps_decay)
         #with open('models/{}.pkl'.format(graph_name), 'wb') as f:
             #pickle.dump(model, f)
     else:

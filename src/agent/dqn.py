@@ -28,6 +28,11 @@ from src.environment.env import NetworkEnv
 from src.agent.baseline import *
 
 
+def save_model(model, file_path):
+    with open(file_path, 'wb') as f:
+        pickle.dump(model, f)
+
+
 class Memory:
     #for primary agent done is for the last main step, for sec agent done is for last sub-step (node) in the last main step
     def __init__(self, state, action, reward, next_state, done):
@@ -218,7 +223,16 @@ class DQN:
         batch_loss = self.loss_fn(batch_prediction, batch_target)
         return batch_loss
 
-    def fit_GCN(self, batch_option='random', num_episodes=100, max_eps=0.3, min_eps=0.1, eps_decay=False, eps_wstart=0.1, discount=1, logdir=None):  
+    def fit_GCN(self,
+                batch_option='random', 
+                num_episodes=100, 
+                max_eps=0.3, 
+                min_eps=0.1, 
+                eps_decay=False, 
+                eps_wstart=0.1, 
+                discount=1,
+                graph_name='',
+                logdir=None):
         if logdir == None:
             writer = SummaryWriter()
         else:
@@ -227,7 +241,7 @@ class DQN:
         loss_list = []
         #cumulative_reward_list = [] 
         #true_cumulative_reward_list = [] 
-        for episode in range(num_episodes):
+        for episode in tqdm(range(num_episodes)):
             print('---------------------------------------------------------------')
             print('train episode: ', episode)
             if eps_decay:
@@ -305,12 +319,13 @@ class DQN:
                 loss.backward()
                 self.sec_optimizer.step()
                 torch.cuda.empty_cache()
+            
             if len(self.sec_replay_memory) > self.memory_size:
                 self.sec_replay_memory = self.sec_replay_memory[-self.memory_size:]
-            if (episode+1)%self.save_freq == 0:
-                with open('models/{}_{}.pkl'.format(graph_name,episode), 'wb') as f:
-                    pickle.dump(model, f)
-    
+            
+            if (episode+1) % self.save_freq == 0:
+                save_model(self, 'models/{}_{}.pkl'.format(graph_name, episode))
+
     def run_episode_GCN(self, eps=0.1, eps_wstart=0, discount=0.99):
         S, A, R, NextS, D = [], [], [], [], []
         cumulative_reward = 0
