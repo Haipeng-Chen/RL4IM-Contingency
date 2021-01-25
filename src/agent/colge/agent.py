@@ -94,16 +94,16 @@ class DQAgent:
         if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens,adj_tens) = self.get_sample()
-            target = reward_tens + self.gamma *(1-done_tens) * torch.max(self.model(observation_tens, adj_tens) + observation_tens * (-1e5), dim=1)[0]
+            target = reward_tens + self.gamma *(1-done_tens) * torch.max(self.model(observation_tens, adj_tens), dim=1)[0]
             target_f = self.model(last_observation_tens, adj_tens)
             target_p = target_f.clone()
-            target_f[range(self.minibatch_length),action_tens,:] = target
+            target_f[range(self.minibatch_length), action_tens, :] = target
             loss = self.criterion(target_p, target_f)
 
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
-            #print(self.t, loss)
+            print(f"[INFO] model update: t: {self.t}, loss: {loss}")
 
             #self.epsilon = self.eps_end + max(0., (self.eps_start- self.eps_end) * (self.eps_step - self.t) / self.eps_step)
             if self.epsilon_ > self.epsilon_min:
@@ -138,7 +138,7 @@ class DQAgent:
         adj_tens = torch.from_numpy(np.expand_dims(adj_tens.astype(int), axis=0)).type(torch.FloatTensor)
 
         for last_observation_, action_, reward_, observation_, done_, games_ in minibatch[-self.minibatch_length + 1:]:
-            last_observation_tens=torch.cat((last_observation_tens,last_observation_))
+            last_observation_tens = torch.cat((last_observation_tens, last_observation_))
             action_tens = torch.cat((action_tens, torch.Tensor([action_]).type(torch.LongTensor)))
             reward_tens = torch.cat((reward_tens, torch.Tensor([[reward_]])))
             observation_tens = torch.cat((observation_tens, observation_))

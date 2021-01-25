@@ -35,11 +35,15 @@ class Runner:
 
                     for i in range(1, self.environment.T+1):
                         state = self.environment.state.copy()
-                        action = self.agent.act(th.from_numpy(state).float(), 
+                        action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
                                                 feasible_actions=self.environment.feasible_actions.copy())
-                        next_state, reward, done = self.environment.step(action=action)
+                        next_state, reward, done = self.environment.step(action=[action])
+
+                        # learning the model
+                        self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], action, reward, done)
 
                         cumul_reward += reward
+                        print(f"[INFO] Epoch: {epoch}, Step: {i}, Reward: {reward}")
                         if self.verbose:
                             # print(" ->       observation: {}".format(obs))
                             # print(" ->            action: {}".format(act))
@@ -47,25 +51,25 @@ class Runner:
                             # print(" -> cumulative reward: {}".format(cumul_reward))
                             if done:
                                 #solution from baseline algorithm
-                                approx_sol = self.environment.get_approx()
+                                # approx_sol = self.environment.get_approx()
 
-                                #optimal solution
-                                optimal_sol = self.environment.get_optimal_sol()
+                                # #optimal solution
+                                # optimal_sol = self.environment.get_optimal_sol()
 
                                 # print cumulative reward of one play, it is actually the solution found by the NN algorithm
                                 print(" ->    Terminal event: cumulative rewards = {}".format(cumul_reward))
 
-                                #print optimal solution
-                                print(" ->    Optimal solution = {}".format(optimal_sol))
+                                # #print optimal solution
+                                # print(" ->    Optimal solution = {}".format(optimal_sol))
 
-                                #we add in a list the solution found by the NN algorithm
-                                list_cumul_reward.append(-cumul_reward)
+                                # #we add in a list the solution found by the NN algorithm
+                                # list_cumul_reward.append(-cumul_reward)
 
-                                #we add in a list the ratio between the NN solution and the optimal solution
-                                list_optimal_ratio.append(cumul_reward/(optimal_sol))
+                                # #we add in a list the ratio between the NN solution and the optimal solution
+                                # list_optimal_ratio.append(cumul_reward/(optimal_sol))
 
-                                #we add in a list the ratio between the NN solution and the baseline solution
-                                list_aprox_ratio.append(cumul_reward/(approx_sol))
+                                # #we add in a list the ratio between the NN solution and the baseline solution
+                                # list_aprox_ratio.append(cumul_reward/(approx_sol))
 
                         if done:
                             break
