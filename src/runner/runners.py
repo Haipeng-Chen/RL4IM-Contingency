@@ -1,15 +1,20 @@
+import os
 import time
 
 import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
-
+from src.utils.os_utils import generate_id
 
 class Runner:
-    def __init__(self, environment, agent, verbose=False):
+    def __init__(self, environment, agent, verbose=True):
         self.environment = environment
         self.agent = agent
         self.verbose = verbose
+        path = os.path.join(os.getcwd(), 'results')
+        os.makedirs(path, exist_ok=True)
+        self.results_path = os.path.join(path, generate_id(path))
+        os.makedirs(self.results_path, exist_ok=True)
 
     def step(self):
         # observation = self.environment.observe().clone()
@@ -53,9 +58,9 @@ class Runner:
 
                         # learning the model
                         self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
-
                         cumul_reward += reward
                         print(f"[INFO] Epoch: {epoch}, Step: {i}, Reward: {reward}")
+                        
                         if self.verbose:
                             # print(" ->       observation: {}".format(obs))
                             # print(" ->            action: {}".format(act))
@@ -69,13 +74,14 @@ class Runner:
                                 # optimal_sol = self.environment.get_optimal_sol()
 
                                 # print cumulative reward of one play, it is actually the solution found by the NN algorithm
-                                print("Cumulative rewards: {}".format(cumul_reward))
+
+                                print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}")
 
                                 # #print optimal solution
                                 # print(" ->    Optimal solution = {}".format(optimal_sol))
 
                                 # #we add in a list the solution found by the NN algorithm
-                                # list_cumul_reward.append(-cumul_reward)
+                                # 
 
                                 # #we add in a list the ratio between the NN solution and the optimal solution
                                 # list_optimal_ratio.append(cumul_reward/(optimal_sol))
@@ -84,19 +90,14 @@ class Runner:
                                 # list_aprox_ratio.append(cumul_reward/(approx_sol))
 
                         if done:
+                            list_cumul_reward.append(cumul_reward)
                             break
-
-                np.savetxt('test_'+str(epoch_)+'.out', list_optimal_ratio, delimiter=',')
-                np.savetxt('test_approx_' + str(epoch_) + '.out', list_aprox_ratio, delimiter=',')
 
             if self.verbose:
                 print(" <=> Finished game number: {} <=>".format(g))
                 print("")
-
-        np.savetxt('test.out', list_cumul_reward, delimiter=',')
-        np.savetxt('opt_set.out', list_optimal_ratio, delimiter=',')
-        #plt.plot(list_cumul_reward)
-        #plt.show()
+        
+        np.savetxt(os.path.join(self.results_path, 'episode_rewards.out'), list_cumul_reward, delimiter=',')
         return cumul_reward
 
 
