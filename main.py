@@ -6,7 +6,7 @@ from src.tasks import REGISTRY as TASK_REGISTRY
 
 def parser():
     parser = argparse.ArgumentParser(description='Arguments of influence maximzation')
-    parser.add_argument('--task', type=str, default='basic_qdn', choices=['basic_qdn', 'colge'])
+    parser.add_argument('--task', type=str, default='colge', choices=['basic_qdn', 'colge'])
 
     return parser
 
