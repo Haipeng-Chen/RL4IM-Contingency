@@ -69,7 +69,7 @@ class Runner:
                                 # optimal_sol = self.environment.get_optimal_sol()
 
                                 # print cumulative reward of one play, it is actually the solution found by the NN algorithm
-                                print(" ->    Terminal event: cumulative rewards = {}".format(cumul_reward))
+                                print("Cumulative rewards: {}".format(cumul_reward))
 
                                 # #print optimal solution
                                 # print(" ->    Optimal solution = {}".format(optimal_sol))
