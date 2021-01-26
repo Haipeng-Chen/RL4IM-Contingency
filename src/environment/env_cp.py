@@ -1,33 +1,31 @@
-import numpy as np
-import networkx as nx
+import os
 import math
+import time
 import random
 import argparse
-import pulp
 #from influence import influence, parallel_influence
-import os
+
+import pulp
+import numpy as np
+import networkx as nx
+
 from src.IC import runIC_repeat
 from src.IC import runDIC_repeat
 from src.IC import runLT_repeat
-from src.IC import runSC_repeat
+from src.IC import runSC_repeat 
 from src.agent.baseline import *
 
-#from IC import runIC_repeat
-#from IC import runDIC_repeat
-#from IC import runLT_repeat
-#from IC import runSC_repeat 
-#from baseline import *
-
-import time
-import pdb
 
 class NetworkEnv(object):
     '''
     Environment for peer leader selection process of influence maximization
     
     we consider fully known and static graph first, will potentially extend to: 1) dynamic graph 2) unknown graph 3) influence at each step 4) ...
+
     G is a nx graph
+
     node 'attr': a trinary value where 0 is not-selected; 1 is selected and present; 2 is selected but not present; I am planning to put the state and action embedding outside environment 
+
     state is 3xN binary array, 
     -- 1st row: invited in previous main step and came (=1), 
     -- 2nd row: invited but not come (=1); 
@@ -36,7 +34,7 @@ class NetworkEnv(object):
     note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     
-    def __init__(self, G, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=250, graphs=None):
+    def __init__(self, G, T=1, budget=20, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None):
         self.G = G
         self.graphs = graphs
         self.N = len(self.G)
@@ -53,121 +51,39 @@ class NetworkEnv(object):
         self.t = 0
         self.done = False
         self.reward = 0
-        #self.feasible_actions = list(range(self.N))
-        self.state = np.zeros((3, self.N)) 
+        self.feasible_actions = list(range(self.N))
+        self.state = np.zeros((3, self.N))
         self.observation = self.state
         nx.set_node_attributes(self.G, 0, 'attr')
 
-    def step(self, i, pri_action, sec_action):
-        #pri_action is a list, sec_action is an int
-        #compute reward as marginal contribution of a node
-        print('time step: ', i)
-        if i == 1:
-            seeds = [sec_action]
-            #print('seeds are ', seeds)
-            self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-            #print('reward:', self.reward)
-            #pdb.set_trace()
-        else:
+    def step(self, action):
+        invited = action
+        present, absent = self.transition(invited)
+        state = self.state.copy()
+        for v in present:
+            self.G.nodes[v]['attr']=1
+            self.state[0][v]=1
+            #self.state[1][v]=0
+        for v in absent:
+            self.G.nodes[v]['attr']=2
+            #self.state[0][v]=0
+            self.state[1][v]=1
+        #self.state[2] = 0
+        if self.t == self.T-1:
             seeds = []
-            [seeds.append(v) for v in range(self.N) if (self.state[0][v]==1 or self.state[2][v]==1)] #I am treating state[2][v]==1 as q=1 TODO: change it to probabilistic
-            #print('seeds without {} are {}'.format(sec_action, seeds))
-            influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-            #print('influence without is ', influece_without)
-            seeds.append(sec_action)
-            #print('seeds with it  are ',seeds)
-            influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-            self.reward = influence_with - influece_without
-            #pdb.set_trace()
-
-        #update feasible actions
-        #print('feasible actions:',  self.feasible_actions)
-        #self.feasible_actions.remove(sec_action)
-        #print('feasible actions:',  self.feasible_actions)
-
-        #update next_state and done      
-        if i%self.budget == 0:
-        #a primary step
-            invited = pri_action
-            present, absent = self.transition(invited)
-            state=self.state.copy()
-            for v in present:
-                self.G.nodes[v]['attr']=1 #TODO: remove this?
-                self.state[0][v]=1
-            for v in absent:
-                self.G.nodes[v]['attr']=2
-                self.state[1][v]=1
-            self.state[2].fill(0)
-            if i == self.T:
-                #seeds = []
-                #[seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
-                #[seeds.append(v) for v in range(self.N) if self.state[0][v] == 1]
-                #self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-                next_state = None
-                self.done = True
-            else:
-                #self.reward = 0 
-                next_state = self.state.copy()
-                self.done = False
+            [seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
+            self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+            next_state = None
+            self.done = True
         else:
-        #a secondary step
-            pdb.set_trace()
-            self.state[2][sec_action]=1
+            self.reward = 0 #TODO: add an auxilliary reward to warm-start 
+            #Han Ching: One idea is to simulate the IM here with given seend.
             next_state = self.state.copy()
-            self.done = False
-
-        return next_state, self.reward, self.done
-            
-    
-   # def step(self, i, pri_action, sec_action):
-   #     #compute reward as marginal contribution of a node
-   #     seeds = []
-   #     [seeds.append(v) for v in range(self.N) if (self.state[0][v]==1 or self.state[2][v]==1)] #I am treating state[2][v]==1 as q=1 TODO: change it to probabilistic
-   #     influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-   #     seeds.append(sec_action)
-   #     influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-   #     self.reward = influence_with - influece_without
-
-   #     #update feasible actions
-   #     self.feasible_actions.remove(sec_action)
-
-   #     #update next_state and done      
-   #     if i == self.budget-1:
-   #     #a primary step
-   #         invited = pri_action
-   #         present, absent = self.transition(invited)
-   #         state=self.state.copy()
-   #         for v in present:
-   #             self.G.nodes[v]['attr']=1 #TODO: remove this?
-   #             self.state[0][v]=1
-   #         for v in absent:
-   #             self.G.nodes[v]['attr']=2
-   #             self.state[1][v]=1
-   #         #numpy.fill(self.state[2])
-   #         #TODO: assigne 0 values to all state[2]
-   #         if self.t == self.T-1:
-   #             #seeds = []
-   #             #[seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
-   #             #[seeds.append(v) for v in range(self.N) if self.state[0][v] == 1]
-   #             #self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-   #             next_state = None
-   #             self.done = True
-   #         else:
-   #             #self.reward = 0 
-   #             next_state = self.state.copy()
-   #             self.done = False
-   #             #self.feasible_actions.remove(sec_action)
-   #             #feasible_actions_cp = self.feasible_actions.copy()
-   #             #self.feasible_actions = [i for i in feasible_actions_cp if i not in invited]
-   #             self.t += 1
-   #     else:
-   #     #a secondary step
-   #         self.state[2][sec_action]=1
-   #         next_state = self.state.copy()
-   #         self.done = False
-   #         #self.feasible_actions.remove(sec_action) ########correct? 
-   #         
-   #     return next_state, self.reward, self.done  
+            feasible_actions_cp = self.feasible_actions.copy()
+            self.feasible_actions = [i for i in feasible_actions_cp if i not in invited]
+            self.t += 1
+        
+        return next_state, self.reward, self.done  #hp: revise 
     
     def run_cascade(self, seeds, cascade='IC', sample=1000):
         #print('running cascade')
@@ -193,7 +109,6 @@ class NetworkEnv(object):
         #[present.append(i) for i in invited if random.random() <= q]
         return present, absent
 
-
     def reset(self):
         self.A = nx.to_numpy_matrix(self.G)
         self.t = 0
@@ -201,14 +116,21 @@ class NetworkEnv(object):
         self.reward = 0
         self.state = np.zeros((3, self.N)) ########
         self.observation = self.state
-        #self.feasible_actions = list(range(self.N))
+        self.feasible_actions = list(range(self.N))
         nx.set_node_attributes(self.G, 0, 'attr')
+
+    def observe(self):
+        """Returns the current observation that the agent can make
+                 of the environment, if applicable.
+        """
+        return self.observation
+
 
 class Environment(NetworkEnv):
     def __init__(self, G, T=1, budget=20, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None, name='MVC'):
-        super().__init__(G=G,
-                         T=T,
-                         budget=budget,
+        super().__init__(G=G, 
+                         T=T, 
+                         budget=budget, 
                          propagate_p=propagate_p,
                          l=l,
                          d=d,
@@ -242,7 +164,6 @@ class Environment(NetworkEnv):
             return 1
         else:
             return 'you pass a wrong environment name'
-
 
     def get_optimal_sol(self):
         if self.name =="MVC":
@@ -323,9 +244,9 @@ def arg_parse():
 
     return parser.parse_args()
 
+
 # THE FOLLOWING CODE ARE FOR TESTING
 if __name__ == '__main__':
-
     args = arg_parse()
     graph_index = args.graph_index 
     baseline = args.baseline
@@ -342,8 +263,7 @@ if __name__ == '__main__':
 
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
-    path = 'graph_data/' + graph_name + '.txt'
-    G = nx.read_edgelist(path, nodetype=int)
+    G = nx.read_edgelist(os.path.join('data', 'graph_data', graph_name + '.txt'), nodetype=int)
     mapping = dict(zip(G.nodes(),range(len(G))))
     G = nx.relabel_nodes(G,mapping)
     print('selected graph: ', graph_name)

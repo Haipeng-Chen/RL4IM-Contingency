@@ -3,6 +3,7 @@ import time
 import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
+import pdb
 
 
 class Runner:
@@ -32,16 +33,28 @@ class Runner:
                     self.environment.reset()
                     self.agent.reset(g)  # g is zero
                     cumul_reward = 0.0
+                    pri_action = [ ]
+                    feasible_actions = list(range(self.environment.N))
 
                     for i in range(1, self.environment.T+1):
                         state = self.environment.state.copy()
-                        # TODO
-                        action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
-                                                feasible_actions=self.environment.feasible_actions.copy())
-                        next_state, reward, done = self.environment.step(action=[action])
+                        if (i-1)%self.environment.budget == 0:
+                            pri_action=[ ]
+                        print('time step: ', i)
+                        print('feasible actions:',  feasible_actions)    
+                        pdb.set_trace()
+                        #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
+                        #                        feasible_actions=self.environment.feasible_actions.copy())
+                        sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
+                                                feasible_actions=feasible_actions.copy())
+                        print('selected sec action:', sec_action)
+
+                        feasible_actions.remove(sec_action)
+                        pri_action.append(sec_action)
+                        next_state, reward, done = self.environment.step(i, pri_action, sec_action=sec_action)
 
                         # learning the model
-                        self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], action, reward, done)
+                        self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
 
                         cumul_reward += reward
                         print(f"[INFO] Epoch: {epoch}, Step: {i}, Reward: {reward}")

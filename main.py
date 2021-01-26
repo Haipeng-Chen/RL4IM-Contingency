@@ -13,5 +13,6 @@ def parser():
 
 if __name__ == '__main__':
     parser = parser()
-    task_runner = TASK_REGISTRY[copy.deepcopy(parser).parse_args().task]
+    #task_runner = TASK_REGISTRY[copy.deepcopy(parser).parse_args().task]
+    task_runner = TASK_REGISTRY[parser.parse_args().task]
     task_runner(parser, run_args=None)
