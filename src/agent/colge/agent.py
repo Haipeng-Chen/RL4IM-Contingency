@@ -11,6 +11,17 @@ import src.agent.colge.models as models
 from src.agent.colge.utils.config import load_model_config
 
 
+def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
+    assert init_v == 1, ValueError('Value Error')
+    assert 0 < final_v <= 1, ValueError('Value Error')
+    assert step_t >= 0, ValueError('Value Error')
+    assert decay_step > 0, ValueError('Decay Value Error')
+    
+    if step_t >= decay_step:
+        return final_v
+    return step_t * ((final_v - init_v)/float(decay_step)) + init_v
+
+
 class DQAgent:
     def __init__(self, graph, model, lr, bs, n_step):
 
@@ -81,13 +92,28 @@ class DQAgent:
         self.last_done=0
         self.iter=1
 
+        self.init_epsilon = 1.
+        self.final_epsilon = 0.01
+        self.curr_epsilon = self.init_epsilon
+        self.epislon_decay_steps = 100
+        self.global_t = 0
+
     def act(self, observation, feasible_actions):
-        if False:
-            return np.random.choice(feasible_actions)
+        if self.curr_epsilon > np.random.rand():
+            action = np.random.choice(feasible_actions)
         else:
             q_a = self.model(observation, self.adj)
             q_a = q_a.detach().numpy()
-            return np.where((q_a[0, :, 0] == np.max(q_a[0, :, 0][observation.numpy()[0, :, 0] == 0])))[0][0]
+            action = np.where((q_a[0, feasible_actions, 0] == 
+                            np.max(q_a[0, feasible_actions, 0][observation.numpy()[0, feasible_actions, 0] == 0])))[0][0]
+        
+        # Update epsilon
+        epsilon_decay(init_v=self.init_epsilon, 
+                      final_v=self.final_epsilon, 
+                      step_t=self.global_t, 
+                      decay_step=self.epislon_decay_steps)
+        self.global_t += 1
+        return action
 
     def reward(self, observation, action, reward,done):
         if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:

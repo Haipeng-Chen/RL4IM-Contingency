@@ -19,7 +19,7 @@ from src.agent.baseline import *
 #from baseline import *
 
 import time
-import pdb
+
 
 class NetworkEnv(object):
     '''
@@ -111,7 +111,6 @@ class NetworkEnv(object):
                 self.done = False
         else:
         #a secondary step
-            pdb.set_trace()
             self.state[2][sec_action]=1
             next_state = self.state.copy()
             self.done = False

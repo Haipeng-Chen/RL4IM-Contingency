@@ -3,7 +3,6 @@ import time
 import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
-import pdb
 
 
 class Runner:
@@ -42,7 +41,6 @@ class Runner:
                             pri_action=[ ]
                         print('time step: ', i)
                         print('feasible actions:',  feasible_actions)    
-                        pdb.set_trace()
                         #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
                         #                        feasible_actions=self.environment.feasible_actions.copy())
                         sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
