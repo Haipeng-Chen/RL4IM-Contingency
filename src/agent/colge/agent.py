@@ -82,7 +82,6 @@ class DQAgent:
         self.iter=1
 
     def act(self, observation, feasible_actions):
-        #if self.epsilon_ > np.random.rand():
         if False:
             return np.random.choice(feasible_actions)
         else:
@@ -94,6 +93,7 @@ class DQAgent:
         if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens,adj_tens) = self.get_sample()
+            # TODO further check
             target = reward_tens + self.gamma *(1-done_tens) * torch.max(self.model(observation_tens, adj_tens), dim=1)[0]
             target_f = self.model(last_observation_tens, adj_tens)
             target_p = target_f.clone()

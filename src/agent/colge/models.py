@@ -18,7 +18,7 @@ class S2V_QN_1(torch.nn.Module):
         self.len_post_pooling = len_post_pooling
         #self.mu_1 = torch.nn.Linear(1, embed_dim)
         #torch.nn.init.normal_(self.mu_1.weight,mean=0,std=0.01)
-        self.mu_1 = torch.nn.Parameter(torch.Tensor(3, embed_dim))
+        self.mu_1 = torch.nn.Parameter(torch.Tensor(3, embed_dim))  # [#batch, #nodes, 3]
         torch.nn.init.normal_(self.mu_1, mean=0, std=0.01)
         self.mu_2 = torch.nn.Linear(embed_dim, embed_dim,True)
         torch.nn.init.normal_(self.mu_2.weight, mean=0, std=0.01)
@@ -80,7 +80,7 @@ class S2V_QN_1(torch.nn.Module):
         q_1 = self.q_1(torch.matmul(xv.transpose(1,2), mu)).view(minibatch_size, 1, -1)
         q_1 = q_1.expand(minibatch_size, nbr_node, self.embed_dim * xv.shape[-1])
         q_2 = self.q_2(mu)
-        q_ = torch.cat((q_1, q_2), dim=-1)
+        q_ = torch.cat((q_1, q_2), dim=-1)  # 64+64/ 64,3*64
         
         if self.reg_hidden > 0:
             q_reg = self.q_reg(q_).clamp(0)

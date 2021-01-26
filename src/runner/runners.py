@@ -27,7 +27,7 @@ class Runner:
         list_aprox_ratio =[]
 
         for epoch_ in range(nbr_epoch):
-            for g in range(games):
+            for g in range(games):  # graph list
                 for epoch in range(5):
                     self.environment.reset()
                     self.agent.reset(g)  # g is zero
@@ -35,6 +35,7 @@ class Runner:
 
                     for i in range(1, self.environment.T+1):
                         state = self.environment.state.copy()
+                        # TODO
                         action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
                                                 feasible_actions=self.environment.feasible_actions.copy())
                         next_state, reward, done = self.environment.step(action=[action])
