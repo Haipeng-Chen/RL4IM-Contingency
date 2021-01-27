@@ -43,7 +43,7 @@ def custom_env_parser(parser: argparse.ArgumentParser):
     #-----------------------------------environment args-----------------------------------
     parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
                 help='graph index')
-    parser.add_argument('--T', dest='T', type=int, default=4, 
+    parser.add_argument('--T', dest='T', type=int, default=20, 
                 help='time horizon')
     #parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06, 
                 #help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
