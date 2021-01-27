@@ -57,15 +57,13 @@ class Runner:
                 if done:
                     episode_accumulated_rewards.append(accumulated_reward)
 
-        print(f'-----> episode_accumulated_rewards: {episode_accumulated_rewards}')
-        return episode_accumulated_rewards
+        return np.mean(episode_accumulated_rewards)
     
     def loop(self, games, nbr_epoch, max_iter):
 
         cumul_reward = 0.0
         list_cumul_reward=[]
-        list_optimal_ratio = []
-        list_aprox_ratio =[]
+        list_eval_reward=[]
 
         st = time.time()
         for epoch_ in range(nbr_epoch):
@@ -99,37 +97,20 @@ class Runner:
                         print(f"[INFO] Epoch: {epoch}, Step: {i}, Reward: {reward}")
                         
                         if done:
-                            #solution from baseline algorithm
-                            # approx_sol = self.environment.get_approx()
-
-                            # #optimal solution
-                            # optimal_sol = self.environment.get_optimal_sol()
-
-                            # print cumulative reward of one play, it is actually the solution found by the NN algorithm
 
                             print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Sec: {(time.time()-st):.2f}")
                             list_cumul_reward.append(cumul_reward)
-                            # #print optimal solution
-                            # print(" ->    Optimal solution = {}".format(optimal_sol))
-
-                            # #we add in a list the solution found by the NN algorithm
-                            # 
-
-                            # #we add in a list the ratio between the NN solution and the optimal solution
-                            # list_optimal_ratio.append(cumul_reward/(optimal_sol))
-
-                            # #we add in a list the ratio between the NN solution and the baseline solution
-                            # list_aprox_ratio.append(cumul_reward/(approx_sol))
                             break
                     
-                    if (epoch + 1) % 2 == 0:
-                        self.evaluate(num_episode=10)
+                    if (epoch + 1) % 5 == 0:
+                        list_eval_reward.append(self.evaluate(num_episode=10))
 
             if self.verbose:
                 print(" <=> Finished game number: {} <=>".format(g))
                 print("")
         
-        np.savetxt(os.path.join(self.results_path, 'episode_rewards.out'), list_cumul_reward, delimiter=',')
+        np.savetxt(os.path.join(self.results_path, 'train_episode_rewards.out'), list_cumul_reward, delimiter=',')
+        np.savetxt(os.path.join(self.results_path, 'eval_episode_rewards.out'), list_eval_reward, delimiter=',')
         return cumul_reward
 
 

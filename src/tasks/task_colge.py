@@ -20,7 +20,7 @@ def custom_arg_parse(parser: argparse.ArgumentParser):
     parser.add_argument('--model', type=str, default='S2V_QN_1', help='model name')
     parser.add_argument('--ngames', type=int, metavar='n', default=1, help='number of games to simulate')
     parser.add_argument('--niter', type=int, metavar='n', default='1000', help='max number of iterations per game')
-    parser.add_argument('--epoch', type=int, metavar='nepoch',default=25, help="number of epochs")
+    parser.add_argument('--epoch', type=int, metavar='nepoch', default=50, help="number of epochs")
     parser.add_argument('--lr', type=float, default=1e-4, help="learning rate")
     parser.add_argument('--bs', type=int, default=32, help="minibatch size for training")
     parser.add_argument('--n_step',type=int, default=3, help="n step in RL")
