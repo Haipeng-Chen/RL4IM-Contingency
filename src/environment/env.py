@@ -208,7 +208,7 @@ class NetworkEnv(object):
         nx.set_node_attributes(self.G, 0, 'attr')
 
 class Environment(NetworkEnv):
-    def __init__(self, G, T=1, budget=20, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None, name='MVC'):
+    def __init__(self, G, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=250, graphs=None, name='MVC'):
         super().__init__(G=G,
                          T=T,
                          budget=budget,
