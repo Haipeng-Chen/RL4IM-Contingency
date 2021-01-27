@@ -28,6 +28,38 @@ class Runner:
         # return observation, action, reward, done
         pass
 
+    def evaluate(self, num_episode=10):
+        """ Start evaluation """
+        episode_accumulated_rewards = []
+        feasible_actions = list(range(self.environment.N))
+        for episode in range(num_episode):
+            self.environment.reset()
+            self.agent.reset(0)  # g is zero
+            
+            accumulated_reward = 0
+            for i in range(1, self.environment.T+1):
+                state = self.environment.state.copy()
+                if (i-1) % self.environment.budget == 0:
+                    pri_action=[ ]
+                print('feasible actions:',  feasible_actions)    
+                #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
+                #                        feasible_actions=self.environment.feasible_actions.copy())
+                sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
+                                        feasible_actions=feasible_actions.copy())
+                print('selected sec action:', sec_action)
+
+                feasible_actions.remove(sec_action)
+                pri_action.append(sec_action)
+                next_state, reward, done = self.environment.step(i, pri_action, sec_action=sec_action)
+                
+                accumulated_reward += reward
+                
+                if done:
+                    episode_accumulated_rewards.append(accumulated_reward)
+
+        print(f'-----> episode_accumulated_rewards: {episode_accumulated_rewards}')
+        return episode_accumulated_rewards
+    
     def loop(self, games, nbr_epoch, max_iter):
 
         cumul_reward = 0.0
@@ -89,6 +121,9 @@ class Runner:
                             # #we add in a list the ratio between the NN solution and the baseline solution
                             # list_aprox_ratio.append(cumul_reward/(approx_sol))
                             break
+                    
+                    if (epoch + 1) % 2 == 0:
+                        self.evaluate(num_episode=10)
 
             if self.verbose:
                 print(" <=> Finished game number: {} <=>".format(g))
