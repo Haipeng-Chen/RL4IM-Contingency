@@ -7,14 +7,16 @@ import torch as th
 import matplotlib.pyplot as plt
 from src.utils.os_utils import generate_id
 
+
 class Runner:
-    def __init__(self, environment, agent, verbose=True):
+    def __init__(self, args, environment, agent, verbose=True):
         self.environment = environment
         self.agent = agent
         self.verbose = verbose
-        path = os.path.join(os.getcwd(), 'results')
-        os.makedirs(path, exist_ok=True)
-        self.results_path = os.path.join(path, generate_id(path))
+        self.args = args
+        self.path = self.args.results_dir
+        os.makedirs(self.path, exist_ok=True)
+        self.results_path = os.path.join(self.path, self.args.task, self.args.tag, generate_id(self.path))
         os.makedirs(self.results_path, exist_ok=True)
 
     def step(self):

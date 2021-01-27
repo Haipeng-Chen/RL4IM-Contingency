@@ -51,5 +51,5 @@ def run_colge(parser: argparse.ArgumentParser, run_args=None):
     env_class = Environment(G=g, cascade=args.cascade, T=args.T, budget=args.budget, 
                            propagate_p=args.propagate_p, l=args.l, d=args.d, q=args.q)
 
-    my_runner = runners.Runner(env_class, agent_class, args.verbose)
+    my_runner = runners.Runner(args, env_class, agent_class, args.verbose)
     final_reward = my_runner.loop(args.ngames, args.epoch, args.niter)
