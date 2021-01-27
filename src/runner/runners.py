@@ -1,6 +1,7 @@
 import os
 import time
 
+import tqdm
 import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
@@ -31,6 +32,7 @@ class Runner:
         list_optimal_ratio = []
         list_aprox_ratio =[]
 
+        st = time.time()
         for epoch_ in range(nbr_epoch):
             for g in range(games):  # graph list
                 for epoch in range(5):
@@ -42,7 +44,7 @@ class Runner:
 
                     for i in range(1, self.environment.T+1):
                         state = self.environment.state.copy()
-                        if (i-1)%self.environment.budget == 0:
+                        if (i-1) % self.environment.budget == 0:
                             pri_action=[ ]
                         print('time step: ', i)
                         print('feasible actions:',  feasible_actions)    
@@ -61,36 +63,28 @@ class Runner:
                         cumul_reward += reward
                         print(f"[INFO] Epoch: {epoch}, Step: {i}, Reward: {reward}")
                         
-                        if self.verbose:
-                            # print(" ->       observation: {}".format(obs))
-                            # print(" ->            action: {}".format(act))
-                            # print(" ->            reward: {}".format(rew))
-                            # print(" -> cumulative reward: {}".format(cumul_reward))
-                            if done:
-                                #solution from baseline algorithm
-                                # approx_sol = self.environment.get_approx()
-
-                                # #optimal solution
-                                # optimal_sol = self.environment.get_optimal_sol()
-
-                                # print cumulative reward of one play, it is actually the solution found by the NN algorithm
-
-                                print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}")
-
-                                # #print optimal solution
-                                # print(" ->    Optimal solution = {}".format(optimal_sol))
-
-                                # #we add in a list the solution found by the NN algorithm
-                                # 
-
-                                # #we add in a list the ratio between the NN solution and the optimal solution
-                                # list_optimal_ratio.append(cumul_reward/(optimal_sol))
-
-                                # #we add in a list the ratio between the NN solution and the baseline solution
-                                # list_aprox_ratio.append(cumul_reward/(approx_sol))
-
                         if done:
+                            #solution from baseline algorithm
+                            # approx_sol = self.environment.get_approx()
+
+                            # #optimal solution
+                            # optimal_sol = self.environment.get_optimal_sol()
+
+                            # print cumulative reward of one play, it is actually the solution found by the NN algorithm
+
+                            print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Sec: {(time.time()-st):.2f}")
                             list_cumul_reward.append(cumul_reward)
+                            # #print optimal solution
+                            # print(" ->    Optimal solution = {}".format(optimal_sol))
+
+                            # #we add in a list the solution found by the NN algorithm
+                            # 
+
+                            # #we add in a list the ratio between the NN solution and the optimal solution
+                            # list_optimal_ratio.append(cumul_reward/(optimal_sol))
+
+                            # #we add in a list the ratio between the NN solution and the baseline solution
+                            # list_aprox_ratio.append(cumul_reward/(approx_sol))
                             break
 
             if self.verbose:
