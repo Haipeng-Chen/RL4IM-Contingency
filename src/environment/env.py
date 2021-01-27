@@ -115,6 +115,10 @@ class NetworkEnv(object):
             next_state = self.state.copy()
             self.done = False
 
+        if i == self.T:  # i%self.budget == 0 may not True when i == self.T
+            next_state = None
+            self.done = True
+
         return next_state, self.reward, self.done
             
     
