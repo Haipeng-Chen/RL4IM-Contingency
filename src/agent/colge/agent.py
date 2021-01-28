@@ -12,7 +12,6 @@ from src.agent.colge.utils.config import load_model_config
 
 
 def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
-    assert init_v == 1, ValueError('Value Error')
     assert 0 < final_v <= 1, ValueError('Value Error')
     assert step_t >= 0, ValueError('Value Error')
     assert decay_step > 0, ValueError('Decay Value Error')

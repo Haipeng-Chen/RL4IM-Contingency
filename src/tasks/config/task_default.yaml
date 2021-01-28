@@ -1,0 +1,4 @@
+tag: "default"
+use_tensorboard: True
+use_cuda: True
+gpu_id: 0

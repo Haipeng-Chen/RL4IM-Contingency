@@ -14,7 +14,7 @@ class Runner:
         self.agent = agent
         self.verbose = verbose
         self.args = args
-        self.path = self.args.results_dir
+        self.path = self.args.local_results_path
         os.makedirs(self.path, exist_ok=True)
         self.results_path = os.path.join(self.path, self.args.task, self.args.tag)
         self.results_path = os.path.join(self.results_path, str(generate_id(self.results_path)))

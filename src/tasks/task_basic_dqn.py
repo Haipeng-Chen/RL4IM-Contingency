@@ -16,6 +16,7 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 
 from tqdm import tqdm, trange
+from types import SimpleNamespace
 from torch_geometric.nn import MessagePassing
 from sklearn.ensemble import ExtraTreesRegressor
 from torch.utils.tensorboard import SummaryWriter
@@ -39,72 +40,8 @@ def get_graph(graph_index):
     return G, g, graph_name
 
 
-def custom_env_parser(parser: argparse.ArgumentParser):
-    #-----------------------------------environment args-----------------------------------
-    parser.add_argument('--graph_index',dest='graph_index', type=int, default=2,
-                help='graph index')
-    parser.add_argument('--T', dest='T', type=int, default=20, 
-                help='time horizon')
-    #parser.add_argument('--budget_ratio', dest='budget_ratio', type=float, default=0.06, 
-                #help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
-    parser.add_argument('--budget', dest='budget', type=int, default=20,
-                help='budget at each main step')
-    parser.add_argument('--propagate_p', dest='propagate_p', type=float, default=0.1, 
-                help='influence propagation probability')
-    parser.add_argument('--l', dest='l', type=float, default=0.05,
-                help='influence of each neighbor in LT cascade')
-    parser.add_argument('--d', dest='d', type=float, default=1,
-                help='d in SC cascade')
-    parser.add_argument('--q', dest='q', type=float, default=1, 
-                help='probability of invited node being present')
-    parser.add_argument('--cascade',dest='cascade', type=str, default='IC',
-                help='cascade model')
-    parser.add_argument('--greedy_sample_size',dest='greedy_sample_size', type=int, default=500,
-                help='sample size for value estimation of greedy algorithms')
-    return parser
-
-
-def custom_arg_parser(parser: argparse.ArgumentParser):
-    parser.add_argument('--use_cuda',dest='use_cuda', type=int, default=1,
-                help='1 to use cuda 0 to not')
-    parser.add_argument('--logfile', dest='logfile', type=str, default='logs/log',
-                help='logfile for results ')
-    parser.add_argument('--logdir', dest='logdir', type=str, default=None,
-                help='log directory of tensorboard')
-    parser.add_argument('--First_time', dest='First_time', type=int , default=1,
-                help='Is this the first time training? 1 yes 0 no')
-    
-    #-----------------------------------hyper paras-----------------------------------
-    parser.add_argument('--batch_option', dest='batch_option', type=str, default='random',
-                help='option of batch sampling: random, last and mix')
-    parser.add_argument('--memory_size', dest='memory_size', type=int, default=4096,
-                help='replay memory size')
-    parser.add_argument('--batch_size', dest='batch_size', type=int, default=128,
-                help='batch size')
-    parser.add_argument('--eps_decay', dest='eps_decay', type= int, default=0, 
-                help='is epsilon decaying?')
-    parser.add_argument('--eps_wstart', dest='eps_wstart', type=float, default=0, 
-                help='epsilon for warm start')
-    parser.add_argument('--ws_baseline',dest='ws_baseline', type=str, default='ada_greedy',
-                help='baseline for warm_start')
-    parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=100,
-                help='number of training episodes')
-    parser.add_argument('--max_eps', dest='max_eps', type=float, default=0.3, 
-                help='maximum probability for exploring random action')
-    parser.add_argument('--min_eps', dest='min_eps', type=float, default=0.1, 
-                help='minium probability for exploring random action')
-    parser.add_argument('--discount', dest='discount', type=float, default=1.0,
-                help='discount factor')
-    parser.add_argument('--save_freq', dest='save_freq', type=int, default=100,
-                help='frequency (in episodes) of saving models')
-    
-    parser = custom_env_parser(parser)
-
-    return parser.parse_args()
-
-
-def basic_dqn(parser: argparse.ArgumentParser, run_args=None):
-    args = custom_arg_parser(parser)
+def basic_dqn(_run, config, _log, run_args=None):
+    args = SimpleNamespace(**config)
     
     logdir = args.logdir
     logfile = args.logfile
