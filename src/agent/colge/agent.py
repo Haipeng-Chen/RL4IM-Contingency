@@ -71,6 +71,18 @@ class DQAgent:
         self.T = 5
         self.t = 1
 
+        self.init_epsilon = 1.
+        self.final_epsilon = 0.01
+        self.curr_epsilon = self.init_epsilon
+        self.epislon_decay_steps = 100
+        self.global_t = 0
+
+        self.init_epsilon = 0.9
+        self.final_epsilon = 0.01
+        self.curr_epsilon = self.init_epsilon
+        self.epislon_decay_steps = 100
+        self.global_t = 0
+
     """
     p : embedding dimension
        
@@ -119,7 +131,7 @@ class DQAgent:
         if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens,adj_tens) = self.get_sample()
-            # TODO further check #TODO: revise this to consider feasible_actions
+            # TODO further check
             target = reward_tens + self.gamma *(1-done_tens) * torch.max(self.model(observation_tens, adj_tens), dim=1)[0]
             target_f = self.model(last_observation_tens, adj_tens)
             target_p = target_f.clone()
