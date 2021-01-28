@@ -16,7 +16,6 @@ from src.tasks.task_basic_dqn import custom_env_parser, get_graph
 
 def run_colge(_run, config, _log, run_args=None):
     args = SimpleNamespace(**config)
-
     graph_dic = {}
     #seed = 125
     #graph_one = graph.Graph(graph_type=args.graph_type, cur_n=20, p=0.15,m=4, seed=seed)

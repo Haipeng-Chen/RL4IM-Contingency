@@ -28,11 +28,12 @@ class Runner:
         # return observation, action, reward, done
         pass
 
-    def evaluate(self, num_episode=10):
+    def evaluate(self, num_episode=2):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = []
         feasible_actions = list(range(self.environment.N))
+        mode = 'test'
         for episode in range(num_episode):
             self.environment.reset()
             self.agent.reset(0)  # g is zero
@@ -42,14 +43,12 @@ class Runner:
                 state = self.environment.state.copy()
                 if (i-1) % self.environment.budget == 0:
                     pri_action=[ ]
-                #print('feasible actions:',  feasible_actions)    
-                #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
-                #                        feasible_actions=self.environment.feasible_actions.copy())
                 sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
-                                        feasible_actions=feasible_actions.copy())
-                #print('selected sec action:', sec_action)
-
+                                        feasible_actions=feasible_actions.copy(), mode=mode)
+                print('feasible actions: ',feasible_actions)
+                print('selected action: ', sec_action)
                 feasible_actions.remove(sec_action)
+                print('feasible actions: ',feasible_actions)
                 pri_action.append(sec_action)
                 next_state, reward, done = self.environment.step(i, pri_action, sec_action=sec_action)
                 
@@ -66,9 +65,7 @@ class Runner:
         cumul_reward = 0.0
         list_cumul_reward=[]
         list_eval_reward=[]
-        #print(f'games: {games}, nbr_epoch: {nbr_epoch}')
-        #ipdb.set_trace()
-
+        mode = 'train'
         st = time.time()
         for epoch_ in range(nbr_epoch):
             print('epoch_: {}'.format(epoch_)) 
@@ -86,13 +83,8 @@ class Runner:
                         state = self.environment.state.copy()
                         if (i-1) % self.environment.budget == 0:
                             pri_action=[ ]
-                        #print('time step: ', i)
-                        #print('feasible actions:',  feasible_actions)    
-                        #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
-                        #                        feasible_actions=self.environment.feasible_actions.copy())
                         sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
-                                                feasible_actions=feasible_actions.copy())
-                        #print('selected sec action:', sec_action)
+                                                feasible_actions=feasible_actions.copy(), mode=mode)
 
                         feasible_actions.remove(sec_action)
                         pri_action.append(sec_action)
