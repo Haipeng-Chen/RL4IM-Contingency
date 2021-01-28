@@ -61,7 +61,7 @@ class NetworkEnv(object):
     def step(self, i, pri_action, sec_action):
         #pri_action is a list, sec_action is an int
         #compute reward as marginal contribution of a node
-        print('time step: ', i)
+        #print('time step: ', i)
         if i == 1:
             seeds = [sec_action]
             #print('seeds are ', seeds)
