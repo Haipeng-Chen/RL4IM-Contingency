@@ -11,3 +11,5 @@ Other commands:
 ```python
 python -m src.environment.env --baseline 'random' --cascade 'DIC'
 ```
+
+Install `pytorch_sparse` via wheel files go to this site: https://github.com/rusty1s/pytorch_sparse
