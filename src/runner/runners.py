@@ -6,7 +6,7 @@ import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
 from src.utils.os_utils import generate_id
-
+import ipdb
 
 class Runner:
     def __init__(self, args, environment, agent, verbose=True):
@@ -30,6 +30,7 @@ class Runner:
 
     def evaluate(self, num_episode=10):
         """ Start evaluation """
+        print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = []
         feasible_actions = list(range(self.environment.N))
         for episode in range(num_episode):
@@ -41,12 +42,12 @@ class Runner:
                 state = self.environment.state.copy()
                 if (i-1) % self.environment.budget == 0:
                     pri_action=[ ]
-                print('feasible actions:',  feasible_actions)    
+                #print('feasible actions:',  feasible_actions)    
                 #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
                 #                        feasible_actions=self.environment.feasible_actions.copy())
                 sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
                                         feasible_actions=feasible_actions.copy())
-                print('selected sec action:', sec_action)
+                #print('selected sec action:', sec_action)
 
                 feasible_actions.remove(sec_action)
                 pri_action.append(sec_action)
@@ -56,6 +57,7 @@ class Runner:
                 
                 if done:
                     episode_accumulated_rewards.append(accumulated_reward)
+                    print('accumulated reward of episode {} is: {}'.format(i, accumulated_reward))
 
         return np.mean(episode_accumulated_rewards)
     
@@ -64,11 +66,16 @@ class Runner:
         cumul_reward = 0.0
         list_cumul_reward=[]
         list_eval_reward=[]
+        #print(f'games: {games}, nbr_epoch: {nbr_epoch}')
+        #ipdb.set_trace()
 
         st = time.time()
         for epoch_ in range(nbr_epoch):
+            print('epoch_: {}'.format(epoch_)) 
             for g in range(games):  # graph list
+                print('game: {}'.format(g))
                 for epoch in range(5):
+                    print('epoch: {}'.format(epoch))
                     self.environment.reset()
                     self.agent.reset(g)  # g is zero
                     cumul_reward = 0.0
@@ -79,13 +86,13 @@ class Runner:
                         state = self.environment.state.copy()
                         if (i-1) % self.environment.budget == 0:
                             pri_action=[ ]
-                        print('time step: ', i)
-                        print('feasible actions:',  feasible_actions)    
+                        #print('time step: ', i)
+                        #print('feasible actions:',  feasible_actions)    
                         #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
                         #                        feasible_actions=self.environment.feasible_actions.copy())
                         sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
                                                 feasible_actions=feasible_actions.copy())
-                        print('selected sec action:', sec_action)
+                        #print('selected sec action:', sec_action)
 
                         feasible_actions.remove(sec_action)
                         pri_action.append(sec_action)
@@ -94,11 +101,13 @@ class Runner:
                         # learning the model
                         self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
                         cumul_reward += reward
-                        print(f"[INFO] Epoch: {epoch}, Step: {i}, Reward: {reward}")
+                        print(f"[INFO] Step: {i}, Action: {sec_action}, Reward: {reward}")
                         
                         if done:
 
-                            print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Sec: {(time.time()-st):.2f}")
+                            print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
+                            print('--------------------------------------')
+                            print(' ')
                             list_cumul_reward.append(cumul_reward)
                             break
                     
