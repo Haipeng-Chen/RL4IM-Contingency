@@ -104,12 +104,6 @@ class DQAgent:
         self.last_done=0
         self.iter=1
 
-        self.init_epsilon = 1.
-        self.final_epsilon = 0.01
-        self.curr_epsilon = self.init_epsilon
-        self.epislon_decay_steps = 100
-        self.global_t = 0
-
     def act(self, observation, feasible_actions):
         if self.curr_epsilon > np.random.rand():
             action = np.random.choice(feasible_actions)
