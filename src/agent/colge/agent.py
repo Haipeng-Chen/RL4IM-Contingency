@@ -71,12 +71,6 @@ class DQAgent:
         self.T = 5
         self.t = 1
 
-        self.init_epsilon = 0.9
-        self.final_epsilon = 0.01
-        self.curr_epsilon = self.init_epsilon
-        self.epislon_decay_steps = 100
-        self.global_t = 0
-
     """
     p : embedding dimension
        
