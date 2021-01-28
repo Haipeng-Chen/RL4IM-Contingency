@@ -36,7 +36,7 @@ class NetworkEnv(object):
     note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     
-    def __init__(self, G, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=250, graphs=None):
+    def __init__(self, G, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None):
         self.G = G
         self.graphs = graphs
         self.N = len(self.G)

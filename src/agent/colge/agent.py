@@ -35,9 +35,9 @@ class DQAgent:
         self.lambd = 0.
         self.n_step=n_step
 
-        self.epsilon_=1
-        self.epsilon_min=0.02
-        self.discount_factor =0.999990
+        #self.epsilon_=1
+        #self.epsilon_min=0.02
+        #self.discount_factor =0.999990
         #self.eps_end=0.02
         #self.eps_start=1
         #self.eps_step=20000
@@ -72,16 +72,11 @@ class DQAgent:
         self.t = 1
 
         self.init_epsilon = 1.
-        self.final_epsilon = 0.01
+        self.final_epsilon = 0.1
         self.curr_epsilon = self.init_epsilon
-        self.epislon_decay_steps = 100
+        self.epislon_decay_steps = 500
         self.global_t = 0
 
-        self.init_epsilon = 0.9
-        self.final_epsilon = 0.01
-        self.curr_epsilon = self.init_epsilon
-        self.epislon_decay_steps = 100
-        self.global_t = 0
 
     """
     p : embedding dimension
@@ -104,27 +99,33 @@ class DQAgent:
         self.last_done=0
         self.iter=1
 
-        self.init_epsilon = 1.
-        self.final_epsilon = 0.01
-        self.curr_epsilon = self.init_epsilon
-        self.epislon_decay_steps = 100
-        self.global_t = 0
+        #self.init_epsilon = 1.
+        #self.final_epsilon = 0.01
+        #self.curr_epsilon = self.init_epsilon
+        #self.epislon_decay_steps = 100
+        #self.global_t = 0
 
-    def act(self, observation, feasible_actions):
-        if self.curr_epsilon > np.random.rand():
-            action = np.random.choice(feasible_actions)
-        else:
+    def act(self, observation, feasible_actions, mode):
+        if mode == 'test':
             q_a = self.model(observation, self.adj)
             q_a = q_a.detach().numpy()
             action = np.where((q_a[0, feasible_actions, 0] == 
                             np.max(q_a[0, feasible_actions, 0][observation.numpy()[0, feasible_actions, 0] == 0])))[0][0]
+        else:
+            if self.curr_epsilon > np.random.rand():
+                action = np.random.choice(feasible_actions)
+            else:
+                q_a = self.model(observation, self.adj)
+                q_a = q_a.detach().numpy()
+                action = np.where((q_a[0, feasible_actions, 0] == 
+                            np.max(q_a[0, feasible_actions, 0][observation.numpy()[0, feasible_actions, 0] == 0])))[0][0]
         
-        # Update epsilon
-        epsilon_decay(init_v=self.init_epsilon, 
-                      final_v=self.final_epsilon, 
-                      step_t=self.global_t, 
-                      decay_step=self.epislon_decay_steps)
-        self.global_t += 1
+            # Update epsilon
+            epsilon_decay(init_v=self.init_epsilon, 
+                          final_v=self.final_epsilon, 
+                          step_t=self.global_t, 
+                          decay_step=self.epislon_decay_steps)
+            self.global_t += 1
         return action
 
     def reward(self, observation, action, reward,done):
@@ -144,8 +145,8 @@ class DQAgent:
             print(f"[INFO] model update: t: {self.t}, loss: {loss}")
 
             #self.epsilon = self.eps_end + max(0., (self.eps_start- self.eps_end) * (self.eps_step - self.t) / self.eps_step)
-            if self.epsilon_ > self.epsilon_min:
-               self.epsilon_ *= self.discount_factor
+            #if self.epsilon_ > self.epsilon_min:
+               #self.epsilon_ *= self.discount_factor
         if self.iter>1:
             self.remember(self.last_observation, self.last_action, self.last_reward, observation.clone(),self.last_done*1)
 
