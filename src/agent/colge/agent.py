@@ -22,7 +22,7 @@ def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
 
 
 class DQAgent:
-    def __init__(self, graph, model, lr, bs, n_step):
+    def __init__(self, graph, model, lr, bs, n_step, args=None):
 
         self.graphs = graph
         self.embed_dim = 64
@@ -33,6 +33,7 @@ class DQAgent:
         self.gamma = 0.99
         self.lambd = 0.
         self.n_step=n_step
+        self.args = args
 
         #self.epsilon_=1
         #self.epsilon_min=0.02
@@ -70,8 +71,8 @@ class DQAgent:
         self.T = 5
         self.t = 1
 
-        self.init_epsilon = 1.
-        self.final_epsilon = 0.1
+        self.init_epsilon = 0.9
+        self.final_epsilon = 0.01
         self.curr_epsilon = self.init_epsilon
         self.epislon_decay_steps = 500
         self.global_t = 0
@@ -105,35 +106,42 @@ class DQAgent:
         #self.global_t = 0
 
     def act(self, observation, feasible_actions, mode):
+        # to cuda
+        if self.args.use_cuda:
+            observation = observation.cuda()
+            self.adj = self.adj.cuda()
+
         if mode == 'test':
             q_a = self.model(observation, self.adj)
-            q_a = q_a.detach().numpy()
+            q_a = q_a.detach().cpu().numpy()
             action = np.where((q_a[0, feasible_actions, 0] == 
-                            np.max(q_a[0, feasible_actions, 0][observation.numpy()[0, feasible_actions, 0] == 0])))[0][0]
+                            np.max(q_a[0, feasible_actions, 0][observation.cpu().numpy()[0, feasible_actions, 0] == 0])))[0][0]
         else:
             if self.curr_epsilon > np.random.rand():
                 action = np.random.choice(feasible_actions)
             else:
                 q_a = self.model(observation, self.adj)
-                q_a = q_a.detach().numpy()
+                q_a = q_a.detach().cpu().numpy()
                 action = np.where((q_a[0, feasible_actions, 0] == 
-                            np.max(q_a[0, feasible_actions, 0][observation.numpy()[0, feasible_actions, 0] == 0])))[0][0]
+                            np.max(q_a[0, feasible_actions, 0][observation.cpu().numpy()[0, feasible_actions, 0] == 0])))[0][0]
         
             # Update epsilon
-            epsilon_decay(init_v=self.init_epsilon, 
-                          final_v=self.final_epsilon, 
-                          step_t=self.global_t, 
-                          decay_step=self.epislon_decay_steps)
+            self.curr_epsilon = epsilon_decay(init_v=self.init_epsilon,
+                                              final_v=self.final_epsilon,
+                                              step_t=self.global_t,
+                                              decay_step=self.epislon_decay_steps)
             self.global_t += 1
         return action
 
     def reward(self, observation, action, reward,done):
+        loss = None
         if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens,adj_tens) = self.get_sample()
             # TODO further check
-            target = reward_tens + self.gamma *(1-done_tens) * torch.max(self.model(observation_tens, adj_tens), dim=1)[0]
-            target_f = self.model(last_observation_tens, adj_tens)
+            target = self.to_cuda(reward_tens) + self.gamma *(1-self.to_cuda(done_tens)) * \
+                torch.max(self.model(self.to_cuda(observation_tens), self.to_cuda(adj_tens)), dim=1)[0]
+            target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens))
             target_p = target_f.clone()
             target_f[range(self.minibatch_length), action_tens, :] = target
             loss = self.criterion(target_p, target_f)
@@ -163,6 +171,7 @@ class DQAgent:
         self.last_observation = observation.clone()
         self.last_reward = reward
         self.last_done = done
+        return loss
 
     def get_sample(self):
         minibatch = random.sample(self.memory_n, self.minibatch_length - 1)
@@ -208,9 +217,18 @@ class DQAgent:
                 else:
                     self.memory_n.append((step_init[0], step_init[1], cum_reward,self.memory[-1][-3], False, self.memory[-1][-1]))
 
-    def save_model(self):
-        cwd = os.getcwd()
-        torch.save(self.model.state_dict(), cwd+'/model.pt')
+    def save_model(self, save_path):
+        save_dir = os.path.join(save_path, str(self.global_t))
+        os.makedirs(save_dir, exist_ok=True)
+        torch.save(self.model.state_dict(), os.path.join(save_dir, 'model.pt'))
 
+    def cuda(self):
+        self.model.cuda()
+
+    def to_cuda(self, tensor):
+        if self.args.use_cuda:
+            return tensor.cuda()
+        else:
+            return tensor
 
 Agent = DQAgent

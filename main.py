@@ -106,7 +106,9 @@ def my_main(_run, _config, _log):
     args_sanity_check(config, _log)
 
     logger = Logger(_log)
-    
+
+    config['local_results_path'] = os.path.join(config['local_results_path'], _run._id)
+
     if config['use_tensorboard']:
         logger.setup_tb(config['local_results_path'])
 

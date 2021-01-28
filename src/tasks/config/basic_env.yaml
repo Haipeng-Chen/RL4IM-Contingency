@@ -1,6 +1,6 @@
 #-----------------------------------environment args-----------------------------------
 graph_index: 2  #',dest='graph_index', type=int, default=2, help='graph index')
-graph_name: "default"
+graph_name: "default_graph"
 T: 20 #', dest='T', type=int, default=20, help='time horizon')
 #budget_ratio: 0.06 #', dest='budget_ratio', type=float, default=0.06, help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
 budget: 20 #', dest='budget', type=int, default=20, help='budget at each main step')

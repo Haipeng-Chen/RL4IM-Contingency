@@ -49,7 +49,6 @@ class S2V_QN_1(torch.nn.Module):
         torch.nn.init.normal_(self.q.weight, mean=0, std=0.01)
  
     def forward(self, xv, adj):
-        # TODO 由于state的size是3x202这种 batch_size应该不是3?
         minibatch_size = xv.shape[0]
         nbr_node = xv.shape[1]
 

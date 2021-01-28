@@ -2,3 +2,8 @@
 .vscode
 __pycache__
 .DS_Store
+temp*
+tmp*
+log*
+results
+test_*.txt

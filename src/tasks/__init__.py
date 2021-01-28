@@ -4,5 +4,5 @@ from src.tasks.task_colge import run_colge
 
 REGISTRY = {}
 
-REGISTRY["basic_qdn"] = basic_dqn
+REGISTRY["basic_dqn"] = basic_dqn
 REGISTRY["colge"] = run_colge

@@ -1,8 +1,9 @@
 logfile: 'logs/log'  #', dest='logfile', type=str, default='logs/log', help='logfile for results ')
 logdir: 'logdir'  #', dest='logdir', type=str, default=None, help='log directory of tensorboard')
-First_time: False  #, dest='First_time', type=int , default=1, help='Is this the first time training? 1 yes 0 no')
+First_time: True  #, dest='First_time', type=int , default=1, help='Is this the first time training? 1 yes 0 no')
 batch_option: 'random'  #', dest='batch_option', type=str, default='random', help='option of batch sampling: random, last and mix')
 memory_size: 4096 #', dest='memory_size', type=int, default=4096, help='replay memory size')
+lr: 0.0001
 batch_size: 128  #', dest='batch_size', type=int, default=128, help='batch size')
 eps_decay: 0  #', dest='eps_decay', type= int, default=0, help='is epsilon decaying?')
 eps_wstart: 0 #', dest='eps_wstart', type=float, default=0, help='epsilon for warm start')
@@ -12,4 +13,4 @@ max_eps: 0.3 #', dest='max_eps', type=float, default=0.3, help='maximum probabil
 min_eps: 0.1  #', dest='min_eps', type=float, default=0.1, help='minium probability for exploring random action')
 discount: 1.0  #', dest='discount', type=float, default=1.0, help='discount factor')
 save_freq: 100  #', dest='save_freq', type=int, default=100, help='frequency (in episodes) of saving models')
-task: 'dqn'
+task: 'basic_dqn'

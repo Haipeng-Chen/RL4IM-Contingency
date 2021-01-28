@@ -222,6 +222,15 @@ class Environment(NetworkEnv):
         self.name = name
         self.graph_init = G
 
+    def try_remove_feasible_action(self, feasible_actions, sec_action):
+        try:
+            feasible_actions.remove(sec_action)
+            return feasible_actions
+        except Exception:
+            pass
+        finally:
+            return feasible_actions
+
     def get_approx(self):
         if self.name == "MVC":
             cover_edge=[]

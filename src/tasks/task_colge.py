@@ -11,10 +11,10 @@ from src.agent.colge.agent import Agent
 from src.environment.graph import Graph
 from src.environment.env import NetworkEnv, Environment
 from src.environment.colge import env as colge_env
-from src.tasks.task_basic_dqn import custom_env_parser, get_graph
+from src.tasks.task_basic_dqn import get_graph
 
 
-def run_colge(_run, config, _log, run_args=None):
+def run_colge(_run, config, logger, run_args=None):
     args = SimpleNamespace(**config)
     graph_dic = {}
     #seed = 125
@@ -25,11 +25,12 @@ def run_colge(_run, config, _log, run_args=None):
         G, g, graph_name = get_graph(args.graph_index)
         graph_dic[graph_] = Graph.create_graph(g)
 
-    agent_class = Agent(graph_dic, args.model, args.lr, args.bs, args.n_step)
-
+    agent_class = Agent(graph_dic, args.model, args.lr, args.bs, args.n_step, args=args)
+    if args.use_cuda:
+        agent_class.cuda()
     # env_class = colge_env.Environment(graph_dic, args.environment_name)
     env_class = Environment(G=g, cascade=args.cascade, T=args.T, budget=args.budget, 
                            propagate_p=args.propagate_p, l=args.l, d=args.d, q=args.q)
 
-    my_runner = runners.Runner(args, env_class, agent_class, args.verbose)
-    final_reward = my_runner.loop(args.ngames, args.epoch, args.niter)
+    my_runner = runners.Runner(args, env_class, agent_class, args.verbose, logger=logger)
+    final_reward = my_runner.loop(args.ngames, args.max_episodes)
