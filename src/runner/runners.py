@@ -31,7 +31,7 @@ class Runner:
         # return observation, action, reward, done
         pass
 
-    def evaluate(self, num_episode=2):
+    def evaluate(self, num_episode=5):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = []
@@ -48,10 +48,10 @@ class Runner:
                     pri_action=[ ]
                 sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
                                         feasible_actions=feasible_actions.copy(), mode=mode)
-                print('feasible actions: ',feasible_actions)
-                print('selected action: ', sec_action)
+                #print('feasible actions: ',feasible_actions)
+                #print('selected action: ', sec_action)
                 feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
-                print('feasible actions: ',feasible_actions)
+                #print('feasible actions: ',feasible_actions)
                 pri_action.append(sec_action)
                 next_state, reward, done = self.environment.step(i, pri_action, sec_action=sec_action)
                 
