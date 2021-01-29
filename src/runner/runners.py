@@ -114,6 +114,7 @@ class Runner:
                 
                 if (epoch + 1) % 5 == 0:
                     list_eval_reward.append(self.evaluate(num_episode=10))
+                    self.logger.log_stat(key='eval_episode_reward', value=list_eval_reward[-1], t=self.agent.global_t)
 
             if self.verbose:
                 print(" <=> Finished game number: {} <=>".format(g))
