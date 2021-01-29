@@ -111,26 +111,28 @@ class DQAgent:
             observation = observation.cuda()
             self.adj = self.adj.cuda()
 
-        if mode == 'test':
+        if self.curr_epsilon > np.random.rand() and mode != 'test':
+            action = np.random.choice(feasible_actions)
+        else:  # called for both test and train mode
             q_a = self.model(observation, self.adj)
             q_a = q_a.detach().cpu().numpy()
-            action = np.where((q_a[0, feasible_actions, 0] == 
-                            np.max(q_a[0, feasible_actions, 0][observation.cpu().numpy()[0, feasible_actions, 0] == 0])))[0][0]
-        else:
-            if self.curr_epsilon > np.random.rand():
-                action = np.random.choice(feasible_actions)
-            else:
-                q_a = self.model(observation, self.adj)
-                q_a = q_a.detach().cpu().numpy()
-                action = np.where((q_a[0, feasible_actions, 0] == 
-                            np.max(q_a[0, feasible_actions, 0][observation.cpu().numpy()[0, feasible_actions, 0] == 0])))[0][0]
-        
-            # Update epsilon
+            
+            # mask out unavailable action
+            action_dim = q_a.shape[1]  # action_dim
+            masked_out_action_id = list(set(range(action_dim)) - set(feasible_actions))
+            if len(masked_out_action_id) > 0:
+                q_a[0, masked_out_action_id, 0] = -9999999
+            
+            action = np.where((q_a[0, :, 0] == np.max(q_a[0, :, 0][observation.cpu().numpy()[0, :, 0] == 0])))[0][0]
+
+        if mode != 'test':
+            # Update epsilon while training
             self.curr_epsilon = epsilon_decay(init_v=self.init_epsilon,
-                                              final_v=self.final_epsilon,
-                                              step_t=self.global_t,
-                                              decay_step=self.epislon_decay_steps)
+                                            final_v=self.final_epsilon,
+                                            step_t=self.global_t,
+                                            decay_step=self.epislon_decay_steps)
             self.global_t += 1
+        
         return action
 
     def reward(self, observation, action, reward,done):
