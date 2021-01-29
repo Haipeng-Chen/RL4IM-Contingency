@@ -3,7 +3,7 @@ graph_index: 2  #',dest='graph_index', type=int, default=2, help='graph index')
 graph_name: "default_graph"
 T: 20 #', dest='T', type=int, default=20, help='time horizon')
 #budget_ratio: 0.06 #', dest='budget_ratio', type=float, default=0.06, help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
-budget: 20 #', dest='budget', type=int, default=20, help='budget at each main step')
+budget: 5 #', dest='budget', type=int, default=20, help='budget at each main step')
 propagate_p: 0.1 #', dest='propagate_p', type=float, default=0.1, help='influence propagation probability')
 l: 0.05 #', dest='l', type=float, default=0.05, help='influence of each neighbor in LT cascade')
 d: 1  #', dest='d', type=float, default=1, help='d in SC cascade')
