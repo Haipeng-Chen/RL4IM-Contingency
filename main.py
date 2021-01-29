@@ -141,7 +141,7 @@ if __name__ == '__main__':
     results_path = _get_basic_config(params_bak, other_params=params, arg_name='--results-dir')
     task_name = _get_basic_config(params_bak, arg_name='--config')
     # Save to disk by default for sacred
-    save_path = os.path.join(results_path, task_name, config_dict['tag'], config_dict['graph_name'])
+    save_path = os.path.join(results_path, task_name)
 
     logger.info(f"Saving to FileStorageObserver in {save_path}/sacred.")
     file_obs_path = os.path.join(save_path, "sacred")
