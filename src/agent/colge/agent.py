@@ -123,7 +123,8 @@ class DQAgent:
             if len(masked_out_action_id) > 0:
                 q_a[0, masked_out_action_id, 0] = -9999999
             
-            action = np.where((q_a[0, :, 0] == np.max(q_a[0, :, 0][observation.cpu().numpy()[0, :, 0] == 0])))[0][0]
+            #action = np.where((q_a[0, :, 0] == np.max(q_a[0, :, 0][observation.cpu().numpy()[0, :, 0] == 0])))[0][0]
+            action = int(np.argmax(q_a[0, :, 0]))
 
         if mode != 'test':
             # Update epsilon while training
