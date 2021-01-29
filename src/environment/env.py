@@ -176,13 +176,13 @@ class NetworkEnv(object):
         #print('running cascade')
         #there may be better ways of passing the arguments
         if cascade == 'IC':
-            reward, _ = runIC_repeat(self.G, seeds, p=self.propagate_p, sample=sample)
+            reward, _ = runIC_repeat(self.G.g, seeds, p=self.propagate_p, sample=sample)
         elif cascade == 'DIC':
-            reward, _ = runDIC_repeat(self.G, seeds, p=self.propagate_p, q=0.001, sample=sample)
+            reward, _ = runDIC_repeat(self.G.g, seeds, p=self.propagate_p, q=0.001, sample=sample)
         elif cascade == 'LT':
-            reward, _ = runLT_repeat(self.G, seeds, l=self.l, sample=sample)
+            reward, _ = runLT_repeat(self.G.g, seeds, l=self.l, sample=sample)
         elif cascade == 'SC':
-            reward, _ = runSC_repeat(self.G, seeds, d=self.d, sample=sample)
+            reward, _ = runSC_repeat(self.G.g, seeds, d=self.d, sample=sample)
         else:
             assert(False)
         return reward
@@ -197,15 +197,17 @@ class NetworkEnv(object):
         return present, absent
 
 
-    def reset(self):
-        self.A = nx.to_numpy_matrix(self.G)
+    def reset(self, g=0):
+        self.G = self.graphs[g]
+        self.A = nx.to_numpy_matrix(self.G.g)
         self.t = 0
         self.done = False
         self.reward = 0
         self.state = np.zeros((3, self.N)) ########
         self.observation = self.state
         #self.feasible_actions = list(range(self.N))
-        nx.set_node_attributes(self.G, 0, 'attr')
+        nx.set_node_attributes(self.G.g, 0, 'attr')
+
 
 class Environment(NetworkEnv):
     def __init__(self, G, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=250, graphs=None, name='MVC'):
@@ -220,7 +222,8 @@ class Environment(NetworkEnv):
                          num_simul=num_simul,
                          graphs=graphs)
         self.name = name
-        self.graph_init = G
+        self.G = graphs[0]
+        self.graph_init = self.G
 
     def try_remove_feasible_action(self, feasible_actions, sec_action):
         try:
@@ -234,7 +237,7 @@ class Environment(NetworkEnv):
     def get_approx(self):
         if self.name == "MVC":
             cover_edge=[]
-            edges= list(self.graph_init.edges())
+            edges= list(self.graph_init.edges)
             while len(edges) > 0:
                 edge = edges[np.random.choice(len(edges))]
                 cover_edge.append(edge[0])
@@ -266,7 +269,7 @@ class Environment(NetworkEnv):
 
             mdl = pulp.LpProblem("MVC", pulp.LpMinimize)
             mdl += sum(xv[k] for k in xv)
-            for edge in self.graph_init.edges():
+            for edge in self.graph_init.edges:
                 mdl += xv[edge[0]] + xv[edge[1]] >= 1, "constraint :" + str(edge)
             mdl.solve()
 
@@ -279,7 +282,7 @@ class Environment(NetworkEnv):
 
         elif self.name=="MAXCUT":
             x = list(range(self.graph_init.g.number_of_nodes()))
-            e = list(self.graph_init.edges())
+            e = list(self.graph_init.edge)
             xv = pulp.LpVariable.dicts('is_opti', x,
                                        lowBound=0,
                                        upBound=1,

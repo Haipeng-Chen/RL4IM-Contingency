@@ -87,8 +87,8 @@ class DQAgent:
         if (len(self.memory_n) != 0) and (len(self.memory_n) % 300000 == 0):
             self.memory_n =random.sample(self.memory_n,120000)
 
-        self.nodes = self.graphs[self.games].nodes()
-        self.adj = self.graphs[self.games].adj()
+        self.nodes = self.graphs[self.games].node
+        self.adj = self.graphs[self.games].adj
         self.adj = self.adj.todense()
         self.adj = torch.from_numpy(np.expand_dims(self.adj.astype(int), axis=0))
         self.adj = self.adj.type(torch.FloatTensor)
@@ -184,7 +184,7 @@ class DQAgent:
         reward_tens = torch.Tensor([[minibatch[0][2]]])
         observation_tens = minibatch[0][3]
         done_tens =torch.Tensor([[minibatch[0][4]]])
-        adj_tens = self.graphs[minibatch[0][5]].adj().todense()
+        adj_tens = self.graphs[minibatch[0][5]].adj.todense()
         adj_tens = torch.from_numpy(np.expand_dims(adj_tens.astype(int), axis=0)).type(torch.FloatTensor)
 
         for last_observation_, action_, reward_, observation_, done_, games_ in minibatch[-self.minibatch_length + 1:]:
@@ -193,7 +193,7 @@ class DQAgent:
             reward_tens = torch.cat((reward_tens, torch.Tensor([[reward_]])))
             observation_tens = torch.cat((observation_tens, observation_))
             done_tens = torch.cat((done_tens,torch.Tensor([[done_]])))
-            adj_ = self.graphs[games_].adj().todense()
+            adj_ = self.graphs[games_].adj.todense()
             adj = torch.from_numpy(np.expand_dims(adj_.astype(int), axis=0)).type(torch.FloatTensor)
             adj_tens = torch.cat((adj_tens, adj))
         return (last_observation_tens, action_tens, reward_tens, observation_tens,done_tens, adj_tens)

@@ -22,18 +22,26 @@ class Graph:
     def create_graph(cls, g):
         return cls(g)
 
-    def nodes(self):
+    @property
+    def node(self):
         return nx.number_of_nodes(self.g)
 
+    @property
+    def nodes(self):
+        return self.g.nodes()
+
+    @property
     def edges(self):
         return self.g.edges()
 
+    @property
     def neighbors(self, node):
         return nx.all_neighbors(self.g, node)
 
     def average_neighbor_degree(self, node):
         return nx.average_neighbor_degree(self.g, nodes=node)
 
+    @property
     def adj(self):
         return nx.adjacency_matrix(self.g)
 

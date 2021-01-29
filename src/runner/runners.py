@@ -63,7 +63,7 @@ class Runner:
 
         return np.mean(episode_accumulated_rewards)
     
-    def loop(self, games, max_episodes):
+    def loop(self):
 
         cumul_reward = 0.0
         list_cumul_reward=[]
@@ -71,11 +71,11 @@ class Runner:
         mode = 'train'
         st = time.time()
 
-        for g in range(games):  # graph list
+        for g in range(self.args.graph_nbr):  # graph list
             print('game: {}'.format(g))
             for epoch in range(self.args.max_episodes):
                 print('epoch: {}'.format(epoch))
-                self.environment.reset()
+                self.environment.reset(g=g)
                 self.agent.reset(g)  # g is zero
                 cumul_reward = 0.0
                 pri_action = [ ]
@@ -105,16 +105,22 @@ class Runner:
                         print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
                         print('--------------------------------------')
                         print(' ')
-                        self.logger.log_stat(key='episode_reward', value=cumul_reward, t=self.agent.global_t)
+                        self.logger.log_stat(key=f'{self.agent.graphs[g].graph_name}/episode_reward', 
+                                             value=cumul_reward, 
+                                             t=self.agent.global_t)
                         if loss is not None:
-                            self.logger.log_stat(key='loss', value=loss.detach().cpu().numpy(), t=self.agent.global_t)
+                            self.logger.log_stat(key=f'{self.agent.graphs[g].graph_name}/loss', 
+                                                 value=loss.detach().cpu().numpy(), 
+                                                 t=self.agent.global_t)
                         
                         list_cumul_reward.append(cumul_reward)
                         break
                 
                 if (epoch + 1) % 5 == 0:
                     list_eval_reward.append(self.evaluate(num_episode=10))
-                    self.logger.log_stat(key='eval_episode_reward', value=list_eval_reward[-1], t=self.agent.global_t)
+                    self.logger.log_stat(key=f'{self.agent.graphs[g].graph_name}/eval_episode_reward', 
+                                         value=list_eval_reward[-1], 
+                                         t=self.agent.global_t)
 
             if self.verbose:
                 print(" <=> Finished game number: {} <=>".format(g))
