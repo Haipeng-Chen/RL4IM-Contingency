@@ -71,10 +71,10 @@ class DQAgent:
         self.T = 5
         self.t = 1
 
-        self.init_epsilon = 0.9
-        self.final_epsilon = 0.01
+        self.init_epsilon = self.args.init_epsilon
+        self.final_epsilon = self.args.final_epsilon
         self.curr_epsilon = self.init_epsilon
-        self.epislon_decay_steps = 500
+        self.epislon_decay_steps = self.args.epislon_decay_steps
         self.global_t = 0
 
 

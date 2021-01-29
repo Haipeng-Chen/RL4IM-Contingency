@@ -15,3 +15,8 @@ m: 4  #, default=4, help="m, parameter in graph degree distribution")
 batch: None  # type=int, metavar='nagent', default=None, help='batch run several agent at the same time')
 verbose: True # action='store_true', default=True, help='Display cumulative results at each step')
 task: 'colge'
+
+# epsilon greedy
+init_epsilon: 0.99
+final_epsilon: 0.01
+epislon_decay_steps: 3000
