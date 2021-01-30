@@ -29,7 +29,7 @@ def run_colge(_run, config, logger, run_args=None):
     if args.use_cuda:
         agent_class.cuda()
     # env_class = colge_env.Environment(graph_dic, args.environment_name)
-    env_class = Environment(G=g, cascade=args.cascade, T=args.T, budget=args.budget, 
+    env_class = Environment(cascade=args.cascade, T=args.T, budget=args.budget, 
                            propagate_p=args.propagate_p, l=args.l, d=args.d, q=args.q, graphs=graph_dic)
 
     my_runner = runners.Runner(args, env_class, agent_class, args.verbose, logger=logger)

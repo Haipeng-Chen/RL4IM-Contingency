@@ -1,0 +1,31 @@
+diff --git a/src/environment/env.py b/src/environment/env.py
+index 65fc4d3..aaad121 100644
+--- a/src/environment/env.py
++++ b/src/environment/env.py
+@@ -39,10 +39,10 @@ class NetworkEnv(object):
+     def __init__(self, G, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None):
+         self.G = G
+         self.graphs = graphs
+-        self.N = len(self.G)
++        self.N = len(self.G.g)
+         #self.budget = math.floor(self.N * budget_ratio/T)
+         self.budget = budget
+-        self.A = nx.to_numpy_matrix(self.G)  
++        self.A = nx.to_numpy_matrix(self.G.g)  
+         self.propagate_p = propagate_p
+         self.l = l
+         self.d = d
+@@ -197,9 +197,10 @@ class NetworkEnv(object):
+         return present, absent
+ 
+ 
+-    def reset(self, g_i=0):
+-        self.g_i = g_i
+-        self.G = self.graphs[g_i]
++    def reset(self, graph_index=0):
++        self.graph_index = graph_index
++        self.G = self.graphs[graph_index]
++        self.N = len(self.G.g)
+         self.A = nx.to_numpy_matrix(self.G.g)
+         self.t = 0
+         self.done = False

@@ -38,7 +38,7 @@ class Runner:
         episode_accumulated_rewards = []
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
-        g = random.choice([i for i, g in enumerate(self.environment.graphs) if g != self.environment.g_i])
+        g = random.choice([i for i, g in enumerate(self.environment.graphs) if g != self.environment.graph_index])
         for episode in range(num_episode):
             # select other graphs
             self.environment.reset(g)
@@ -75,10 +75,10 @@ class Runner:
         st = time.time()
 
         for g in range(self.args.graph_nbr):  # graph list
-            print('game: {}'.format(g))
-            for epoch in range(self.args.max_episodes):
-                print('epoch: {}'.format(epoch))
-                self.environment.reset(g=g)
+            print('graph: {}'.format(g))
+            for episode in range(self.args.max_episodes):
+                print('episode: {}'.format(episode))
+                self.environment.reset(graph_index=g)
                 self.agent.reset(g)  # g is zero
                 cumul_reward = 0.0
                 pri_action = [ ]
@@ -119,7 +119,7 @@ class Runner:
                         list_cumul_reward.append(cumul_reward)
                         break
                 
-                if (epoch + 1) % 5 == 0:
+                if (episode+ 1) % 5 == 0:
                     list_eval_reward.append(self.evaluate(num_episode=10))
                     self.logger.log_stat(key=f'{self.agent.graphs[g].graph_name}/eval_episode_reward', 
                                          value=list_eval_reward[-1], 
