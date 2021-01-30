@@ -226,6 +226,26 @@ class Environment(NetworkEnv):
         self.G = graphs[0]
         self.graph_init = self.G
 
+        self.graphs = graphs
+        self.N = len(self.G)
+        #self.budget = math.floor(self.N * budget_ratio/T)
+        self.budget = budget
+        self.A = nx.to_numpy_matrix(self.G)  
+        self.propagate_p = propagate_p
+        self.l = l
+        self.d = d
+        self.q = q
+        self.T = T
+        self.cascade = cascade
+        self.num_simul = num_simul
+        self.t = 0
+        self.done = False
+        self.reward = 0
+        #self.feasible_actions = list(range(self.N))
+        self.state = np.zeros((3, self.N)) 
+        self.observation = self.state
+        nx.set_node_attributes(self.G, 0, 'attr')
+
     def try_remove_feasible_action(self, feasible_actions, sec_action):
         try:
             feasible_actions.remove(sec_action)
