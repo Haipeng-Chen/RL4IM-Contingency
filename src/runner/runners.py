@@ -1,5 +1,6 @@
 import os
 import time
+import random
 
 import tqdm
 import numpy as np
@@ -37,9 +38,11 @@ class Runner:
         episode_accumulated_rewards = []
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
+        g = random.choice([i for i, g in enumerate(self.environment.graphs) if g != self.environment.g_i])
         for episode in range(num_episode):
-            self.environment.reset()
-            self.agent.reset(0)  # g is zero
+            # select other graphs
+            self.environment.reset(g)
+            self.agent.reset(g)  # g is zero
             
             accumulated_reward = 0
             for i in range(1, self.environment.T+1):

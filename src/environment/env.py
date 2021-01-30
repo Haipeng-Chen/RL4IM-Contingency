@@ -197,8 +197,9 @@ class NetworkEnv(object):
         return present, absent
 
 
-    def reset(self, g=0):
-        self.G = self.graphs[g]
+    def reset(self, g_i=0):
+        self.g_i = g_i
+        self.G = self.graphs[g_i]
         self.A = nx.to_numpy_matrix(self.G.g)
         self.t = 0
         self.done = False
