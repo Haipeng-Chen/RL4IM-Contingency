@@ -230,7 +230,7 @@ class Environment(NetworkEnv):
         self.N = len(self.G)
         #self.budget = math.floor(self.N * budget_ratio/T)
         self.budget = budget
-        self.A = nx.to_numpy_matrix(self.G)  
+        self.A = nx.to_numpy_matrix(self.G.g)  
         self.propagate_p = propagate_p
         self.l = l
         self.d = d
@@ -244,7 +244,7 @@ class Environment(NetworkEnv):
         #self.feasible_actions = list(range(self.N))
         self.state = np.zeros((3, self.N)) 
         self.observation = self.state
-        nx.set_node_attributes(self.G, 0, 'attr')
+        nx.set_node_attributes(self.G.g, 0, 'attr')
 
     def try_remove_feasible_action(self, feasible_actions, sec_action):
         try:
