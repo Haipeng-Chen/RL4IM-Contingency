@@ -6,7 +6,7 @@ import collections
 # seed = np.random.seed(120)
 
 class Graph:
-    def __init__(self, g, graph_type=None, cur_n=None, p=None, m=None, seed=None):
+    def __init__(self, g=None, graph_type=None, cur_n=None, p=None, m=None, seed=None):
         if graph_type == 'erdos_renyi':
             self.g = nx.erdos_renyi_graph(n=cur_n, p=p, seed=seed)
         elif graph_type == 'powerlaw':

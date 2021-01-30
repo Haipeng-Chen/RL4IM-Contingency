@@ -16,14 +16,18 @@ from src.tasks.task_basic_dqn import get_graph
 
 def run_colge(_run, config, logger, run_args=None):
     args = SimpleNamespace(**config)
+    print('Loading graph: ', args.graph_type)
     graph_dic = {}
     #seed = 125
     #graph_one = graph.Graph(graph_type=args.graph_type, cur_n=20, p=0.15,m=4, seed=seed)
     
     for graph_ in range(args.graph_nbr):
-        G, g, graph_name = get_graph(args.graph_index)
-        graph_dic[graph_] = Graph.create_graph(g)
-        graph_dic[graph_].graph_name = graph_name
+        #G, g, graph_name = get_graph(args.graph_index)
+        #graph_dic[graph_] = Graph.create_graph(g)
+        #graph_dic[graph_].graph_name = graph_name
+        seed = graph_ #fix seed for now; TODO: revise later
+        graph_dic[graph_]=Graph(graph_type=args.graph_type, cur_n=args.node, p=args.p,m=args.m,seed=seed)
+        graph_dic[graph_].graph_name = str(graph_)
 
     agent_class = Agent(graph_dic, args.model, args.lr, args.bs, args.n_step, args=args)
     if args.use_cuda:

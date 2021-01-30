@@ -75,7 +75,7 @@ class Runner:
         st = time.time()
 
         for g in range(self.args.graph_nbr):  # graph list
-            print('graph: {}'.format(g))
+            print('graph: {}, nodes: {}, edges: {}'.format(g, len(self.environment.graphs[g].nodes), len(self.environment.graphs[g].edges)))
             for episode in range(self.args.max_episodes):
                 print('episode: {}'.format(episode))
                 self.environment.reset(graph_index=g)
