@@ -40,32 +40,87 @@ class Runner:
         mode = 'test'
         g_index = self.args.graph_nbr-1 
         print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
-        #TODO I am using the last graph as the test graph for now so that the test graph is consistent in different evaluate() runs. Better distinguish train/test at generation time 
+        #the last graph in graphs is the test graph 
         #g = random.choice([i for i, g in enumerate(self.environment.graphs) if g != self.environment.graph_index])
-        for episode in range(num_episode):
-            # select other graphs
-            self.environment.reset(g_index)
-            self.agent.reset(g_index)  # g is zero
-            
-            accumulated_reward = 0
-            for i in range(1, self.environment.T+1):
-                state = self.environment.state.copy()
-                if (i-1) % self.environment.budget == 0:
-                    pri_action=[ ]
-                sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
-                                        feasible_actions=feasible_actions.copy(), mode=mode)
-                #print('feasible actions: ',feasible_actions)
-                #print('selected action: ', sec_action)
-                feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
-                #print('feasible actions: ',feasible_actions)
-                pri_action.append(sec_action)
-                next_state, reward, done = self.environment.step(i, pri_action, sec_action=sec_action)
-                
-                accumulated_reward += reward
-                
-                if done:
-                    episode_accumulated_rewards.append(accumulated_reward)
-                    print('accumulated reward of episode {} is: {}'.format(i, accumulated_reward))
+        #for episode in range(num_episode):
+        #    # select other graphs
+        #    self.environment.reset(g_index)
+        #    self.agent.reset(g_index)  # g is zero
+        #    
+        #    accumulated_reward = 0
+        #    for i in range(1, self.environment.T+1):
+        #        state = self.environment.state.copy()
+        #        if (i-1) % self.environment.budget == 0:
+        #            pri_action=[ ]
+        #        sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
+        #                                feasible_actions=feasible_actions.copy(), mode=mode)
+        #        #print('feasible actions: ',feasible_actions)
+        #        #print('selected action: ', sec_action)
+        #        feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
+        #        #print('feasible actions: ',feasible_actions)
+        #        pri_action.append(sec_action)
+        #        next_state, reward, done = self.environment.step(i, pri_action, sec_action=sec_action)
+        #        
+        #        accumulated_reward += reward
+        #        
+        #        if done:
+        #            episode_accumulated_rewards.append(accumulated_reward)
+        #            print('accumulated reward of episode {} is: {}'.format(i, accumulated_reward))
+
+        if self.agent.method == 'RL':
+            for episode in range(num_episode):
+                # select other graphs
+                self.environment.reset(g_index)
+                self.agent.reset(g_index)  # g is zero
+
+                accumulated_reward = 0
+                for i in range(1, self.environment.T+1):
+                    state = self.environment.state.copy()
+                    if (i-1) % self.environment.budget == 0:
+                        pri_action=[ ]
+                    sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
+                                            feasible_actions=feasible_actions.copy(), mode=mode)
+                    #print('feasible actions: ',feasible_actions)
+                    #print('selected action: ', sec_action)
+                    feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
+                    #print('feasible actions: ',feasible_actions)
+                    pri_action.append(sec_action)
+                    next_state, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
+
+                    #TODO: this should be different
+                    accumulated_reward += reward
+
+                    if done:
+                        episode_accumulated_rewards.append(accumulated_reward)
+                        print('accumulated reward of episode {} is: {}'.format(i, accumulated_reward))
+    
+        else:
+            print('method is :', self.agent.method)
+            for episode in range(num_episode):
+                self.environment.reset(g_index)
+                actions = []
+                presents = []
+                accumulated_reward = 0
+                for i in range(1, self.environment.T+1):
+                    if (i-1) % self.environment.budget == 0:
+                        #note that the other methods select budget number of nodes a time
+                        print('presents before: ', presents)
+                        pri_action = self.agent.act(feasible_actions,self.environment.budget,self.environment.f_multi,presents)
+                        print('presents after: ', presents)
+                        ipdb.set_trace()
+                        actions.append(pri_action)
+                        present, _ = self.environment.transition(pri_action)
+                        presents+=present
+                    for sec_action in pri_action:
+                        feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
+                    #accumulated_reward += reward
+
+                    if i == self.environment.T:
+                        accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                        episode_accumulated_rewards.append(accumulated_reward)
+                        print('accumulated reward of episode {} is: {}'.format(i, accumulated_reward))
+                        print('invited: ', actions)
+                        print('present: ', presents)
 
         return np.mean(episode_accumulated_rewards)
     
@@ -77,7 +132,7 @@ class Runner:
         mode = 'train'
         st = time.time()
 
-        for g_index in range(self.args.graph_nbr):  # graph list
+        for g_index in range(self.args.graph_nbr-1):  # graph list; first  graph_nbr-1 graphs are training, the last one for test
             print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
             for episode in range(self.args.max_episodes):
                 print('episode: {}'.format(episode))

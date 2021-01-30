@@ -234,4 +234,4 @@ class DQAgent:
         else:
             return tensor
 
-Agent = DQAgent
+#Agent = DQAgent
