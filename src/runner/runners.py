@@ -38,11 +38,14 @@ class Runner:
         episode_accumulated_rewards = []
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
-        g = random.choice([i for i, g in enumerate(self.environment.graphs) if g != self.environment.graph_index])
+        g_index = self.args.graph_nbr-1 
+        print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
+        #TODO I am using the last graph as the test graph for now so that the test graph is consistent in different evaluate() runs. Better distinguish train/test at generation time 
+        #g = random.choice([i for i, g in enumerate(self.environment.graphs) if g != self.environment.graph_index])
         for episode in range(num_episode):
             # select other graphs
-            self.environment.reset(g)
-            self.agent.reset(g)  # g is zero
+            self.environment.reset(g_index)
+            self.agent.reset(g_index)  # g is zero
             
             accumulated_reward = 0
             for i in range(1, self.environment.T+1):
@@ -74,11 +77,11 @@ class Runner:
         mode = 'train'
         st = time.time()
 
-        for g in range(self.args.graph_nbr):  # graph list
-            print('graph: {}, nodes: {}, edges: {}'.format(g, len(self.environment.graphs[g].nodes), len(self.environment.graphs[g].edges)))
+        for g_index in range(self.args.graph_nbr):  # graph list
+            print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
             for episode in range(self.args.max_episodes):
                 print('episode: {}'.format(episode))
-                self.environment.reset(graph_index=g)
+                self.environment.reset(graph_index=g_index)
                 self.agent.reset(g)  # g is zero
                 cumul_reward = 0.0
                 pri_action = [ ]
@@ -108,11 +111,11 @@ class Runner:
                         print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
                         print('--------------------------------------')
                         print(' ')
-                        self.logger.log_stat(key=f'{self.agent.graphs[g].graph_name}/episode_reward', 
+                        self.logger.log_stat(key=f'{self.agent.graphs[g_index].graph_name}/episode_reward', 
                                              value=cumul_reward, 
                                              t=self.agent.global_t)
                         if loss is not None:
-                            self.logger.log_stat(key=f'{self.agent.graphs[g].graph_name}/loss', 
+                            self.logger.log_stat(key=f'{self.agent.graphs[g_index].graph_name}/loss', 
                                                  value=loss.detach().cpu().numpy(), 
                                                  t=self.agent.global_t)
                         
@@ -121,12 +124,12 @@ class Runner:
                 
                 if (episode+ 1) % 5 == 0:
                     list_eval_reward.append(self.evaluate(num_episode=10))
-                    self.logger.log_stat(key=f'{self.agent.graphs[g].graph_name}/eval_episode_reward', 
+                    self.logger.log_stat(key=f'{self.agent.graphs[g_index].graph_name}/eval_episode_reward', 
                                          value=list_eval_reward[-1], 
                                          t=self.agent.global_t)
 
             if self.verbose:
-                print(" <=> Finished game number: {} <=>".format(g))
+                print(" <=> Finished game number: {} <=>".format(g_index))
                 print("")
         
         np.savetxt(os.path.join(self.results_path, 'train_episode_rewards.out'), list_cumul_reward, delimiter=',')

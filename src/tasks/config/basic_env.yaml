@@ -2,9 +2,9 @@
 #graph_index: 2  # graph index
 #graph_name: "default_graph"
 graph_type: 'erdos_renyi' # , metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
-graph_nbr: 5 # , type=int, default='1', help='number of differente graph to generate for the training sample')
+graph_nbr: 10 # , type=int, default='1', help='number of differente graph to generate for the training sample')
 node: 200 # type=int, metavar='nnode', default=20, help="number of node in generated graphs")
-p: 0.14  #, default=0.14, help="p, parameter in graph degree distribution")
+p: 0.05  #, default=0.14, help="p, parameter in graph degree distribution")
 m: 4  #, default=4, help="m, parameter in graph degree distribution")
 T: 20  # time horizon
 #budget_ratio: 0.06 #', dest='budget_ratio', type=float, default=0.06, help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
