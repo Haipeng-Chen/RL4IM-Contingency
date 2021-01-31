@@ -3,7 +3,7 @@ agent: 'Agent' # metavar='AGENT_CLASS', default='Agent', type=str, help='Class t
 model: 'S2V_QN_1' #, type=str, default='S2V_QN_1', help='model name')
 ngames: 1  # type=int, metavar='n', default=1, help='number of games to simulate')
 max_episodes: 20  # type=int, metavar='n', default='1000', help='max number of iterations per game')
-#epoch: 50 # type=int, metavar='nepoch', default=50, help="number of epochs")
+nbr_epoch: 10 # type=int, metavar='nepoch', default=50, help="number of epochs")
 lr: 1e-4 # type=float, default=1e-4, help="learning rate")
 bs: 32 # type=int, default=32, help="minibatch size for training")
 n_step: 3 # type=int, default=3, help="n step in RL")
@@ -14,7 +14,7 @@ task: 'colge'
 # epsilon greedy
 init_epsilon: 0.99
 final_epsilon: 0.01
-epislon_decay_steps: 500
+epislon_decay_steps: 1000
 
 #graph_type: 'erdos_renyi' # , metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
 #graph_nbr: 8 # , type=int, default='1', help='number of differente graph to generate for the training sample')

@@ -117,7 +117,7 @@ def my_main(_run, _config, _log):
 
     #TODO: make it as an argument
     methods = ['RL', 'ada_greedy', 'lazy_adaptive_greedy'] #'random', 'maxdegree'
-    method = methods[2]
+    method = methods[0]
 
 
     # run the task

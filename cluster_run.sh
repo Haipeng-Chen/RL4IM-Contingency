@@ -7,4 +7,4 @@
 #SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
 #SBATCH --gres=gpu:1
 
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-4 max_episodes=20 graph_nbr=10
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 max_episodes=20 graph_nbr=11 T=6 budget=2 epislon_decay_steps=10000
