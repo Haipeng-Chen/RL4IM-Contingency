@@ -14,7 +14,7 @@ task: 'colge'
 # epsilon greedy
 init_epsilon: 0.99
 final_epsilon: 0.01
-epislon_decay_steps: 5000
+epislon_decay_steps: 500
 
 #graph_type: 'erdos_renyi' # , metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
 #graph_nbr: 8 # , type=int, default='1', help='number of differente graph to generate for the training sample')

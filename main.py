@@ -116,8 +116,9 @@ def my_main(_run, _config, _log):
     logger.setup_sacred(_run)
 
     #TODO: make it as an argument
-    method = 'RL'
-    method = 'lazy_adaptive_greedy'
+    methods = ['RL', 'ada_greedy', 'lazy_adaptive_greedy'] #'random', 'maxdegree'
+    method = methods[2]
+
 
     # run the task
     task_runner = TASK_REGISTRY[config['task']]

@@ -23,7 +23,8 @@ def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
 
 class DQAgent:
     def __init__(self, graph, model, lr, bs, n_step, args=None):
-
+        
+        self.method = 'RL'
         self.graphs = graph
         self.embed_dim = 64
         self.model_name = model

@@ -11,7 +11,7 @@ class lazy_greedyAgent:
     def __init__(self):
         self.method = 'lazy_greedy'
     
-    def lazy_greedy(self, items, budget, f):
+    def act(self, items, budget, f):
         #Generic greedy algorithm to select budget number of items to maximize f.
         #Employs lazy evaluation of marginal gains, which is only correct when f is submodular.
         import heapq
@@ -40,7 +40,7 @@ class greedyAgent:
     def __init__(self):
         self.method = 'greedy'
 
-    def greedy(self, items, budget, f):
+    def act(self, items, budget, f):
         S = set()
         for i in range(budget):
             #print(i)
@@ -91,7 +91,7 @@ class lazy_adaptive_greedyAgent:
 class adaptive_greedyAgent:
     def __init__(self):
         self.method = 'adaptive_greedy'
-    def adaptive_greedy(items, budget, f, S_prev=[]):
+    def act(self, items, budget, f, S_prev=[]):
         action=set()
         S = set(S_prev)
         for i in range(budget):
@@ -107,10 +107,10 @@ class adaptive_greedyAgent:
             action.add(u)
         return list(action), starting_objective
 
-class max_degreeAgent:
+class maxdegreeAgent:
     def __init__(self):
-        self.method = 'max_degree'
-    def max_degree(feasible_actions, G, budget):
+        self.method = 'maxdegree'
+    def act(self, feasible_actions, G, budget):
         degree=nx.degree(G)
         degree = [val for (node, val) in G.degree()]
         # print(degree)
