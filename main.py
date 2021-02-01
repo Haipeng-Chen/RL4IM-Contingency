@@ -115,14 +115,9 @@ def my_main(_run, _config, _log):
     # sacred is on by default
     logger.setup_sacred(_run)
 
-    #TODO: make it as an argument
-    methods = ['RL', 'ada_greedy', 'lazy_adaptive_greedy'] #'random', 'maxdegree'
-    method = methods[0]
-
-
     # run the task
     task_runner = TASK_REGISTRY[config['task']]
-    task_runner(_run, config, logger, method=method, run_args=None)
+    task_runner(_run, config, logger, run_args=None)
 
 
 if __name__ == '__main__':
