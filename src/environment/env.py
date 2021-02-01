@@ -152,10 +152,12 @@ class NetworkEnv(object):
         #[present.append(i) for i in invited if random.random() <= q]
         return present, absent
 
-
-    def reset(self, graph_index=0):
-        self.graph_index = graph_index
-        self.G = self.graphs[graph_index]
+    def reset(self, graph_index=0, test_model=False):
+        if test_model:  # do not set the index of the graph
+            self.G = self.graphs[graph_index]
+        else:
+            self.graph_index = graph_index
+            self.G = self.graphs[graph_index]
         self.N = len(self.G.g)
         self.A = nx.to_numpy_matrix(self.G.g)
         self.t = 0

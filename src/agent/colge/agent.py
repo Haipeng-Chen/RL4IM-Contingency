@@ -85,8 +85,12 @@ class DQAgent:
     p : embedding dimension
        
     """
-    def reset(self, g):
-        self.games = g
+    def reset(self, g=0, test_mode=False):
+        if test_mode:  # do not change the graph index
+            self.games = self.games
+        else:
+            self.games = g
+        
         if (len(self.memory_n) != 0) and (len(self.memory_n) % 300000 == 0):
             self.memory_n =random.sample(self.memory_n,120000)
 

@@ -20,7 +20,7 @@ class Graph:
 
     @classmethod
     def create_graph(cls, g):
-        return cls(g)
+        return cls(g=g)
 
     @property
     def node(self):

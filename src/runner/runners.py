@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import random
 
 import tqdm
@@ -38,22 +39,23 @@ class Runner:
         episode_accumulated_rewards = []
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
-        g_index = self.args.graph_nbr-1 
-        print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
+
         #the last graph in graphs is the test graph 
-        #g = random.choice([i for i, g in enumerate(self.environment.graphs) if g != self.environment.graph_index])
+        g_index = random.choice([i for i, g in enumerate(self.environment.graphs) if i != self.environment.graph_index])
+        g_name = self.environment.graphs[g_index].graph_name
+        print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
 
         if self.agent.method == 'RL':
             for episode in range(num_episode):
                 # select other graphs
-                self.environment.reset(g_index)
-                self.agent.reset(g_index)  # g is zero
+                self.environment.reset(test_mode=True)
+                self.agent.reset(test_mode=True)  # g is zero
                 feasible_actions = list(range(self.environment.N))
                 accumulated_reward = 0
                 pri_action = [ ]
                 invited = []
-                presents = [
-]
+                presents = []
+
                 for i in range(1, self.environment.T+1):
                     state = self.environment.state.copy()
                     sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
@@ -79,7 +81,7 @@ class Runner:
         else:
             print('method is :', self.agent.method)
             for episode in range(num_episode):
-                self.environment.reset(g_index)
+                self.environment.reset(test_mode=True)
                 feasible_actions = list(range(self.environment.N))
                 invited = []
                 presents = []
@@ -105,19 +107,20 @@ class Runner:
         print('average cummulative reward is: ', ave_cummulative_reward)
         print('----------------------------------------------end evaluation---------------------------------------------------------')
         print(' ')
-        return ave_cummulative_reward 
+        return g_name, ave_cummulative_reward 
     
     def loop(self):
 
         cumul_reward = 0.0
-        list_cumul_reward=[]
-        list_eval_reward=[]
+        graph_cumul_reward = {}
+        graph_eval_reward = {}
         mode = 'train'
         st = time.time()
 
         for epoch in range(self.args.nbr_epoch):
             print('epoch: ', epoch)
             for g_index in range(self.args.graph_nbr-1):  # graph list; first  graph_nbr-1 graphs are training, the last one for test
+                graph_name = self.agent.graphs[g_index].graph_name
                 print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
                 for episode in range(self.args.max_episodes):
                     print('episode: {}'.format(episode))
@@ -151,29 +154,43 @@ class Runner:
                             print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
                             print('--------------------------------------')
                             print(' ')
-                            self.logger.log_stat(key=f'{self.agent.graphs[g_index].graph_name}/episode_reward', 
+                            self.logger.log_stat(key=f'{graph_name}/episode_reward', 
                                                  value=cumul_reward, 
                                                  t=self.agent.global_t)
                             if loss is not None:
-                                self.logger.log_stat(key=f'{self.agent.graphs[g_index].graph_name}/loss', 
+                                self.logger.log_stat(key=f'{graph_name}/loss', 
                                                      value=loss.detach().cpu().numpy(), 
                                                      t=self.agent.global_t)
                             
-                            list_cumul_reward.append(cumul_reward)
-                            break
-                    
+
+                            if graph_name not in graph_cumul_reward:
+                                graph_cumul_reward[graph_name] = cumul_reward
+                            else:
+                                graph_cumul_reward[graph_name].append(cumul_reward)
+
+                            break    
+        
                     if (episode+ 1)*(g_index+1)*(epoch+1) % 10 == 0:
-                        list_eval_reward.append(self.evaluate(num_episode=5))
-                        self.logger.log_stat(key=f'{self.agent.graphs[g_index].graph_name}/eval_episode_reward', 
-                                             value=list_eval_reward[-1], 
+                        graph_name, mean_eval_reward = self.evaluate(num_episode=5)
+                        if graph_name not in graph_eval_reward:
+                            graph_eval_reward[graph_name] = [mean_eval_reward]
+                        else:
+                            graph_eval_reward[graph_name].append(mean_eval_reward)
+                        
+                        self.logger.log_stat(key=f'{graph_name}/eval_episode_reward', 
+                                             value=mean_eval_reward, 
                                              t=self.agent.global_t)
 
                 #if self.verbose:
                     #print(" <=> Finished game number: {} <=>".format(g_index))
                     #print("")
+
+        with open(os.path.join(self.results_path, 'train_episode_rewards.json'), 'w') as f:
+            json.dump(graph_cumul_reward, f, indent=4)
+            
+        with open(os.path.join(self.results_path, 'eval_episode_rewards.json'), 'w') as f:
+            json.dump(graph_eval_reward, f, indent=4)
         
-        np.savetxt(os.path.join(self.results_path, 'train_episode_rewards.out'), list_cumul_reward, delimiter=',')
-        np.savetxt(os.path.join(self.results_path, 'eval_episode_rewards.out'), list_eval_reward, delimiter=',')
         return cumul_reward
 
 
