@@ -162,7 +162,7 @@ class Runner:
                             list_cumul_reward.append(cumul_reward)
                             break
                     
-                    if (episode+ 1) % 5 == 0:
+                    if (episode+ 1)*(g_index+1)*(epoch+1) % 10 == 0:
                         list_eval_reward.append(self.evaluate(num_episode=5))
                         self.logger.log_stat(key=f'{self.agent.graphs[g_index].graph_name}/eval_episode_reward', 
                                              value=list_eval_reward[-1], 
