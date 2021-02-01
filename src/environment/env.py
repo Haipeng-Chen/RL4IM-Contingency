@@ -61,13 +61,11 @@ class NetworkEnv(object):
     def step(self, i, pri_action, sec_action):
         #pri_action is a list, sec_action is an int
         #compute reward as marginal contribution of a node
-        #print('time step: ', i)
         if i == 1:
             seeds = [sec_action]
             #print('seeds are ', seeds)
             self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
             #print('reward:', self.reward)
-            #pdb.set_trace()
         else:
             seeds = []
             [seeds.append(v) for v in range(self.N) if (self.state[0][v]==1 or self.state[2][v]==1)] #I am treating state[2][v]==1 as q=1 TODO: change it to probabilistic
@@ -78,12 +76,6 @@ class NetworkEnv(object):
             #print('seeds with it  are ',seeds)
             influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
             self.reward = influence_with - influece_without
-            #pdb.set_trace()
-
-        #update feasible actions
-        #print('feasible actions:',  self.feasible_actions)
-        #self.feasible_actions.remove(sec_action)
-        #print('feasible actions:',  self.feasible_actions)
 
         #update next_state and done      
         if i%self.budget == 0:
@@ -92,15 +84,14 @@ class NetworkEnv(object):
             present, absent = self.transition(invited)
             state=self.state.copy()
             for v in present:
-                self.G.nodes[v]['attr']=1 #TODO: remove this?
+                #self.G.nodes[v]['attr']=1 #TODO: remove this?
                 self.state[0][v]=1
             for v in absent:
-                self.G.nodes[v]['attr']=2
+                #self.G.nodes[v]['attr']=2
                 self.state[1][v]=1
             self.state[2].fill(0)
             if i == self.T:
                 #seeds = []
-                #[seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
                 #[seeds.append(v) for v in range(self.N) if self.state[0][v] == 1]
                 #self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 next_state = None
@@ -152,25 +143,25 @@ class NetworkEnv(object):
         #[present.append(i) for i in invited if random.random() <= q]
         return present, absent
 
-    def reset(self, graph_index=0, test_mode=False):
-        if test_mode:  # do not set the index of the graph
-            self.G = self.graphs[graph_index]
+    def reset(self, g_index=0, mode='train'):
+        if mode == 'test': 
+            #self.graph_index = g_index 
+            self.G = self.graphs[g_index]
         else:
-            self.graph_index = graph_index
-            self.G = self.graphs[graph_index]
+            #self.graph_index = g_index
+            self.G = self.graphs[g_index]
         self.N = len(self.G.g)
         self.A = nx.to_numpy_matrix(self.G.g)
         self.t = 0
         self.done = False
         self.reward = 0
-        self.state = np.zeros((3, self.N)) ########
+        self.state = np.zeros((3, self.N)) 
         self.observation = self.state
-        #self.feasible_actions = list(range(self.N))
         nx.set_node_attributes(self.G.g, 0, 'attr')
 
 
 class Environment(NetworkEnv):
-    def __init__(self, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=250, graphs=None, name='MVC'):
+    def __init__(self, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None, name='MVC'):
         super().__init__(T=T,
                          budget=budget,
                          propagate_p=propagate_p,
@@ -181,11 +172,11 @@ class Environment(NetworkEnv):
                          num_simul=num_simul,
                          graphs=graphs)
         self.name = name
-        self.G = graphs[0]
-        self.graph_init = self.G
+        self.G = graphs[0] ####
+        self.graph_init = self.G  #####
 
         self.graphs = graphs
-        self.N = len(self.G.g)
+        self.N = len(self.G.g)  ####
         #self.budget = math.floor(self.N * budget_ratio/T)
         self.budget = budget
         self.A = nx.to_numpy_matrix(self.G.g)  
@@ -213,78 +204,78 @@ class Environment(NetworkEnv):
         finally:
             return feasible_actions
 
-    def get_approx(self):
-        if self.name == "MVC":
-            cover_edge=[]
-            edges= list(self.graph_init.edges)
-            while len(edges) > 0:
-                edge = edges[np.random.choice(len(edges))]
-                cover_edge.append(edge[0])
-                cover_edge.append(edge[1])
-                to_remove=[]
-                for edge_ in edges:
-                    if edge_[0]==edge[0] or edge_[0]==edge[1]:
-                        to_remove.append(edge_)
-                    else:
-                        if edge_[1]==edge[1] or edge_[1]==edge[0]:
-                            to_remove.append(edge_)
-                for i in to_remove:
-                    edges.remove(i)
-            return len(cover_edge)
+    #def get_approx(self):
+    #    if self.name == "MVC":
+    #        cover_edge=[]
+    #        edges= list(self.graph_init.edges)
+    #        while len(edges) > 0:
+    #            edge = edges[np.random.choice(len(edges))]
+    #            cover_edge.append(edge[0])
+    #            cover_edge.append(edge[1])
+    #            to_remove=[]
+    #            for edge_ in edges:
+    #                if edge_[0]==edge[0] or edge_[0]==edge[1]:
+    #                    to_remove.append(edge_)
+    #                else:
+    #                    if edge_[1]==edge[1] or edge_[1]==edge[0]:
+    #                        to_remove.append(edge_)
+    #            for i in to_remove:
+    #                edges.remove(i)
+    #        return len(cover_edge)
 
-        elif self.name=="MAXCUT":
-            return 1
-        else:
-            return 'you pass a wrong environment name'
+    #    elif self.name=="MAXCUT":
+    #        return 1
+    #    else:
+    #        return 'you pass a wrong environment name'
 
 
-    def get_optimal_sol(self):
-        if self.name =="MVC":
-            x = list(range(self.graph_init.g.number_of_nodes()))
-            xv = pulp.LpVariable.dicts('is_opti', x,
-                                       lowBound=0,
-                                       upBound=1,
-                                       cat=pulp.LpInteger)
+    #def get_optimal_sol(self):
+    #    if self.name =="MVC":
+    #        x = list(range(self.graph_init.g.number_of_nodes()))
+    #        xv = pulp.LpVariable.dicts('is_opti', x,
+    #                                   lowBound=0,
+    #                                   upBound=1,
+    #                                   cat=pulp.LpInteger)
 
-            mdl = pulp.LpProblem("MVC", pulp.LpMinimize)
-            mdl += sum(xv[k] for k in xv)
-            for edge in self.graph_init.edges:
-                mdl += xv[edge[0]] + xv[edge[1]] >= 1, "constraint :" + str(edge)
-            mdl.solve()
+    #        mdl = pulp.LpProblem("MVC", pulp.LpMinimize)
+    #        mdl += sum(xv[k] for k in xv)
+    #        for edge in self.graph_init.edges:
+    #            mdl += xv[edge[0]] + xv[edge[1]] >= 1, "constraint :" + str(edge)
+    #        mdl.solve()
 
-            #print("Status:", pulp.LpStatus[mdl.status])
-            optimal=0
-            for x in xv:
-                optimal += xv[x].value()
-                #print(xv[x].value())
-            return optimal
+    #        #print("Status:", pulp.LpStatus[mdl.status])
+    #        optimal=0
+    #        for x in xv:
+    #            optimal += xv[x].value()
+    #            #print(xv[x].value())
+    #        return optimal
 
-        elif self.name=="MAXCUT":
-            x = list(range(self.graph_init.g.number_of_nodes()))
-            e = list(self.graph_init.edge)
-            xv = pulp.LpVariable.dicts('is_opti', x,
-                                       lowBound=0,
-                                       upBound=1,
-                                       cat=pulp.LpInteger)
-            ev = pulp.LpVariable.dicts('ev', e,
-                                       lowBound=0,
-                                       upBound=1,
-                                       cat=pulp.LpInteger)
+    #    elif self.name=="MAXCUT":
+    #        x = list(range(self.graph_init.g.number_of_nodes()))
+    #        e = list(self.graph_init.edge)
+    #        xv = pulp.LpVariable.dicts('is_opti', x,
+    #                                   lowBound=0,
+    #                                   upBound=1,
+    #                                   cat=pulp.LpInteger)
+    #        ev = pulp.LpVariable.dicts('ev', e,
+    #                                   lowBound=0,
+    #                                   upBound=1,
+    #                                   cat=pulp.LpInteger)
 
-            mdl = pulp.LpProblem("MVC", pulp.LpMaximize)
+    #        mdl = pulp.LpProblem("MVC", pulp.LpMaximize)
 
-            mdl += sum(ev[k] for k in ev)
+    #        mdl += sum(ev[k] for k in ev)
 
-            for i in e:
-                mdl+= ev[i] <= xv[i[0]]+xv[i[1]]
+    #        for i in e:
+    #            mdl+= ev[i] <= xv[i[0]]+xv[i[1]]
 
-            for i in e:
-                mdl+= ev[i]<= 2 -(xv[i[0]]+xv[i[1]])
+    #        for i in e:
+    #            mdl+= ev[i]<= 2 -(xv[i[0]]+xv[i[1]])
 
-            #pulp.LpSolverDefault.msg = 1
-            mdl.solve()
-            # print("Status:", pulp.LpStatus[mdl.status])
-            return mdl.objective.value()
+    #        #pulp.LpSolverDefault.msg = 1
+    #        mdl.solve()
+    #        # print("Status:", pulp.LpStatus[mdl.status])
+    #        return mdl.objective.value()
 
 
 def arg_parse():

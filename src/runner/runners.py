@@ -41,15 +41,19 @@ class Runner:
         mode = 'test'
 
         #the last graph in graphs is the test graph 
-        g_index = random.choice([i for i, g in enumerate(self.environment.graphs) if i != self.environment.graph_index])
+        #g_index = random.choice([i for i, g in enumerate(self.environment.graphs) if i != self.environment.graph_index])
+        g_index = self.args.graph_nbr_train #TODO: use one test graph for sanity chaeck, use all test graphs at last
+        print('graph index: ', g_index)
+        #ipdb.set_trace()
         g_name = self.environment.graphs[g_index].graph_name
         print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
 
         if self.agent.method == 'RL':
             for episode in range(num_episode):
                 # select other graphs
-                self.environment.reset(test_mode=True)
-                self.agent.reset(test_mode=True)  # g is zero
+                self.environment.reset(g_index=g_index, mode=mode)
+                #TODO: revise agent.py to disginguish train/test
+                self.agent.reset(g_index=g_index, mode=mode)  
                 feasible_actions = list(range(self.environment.N))
                 accumulated_reward = 0
                 pri_action = [ ]
@@ -119,12 +123,12 @@ class Runner:
 
         for epoch in range(self.args.nbr_epoch):
             print('epoch: ', epoch)
-            for g_index in range(self.args.graph_nbr-1):  # graph list; first  graph_nbr-1 graphs are training, the last one for test
+            for g_index in range(self.args.graph_nbr_train):  # graph list; first  graph_nbr_train graphs are training, the rest are for test
                 graph_name = self.agent.graphs[g_index].graph_name
                 print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
                 for episode in range(self.args.max_episodes):
                     print('episode: {}'.format(episode))
-                    self.environment.reset(graph_index=g_index)
+                    self.environment.reset(g_index=g_index)
                     self.agent.reset(g_index)  
                     cumul_reward = 0.0
                     pri_action = [ ]
