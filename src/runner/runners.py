@@ -164,7 +164,7 @@ class Runner:
                             
 
                             if graph_name not in graph_cumul_reward:
-                                graph_cumul_reward[graph_name] = cumul_reward
+                                graph_cumul_reward[graph_name] = [cumul_reward]
                             else:
                                 graph_cumul_reward[graph_name].append(cumul_reward)
 
