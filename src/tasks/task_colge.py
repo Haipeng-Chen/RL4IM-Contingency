@@ -49,7 +49,7 @@ def run_colge(_run, config, logger, run_args=None):
         agent_class = randomAgent()
     elif args.method == 'maxdegree': 
         agent_class = maxdegreeAgent()
-    elif args.method == 'ada_greedy':
+    elif args.method == 'adaptive_greedy':
         agent_class = adaptive_greedyAgent()
     elif args.method == 'lazy_adaptive_greedy':
         agent_class = lazy_adaptive_greedyAgent()

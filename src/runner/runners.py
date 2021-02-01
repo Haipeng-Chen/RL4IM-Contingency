@@ -33,6 +33,10 @@ class Runner:
         # return observation, action, reward, done
         pass
 
+    def state_abstraction(self, state):
+        abs_state = state[0]+state[2]*self.args.q
+        return abs_state
+
     def evaluate(self, num_episode=5):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
@@ -62,13 +66,14 @@ class Runner:
 
                 for i in range(1, self.environment.T+1):
                     state = self.environment.state.copy()
-                    sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
-                                            feasible_actions=feasible_actions.copy(), mode=mode)
-                    #print('feasible actions: ',feasible_actions)
+                    abs_state = self.state_abstraction(state) ####
+                    #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
+                                            #feasible_actions=feasible_actions.copy(), mode=mode)
+                    sec_action = self.agent.act(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...], 
+                                                feasible_actions=feasible_actions.copy(), mode=mode) ####
                     feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
-                    #print('feasible actions: ',feasible_actions)
                     pri_action.append(sec_action)
-                    next_state, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
+                    _, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
 
                     if i % self.environment.budget == 0:
                         present, _ = self.environment.transition(pri_action)
@@ -85,7 +90,7 @@ class Runner:
         else:
             print('method is :', self.agent.method)
             for episode in range(num_episode):
-                self.environment.reset(test_mode=True)
+                self.environment.reset(mode=mode)
                 feasible_actions = list(range(self.environment.N))
                 invited = []
                 presents = []
@@ -93,7 +98,7 @@ class Runner:
                 for i in range(1, self.environment.T+1):
                     if (i-1) % self.environment.budget == 0:
                         #note that the other methods select budget number of nodes a time
-                        print('step: {}, feasible actions: {}'.format(i, len(feasible_actions)))
+                        #print('step: {}, feasible actions: {}'.format(i, len(feasible_actions)))
                         pri_action, _ = self.agent.act(feasible_actions,self.environment.budget,self.environment.f_multi,presents)
                         invited+=pri_action
                         present, _ = self.environment.transition(pri_action)
@@ -136,17 +141,21 @@ class Runner:
 
                     for i in range(1, self.environment.T+1):
                         state = self.environment.state.copy()
+                        abs_state = self.state_abstraction(state) ####
                         if (i-1) % self.environment.budget == 0:
                             pri_action=[ ]
-                        sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...], 
-                                                feasible_actions=feasible_actions.copy(), mode=mode)
+                        #sec_action = self.agent.act(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...],
+                                                #feasible_actions=feasible_actions.copy(), mode=mode)
+                        sec_action = self.agent.act(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...], 
+                                                feasible_actions=feasible_actions.copy(), mode=mode) ####
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
                         next_state, reward, done = self.environment.step(i, pri_action, sec_action=sec_action)
 
                         # learning the model
-                        loss = self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
+                        #loss = self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
+                        loss = self.agent.reward(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...], sec_action, reward, done) ####
                         cumul_reward += reward
                         print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Epsilon: {self.agent.curr_epsilon:.2f}")
                         
