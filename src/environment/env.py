@@ -36,27 +36,27 @@ class NetworkEnv(object):
     note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     
-    def __init__(self, G, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None):
-        self.G = G
+    def __init__(self, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None):
+        #self.G = G
         self.graphs = graphs
-        self.N = len(self.G)
+        #self.N = len(self.G)
         #self.budget = math.floor(self.N * budget_ratio/T)
-        self.budget = budget
-        self.A = nx.to_numpy_matrix(self.G)  
-        self.propagate_p = propagate_p
-        self.l = l
-        self.d = d
-        self.q = q
-        self.T = T
-        self.cascade = cascade
-        self.num_simul = num_simul
-        self.t = 0
-        self.done = False
-        self.reward = 0
+        #self.budget = budget
+        #self.A = nx.to_numpy_matrix(self.G)  
+        #self.propagate_p = propagate_p
+        #self.l = l
+        #self.d = d
+        #self.q = q
+        #self.T = T
+        #self.cascade = cascade
+        #self.num_simul = num_simul
+        #self.t = 0
+        #self.done = False
+        #self.reward = 0
         #self.feasible_actions = list(range(self.N))
-        self.state = np.zeros((3, self.N)) 
-        self.observation = self.state
-        nx.set_node_attributes(self.G, 0, 'attr')
+        #self.state = np.zeros((3, self.N)) 
+        #self.observation = self.state
+        #nx.set_node_attributes(self.G, 0, 'attr')
 
     def step(self, i, pri_action, sec_action):
         #pri_action is a list, sec_action is an int
@@ -121,57 +121,6 @@ class NetworkEnv(object):
 
         return next_state, self.reward, self.done
             
-    
-   # def step(self, i, pri_action, sec_action):
-   #     #compute reward as marginal contribution of a node
-   #     seeds = []
-   #     [seeds.append(v) for v in range(self.N) if (self.state[0][v]==1 or self.state[2][v]==1)] #I am treating state[2][v]==1 as q=1 TODO: change it to probabilistic
-   #     influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-   #     seeds.append(sec_action)
-   #     influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-   #     self.reward = influence_with - influece_without
-
-   #     #update feasible actions
-   #     self.feasible_actions.remove(sec_action)
-
-   #     #update next_state and done      
-   #     if i == self.budget-1:
-   #     #a primary step
-   #         invited = pri_action
-   #         present, absent = self.transition(invited)
-   #         state=self.state.copy()
-   #         for v in present:
-   #             self.G.nodes[v]['attr']=1 #TODO: remove this?
-   #             self.state[0][v]=1
-   #         for v in absent:
-   #             self.G.nodes[v]['attr']=2
-   #             self.state[1][v]=1
-   #         #numpy.fill(self.state[2])
-   #         #TODO: assigne 0 values to all state[2]
-   #         if self.t == self.T-1:
-   #             #seeds = []
-   #             #[seeds.append(v) for v in range(self.N) if self.G.nodes[v]['attr'] == 1]
-   #             #[seeds.append(v) for v in range(self.N) if self.state[0][v] == 1]
-   #             #self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-   #             next_state = None
-   #             self.done = True
-   #         else:
-   #             #self.reward = 0 
-   #             next_state = self.state.copy()
-   #             self.done = False
-   #             #self.feasible_actions.remove(sec_action)
-   #             #feasible_actions_cp = self.feasible_actions.copy()
-   #             #self.feasible_actions = [i for i in feasible_actions_cp if i not in invited]
-   #             self.t += 1
-   #     else:
-   #     #a secondary step
-   #         self.state[2][sec_action]=1
-   #         next_state = self.state.copy()
-   #         self.done = False
-   #         #self.feasible_actions.remove(sec_action) ########correct? 
-   #         
-   #     return next_state, self.reward, self.done  
-    
     def run_cascade(self, seeds, cascade='IC', sample=1000):
         #print('running cascade')
         #there may be better ways of passing the arguments
@@ -186,6 +135,13 @@ class NetworkEnv(object):
         else:
             assert(False)
         return reward
+
+    #TODO
+    def f_multi(self, x):
+        s=list(x) 
+        #print('cascade model is: ', env.cascade)
+        val = self.run_cascade(seeds=s, cascade=self.cascade, sample=self.num_simul)
+        return val
  
     #the simple state transition process
     def transition(self, invited):#q is probability being present
@@ -197,9 +153,10 @@ class NetworkEnv(object):
         return present, absent
 
 
-    def reset(self, g_i=0):
-        self.g_i = g_i
-        self.G = self.graphs[g_i]
+    def reset(self, graph_index=0):
+        self.graph_index = graph_index
+        self.G = self.graphs[graph_index]
+        self.N = len(self.G.g)
         self.A = nx.to_numpy_matrix(self.G.g)
         self.t = 0
         self.done = False
@@ -211,9 +168,8 @@ class NetworkEnv(object):
 
 
 class Environment(NetworkEnv):
-    def __init__(self, G, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=250, graphs=None, name='MVC'):
-        super().__init__(G=G,
-                         T=T,
+    def __init__(self, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=250, graphs=None, name='MVC'):
+        super().__init__(T=T,
                          budget=budget,
                          propagate_p=propagate_p,
                          l=l,
@@ -227,7 +183,7 @@ class Environment(NetworkEnv):
         self.graph_init = self.G
 
         self.graphs = graphs
-        self.N = len(self.G)
+        self.N = len(self.G.g)
         #self.budget = math.floor(self.N * budget_ratio/T)
         self.budget = budget
         self.A = nx.to_numpy_matrix(self.G.g)  

@@ -5,7 +5,7 @@ python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with
 ```
 
 `--config=colge`, `--env-config=basic_env` and `--results-dir=temp_dir` all needed and hyperparameters are stored in `src/tasks/config`. You can set params after `with`.
-
+Default parameter values are in network-opt-rl/src/tasks/config/
 
 Run with Docker on GPU `0`
 

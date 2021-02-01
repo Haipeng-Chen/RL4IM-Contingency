@@ -10,6 +10,8 @@ import torch.nn.functional as F
 import src.agent.colge.models as models
 from src.agent.colge.utils.config import load_model_config
 
+import ipdb
+
 
 def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
     assert 0 < final_v <= 1, ValueError('Value Error')
@@ -23,7 +25,8 @@ def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
 
 class DQAgent:
     def __init__(self, graph, model, lr, bs, n_step, args=None):
-
+        
+        self.method = 'RL'
         self.graphs = graph
         self.embed_dim = 64
         self.model_name = model
@@ -114,6 +117,9 @@ class DQAgent:
         if self.curr_epsilon > np.random.rand() and mode != 'test':
             action = np.random.choice(feasible_actions)
         else:  # called for both test and train mode
+            #if mode == 'test' and len(feasible_actions)==200:
+                #print('observation: ', observation)
+                #ipdb.set_trace()
             q_a = self.model(observation, self.adj)
             q_a = q_a.detach().cpu().numpy()
             
@@ -125,6 +131,9 @@ class DQAgent:
             
             #action = np.where((q_a[0, :, 0] == np.max(q_a[0, :, 0][observation.cpu().numpy()[0, :, 0] == 0])))[0][0]
             action = int(np.argmax(q_a[0, :, 0]))
+            #if mode == 'test' and len(feasible_actions)==200:
+                #print('action: ', action)
+                #ipdb.set_trace()
 
         if mode != 'test':
             # Update epsilon while training
@@ -234,4 +243,4 @@ class DQAgent:
         else:
             return tensor
 
-Agent = DQAgent
+#Agent = DQAgent

@@ -27,7 +27,7 @@ from src.agent.dqn import DQN
 from src.network.gcn import NaiveGCN
 from src.environment.graph import Graph
 from src.environment.env import NetworkEnv
-from src.agent.baseline import lazy_greedy, greedy, lazy_adaptive_greedy, adaptive_greedy, max_degree
+#from src.agent.baseline import lazy_greedy, greedy, lazy_adaptive_greedy, adaptive_greedy, max_degree
 
 
 def get_graph(graph_index):
