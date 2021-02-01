@@ -152,8 +152,8 @@ class NetworkEnv(object):
         #[present.append(i) for i in invited if random.random() <= q]
         return present, absent
 
-    def reset(self, graph_index=0, test_model=False):
-        if test_model:  # do not set the index of the graph
+    def reset(self, graph_index=0, test_mode=False):
+        if test_mode:  # do not set the index of the graph
             self.G = self.graphs[graph_index]
         else:
             self.graph_index = graph_index
