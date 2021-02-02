@@ -19,6 +19,8 @@ epislon_decay_steps: 10000
 
 method: 'rl'  # ['rl', 'ada_greedy', 'lazy_adaptive_greedy']
 
+use_state_abs: True
+
 #graph_type: 'erdos_renyi' # , metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
 #graph_nbr: 8 # , type=int, default='1', help='number of differente graph to generate for the training sample')
 #node: 20 # type=int, metavar='nnode', default=20, help="number of node in generated graphs")

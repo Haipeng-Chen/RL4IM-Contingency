@@ -4,6 +4,7 @@ import random
 import logging
 
 import torch
+import torch as th
 import numpy as np
 import torch.nn.functional as F
 
@@ -26,7 +27,7 @@ def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
 class DQAgent:
     def __init__(self, graph, model, lr, bs, n_step, args=None):
         
-        self.method = 'RL'
+        self.method = 'rl'  # use lowercase 
         self.graphs = graph
         self.embed_dim = 64
         self.model_name = model
@@ -49,24 +50,21 @@ class DQAgent:
         self.memory_n=[]
         self.minibatch_length = bs
 
+        args_init = load_model_config()[self.model_name]
+        args_init['args'] = self.args
         if self.model_name == 'S2V_QN_1':
-            args_init = load_model_config()[self.model_name]
             self.model = models.S2V_QN_1(**args_init)
 
         elif self.model_name == 'S2V_QN_2':
-            args_init = load_model_config()[self.model_name]
             self.model = models.S2V_QN_2(**args_init)
 
         elif self.model_name== 'GCN_QN_1':
-            args_init = load_model_config()[self.model_name]
             self.model = models.GCN_QN_1(**args_init)
 
         elif self.model_name == 'LINE_QN':
-            args_init = load_model_config()[self.model_name]
             self.model = models.LINE_QN(**args_init)
 
         elif self.model_name == 'W2V_QN':
-            args_init = load_model_config()[self.model_name]
             self.model = models.W2V_QN(G=self.graphs[self.games], **args_init)
 
         self.criterion = torch.nn.MSELoss(reduction='sum')
@@ -115,6 +113,12 @@ class DQAgent:
 
     def act(self, observation, feasible_actions, mode):
         # to cuda
+
+        if self.args.use_state_abs:
+            observation = th.from_numpy(observation).float()[None, :, None]
+        else:
+            observation = th.from_numpy(observation).float().transpose(1, 0)[None, ...]
+
         if self.args.use_cuda:
             observation = observation.cuda()
             self.adj = self.adj.cuda()
@@ -151,13 +155,20 @@ class DQAgent:
         return action
 
     def reward(self, observation, action, reward,done):
+        
+        if self.args.use_state_abs:
+            observation = th.from_numpy(observation).float()[None, :, None]
+        else:
+            observation = th.from_numpy(observation).float().transpose(1, 0)[None, ...]
+
         loss = None
         if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens,adj_tens) = self.get_sample()
             # TODO further check
+            aux_tensor = self.to_cuda(th.tensor(observation_tens * (-1e5) if self.args.use_state_abs else 0).float())
             target = self.to_cuda(reward_tens) + self.gamma *(1-self.to_cuda(done_tens)) * \
-                torch.max(self.model(self.to_cuda(observation_tens), self.to_cuda(adj_tens)), dim=1)[0]
+                torch.max(self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens)), dim=1)[0]
             target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens))
             target_p = target_f.clone()
             target_f[range(self.minibatch_length), action_tens, :] = target

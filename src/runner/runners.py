@@ -52,7 +52,7 @@ class Runner:
         g_name = self.environment.graphs[g_index].graph_name
         print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
 
-        if self.agent.method == 'RL':
+        if self.agent.method == 'rl':
             for episode in range(num_episode):
                 # select other graphs
                 self.environment.reset(g_index=g_index, mode=mode)
@@ -66,11 +66,11 @@ class Runner:
 
                 for i in range(1, self.environment.T+1):
                     state = self.environment.state.copy()
-                    abs_state = self.state_abstraction(state) ####
+                    if self.args.use_state_abs:
+                        state = self.state_abstraction(state) ####
                     #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
                                             #feasible_actions=feasible_actions.copy(), mode=mode)
-                    sec_action = self.agent.act(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...], 
-                                                feasible_actions=feasible_actions.copy(), mode=mode) ####
+                    sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) ####
                     feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                     pri_action.append(sec_action)
                     _, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
@@ -96,10 +96,14 @@ class Runner:
                 presents = []
                 accumulated_reward = 0
                 for i in range(1, self.environment.T+1):
+                    state = self.environment.state.copy()
+                    if self.args.use_state_abs:
+                        state = self.state_abstraction(state) ####
+                    
                     if (i-1) % self.environment.budget == 0:
                         #note that the other methods select budget number of nodes a time
                         #print('step: {}, feasible actions: {}'.format(i, len(feasible_actions)))
-                        pri_action, _ = self.agent.act(feasible_actions,self.environment.budget,self.environment.f_multi,presents)
+                        pri_action, _ = self.agent.act(state, feasible_actions,self.environment.budget,self.environment.f_multi,presents)
                         invited+=pri_action
                         present, _ = self.environment.transition(pri_action)
                         presents+=present
@@ -141,13 +145,13 @@ class Runner:
 
                     for i in range(1, self.environment.T+1):
                         state = self.environment.state.copy()
-                        abs_state = self.state_abstraction(state) ####
+                        if self.args.use_state_abs:
+                            state = self.state_abstraction(state) ####
                         if (i-1) % self.environment.budget == 0:
                             pri_action=[ ]
                         #sec_action = self.agent.act(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...],
                                                 #feasible_actions=feasible_actions.copy(), mode=mode)
-                        sec_action = self.agent.act(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...], 
-                                                feasible_actions=feasible_actions.copy(), mode=mode) ####
+                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) ####
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
@@ -155,7 +159,7 @@ class Runner:
 
                         # learning the model
                         #loss = self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
-                        loss = self.agent.reward(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...], sec_action, reward, done) ####
+                        loss = self.agent.reward(state, sec_action, reward, done) ####
                         cumul_reward += reward
                         print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Epsilon: {self.agent.curr_epsilon:.2f}")
                         
@@ -198,11 +202,12 @@ class Runner:
                     #print(" <=> Finished game number: {} <=>".format(g_index))
                     #print("")
 
-        with open(os.path.join(self.results_path, 'train_episode_rewards.json'), 'w') as f:
-            json.dump(graph_cumul_reward, f, indent=4)
-            
-        with open(os.path.join(self.results_path, 'eval_episode_rewards.json'), 'w') as f:
-            json.dump(graph_eval_reward, f, indent=4)
+                # save per episode
+                with open(os.path.join(self.results_path, 'train_episode_rewards.json'), 'w') as f:
+                    json.dump(graph_cumul_reward, f, indent=4)
+                    
+                with open(os.path.join(self.results_path, 'eval_episode_rewards.json'), 'w') as f:
+                    json.dump(graph_eval_reward, f, indent=4)
         
         return cumul_reward
 

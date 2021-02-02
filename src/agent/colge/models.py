@@ -9,8 +9,9 @@ import torch.nn.functional as F
 
 
 class S2V_QN_1(torch.nn.Module):
-    def __init__(self,reg_hidden, embed_dim, len_pre_pooling, len_post_pooling, T):
+    def __init__(self, reg_hidden, embed_dim, len_pre_pooling, len_post_pooling, T, args=None):
         super(S2V_QN_1, self).__init__()
+        self.args = args
         self.T = T
         self.embed_dim = embed_dim
         self.reg_hidden = reg_hidden
@@ -18,7 +19,7 @@ class S2V_QN_1(torch.nn.Module):
         self.len_post_pooling = len_post_pooling
         #self.mu_1 = torch.nn.Linear(1, embed_dim)
         #torch.nn.init.normal_(self.mu_1.weight,mean=0,std=0.01)
-        self.mu_1 = torch.nn.Parameter(torch.Tensor(3, embed_dim))  # [#batch, #nodes, 3]
+        self.mu_1 = torch.nn.Parameter(torch.Tensor(1 if self.args.use_state_abs else 3, embed_dim))  # [#batch, #nodes, 3]
         torch.nn.init.normal_(self.mu_1, mean=0, std=0.01)
         self.mu_2 = torch.nn.Linear(embed_dim, embed_dim,True)
         torch.nn.init.normal_(self.mu_2.weight, mean=0, std=0.01)
@@ -41,11 +42,11 @@ class S2V_QN_1(torch.nn.Module):
         torch.nn.init.normal_(self.q_2.weight, mean=0, std=0.01)
         
         if self.reg_hidden > 0:
-            self.q_reg = torch.nn.Linear(4 * embed_dim, self.reg_hidden)
+            self.q_reg = torch.nn.Linear((2 if self.args.use_state_abs else 4) * embed_dim, self.reg_hidden)
             torch.nn.init.normal_(self.q_reg.weight, mean=0, std=0.01)
             self.q = torch.nn.Linear(self.reg_hidden, 1)
         else:
-            self.q = torch.nn.Linear(4 * embed_dim, 1)
+            self.q = torch.nn.Linear((2 if self.args.use_state_abs else 4) * embed_dim, 1)
         torch.nn.init.normal_(self.q.weight, mean=0, std=0.01)
  
     def forward(self, xv, adj):
