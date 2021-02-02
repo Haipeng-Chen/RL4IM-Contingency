@@ -96,14 +96,10 @@ class Runner:
                 presents = []
                 accumulated_reward = 0
                 for i in range(1, self.environment.T+1):
-                    state = self.environment.state.copy()
-                    if self.args.use_state_abs:
-                        state = self.state_abstraction(state) ####
-                    
                     if (i-1) % self.environment.budget == 0:
                         #note that the other methods select budget number of nodes a time
                         #print('step: {}, feasible actions: {}'.format(i, len(feasible_actions)))
-                        pri_action, _ = self.agent.act(state, feasible_actions,self.environment.budget,self.environment.f_multi,presents)
+                        pri_action, _ = self.agent.act(feasible_actions, self.environment.budget, self.environment.f_multi,presents)
                         invited+=pri_action
                         present, _ = self.environment.transition(pri_action)
                         presents+=present
