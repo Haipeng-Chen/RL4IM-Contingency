@@ -37,7 +37,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episode=5):
+    def evaluate(self, num_episode=20):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = []
@@ -47,71 +47,71 @@ class Runner:
         #the last graph in graphs is the test graph 
         #g_index = random.choice([i for i, g in enumerate(self.environment.graphs) if i != self.environment.graph_index])
         g_index = self.args.graph_nbr_train #TODO: use one test graph for sanity chaeck, use all test graphs at last
-        print('graph index: ', g_index)
-        #ipdb.set_trace()
-        g_name = self.environment.graphs[g_index].graph_name
-        print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
 
-        if self.agent.method == 'rl':
-            for episode in range(num_episode):
-                # select other graphs
-                self.environment.reset(g_index=g_index, mode=mode)
-                #TODO: revise agent.py to disginguish train/test
-                self.agent.reset(g_index=g_index, mode=mode)  
-                feasible_actions = list(range(self.environment.N))
-                accumulated_reward = 0
-                pri_action = [ ]
-                invited = []
-                presents = []
+        
+        for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+args.graph_nbr_test):
+            print('graph index: ', g_index)
+            g_name = self.environment.graphs[g_index].graph_name
+            print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
+            if self.agent.method == 'rl':
+                for episode in range(num_episode):
+                    # select other graphs
+                    self.environment.reset(g_index=g_index, mode=mode)
+                    self.agent.reset(g_index=g_index, mode=mode)  
+                    feasible_actions = list(range(self.environment.N))
+                    accumulated_reward = 0
+                    pri_action = [ ]
+                    invited = []
+                    presents = []
 
-                for i in range(1, self.environment.T+1):
-                    state = self.environment.state.copy()
-                    if self.args.use_state_abs:
-                        state = self.state_abstraction(state) ####
-                    #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
-                                            #feasible_actions=feasible_actions.copy(), mode=mode)
-                    sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) ####
-                    feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
-                    pri_action.append(sec_action)
-                    _, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
-
-                    if i % self.environment.budget == 0:
-                        present, _ = self.environment.transition(pri_action)
-                        presents += present
-                        invited += pri_action
-                        pri_action=[ ]
-
-                    if done:
-                        accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
-                        episode_accumulated_rewards.append(accumulated_reward)
-                        print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
-                        print('invited: ', invited)
-                        print('present: ', presents) 
-        else:
-            print('method is :', self.agent.method)
-            for episode in range(num_episode):
-                self.environment.reset(mode=mode)
-                feasible_actions = list(range(self.environment.N))
-                invited = []
-                presents = []
-                accumulated_reward = 0
-                for i in range(1, self.environment.T+1):
-                    if (i-1) % self.environment.budget == 0:
-                        #note that the other methods select budget number of nodes a time
-                        #print('step: {}, feasible actions: {}'.format(i, len(feasible_actions)))
-                        pri_action, _ = self.agent.act(feasible_actions, self.environment.budget, self.environment.f_multi,presents)
-                        invited+=pri_action
-                        present, _ = self.environment.transition(pri_action)
-                        presents+=present
-                    for sec_action in pri_action:
+                    for i in range(1, self.environment.T+1):
+                        state = self.environment.state.copy()
+                        if self.args.use_state_abs:
+                            state = self.state_abstraction(state) ####
+                        #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
+                                                #feasible_actions=feasible_actions.copy(), mode=mode)
+                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) ####
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
+                        pri_action.append(sec_action)
+                        _, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
 
-                    if i == self.environment.T:
-                        accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
-                        episode_accumulated_rewards.append(accumulated_reward)
-                        print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
-                        print('invited: ', invited)
-                        print('present: ', presents)
+                        if i % self.environment.budget == 0:
+                            present, _ = self.environment.transition(pri_action)
+                            presents += present
+                            invited += pri_action
+                            pri_action=[ ]
+
+                        if done:
+                            accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                            episode_accumulated_rewards.append(accumulated_reward)
+                            print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
+                            print('invited: ', invited)
+                            print('present: ', presents) 
+            else:
+                print('method is :', self.agent.method)
+                for episode in range(num_episode):
+                    self.environment.reset(mode=mode)
+                    feasible_actions = list(range(self.environment.N))
+                    invited = []
+                    presents = []
+                    accumulated_reward = 0
+                    for i in range(1, self.environment.T+1):
+                        if (i-1) % self.environment.budget == 0:
+                            #note that the other methods select budget number of nodes a time
+                            #print('step: {}, feasible actions: {}'.format(i, len(feasible_actions)))
+                            pri_action, _ = self.agent.act(feasible_actions, self.environment.budget, self.environment.f_multi,presents)
+                            invited+=pri_action
+                            present, _ = self.environment.transition(pri_action)
+                            presents+=present
+                        for sec_action in pri_action:
+                            feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
+
+                        if i == self.environment.T:
+                            accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                            episode_accumulated_rewards.append(accumulated_reward)
+                            print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
+                            print('invited: ', invited)
+                            print('present: ', presents)
         ave_cummulative_reward = np.mean(episode_accumulated_rewards)
         print('average cummulative reward is: ', ave_cummulative_reward)
         print('----------------------------------------------end evaluation---------------------------------------------------------')
@@ -125,6 +125,7 @@ class Runner:
         graph_eval_reward = {}
         mode = 'train'
         st = time.time()
+        global_episode = 0
 
         for epoch in range(self.args.nbr_epoch):
             print('epoch: ', epoch)
@@ -133,6 +134,7 @@ class Runner:
                 print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
                 for episode in range(self.args.max_episodes):
                     print('episode: {}'.format(episode))
+                    global_episode += 1
                     self.environment.reset(g_index=g_index)
                     self.agent.reset(g_index)  
                     cumul_reward = 0.0
@@ -183,8 +185,9 @@ class Runner:
 
                             break    
         
-                    if (episode+ 1)*(g_index+1)*(epoch+1) % 10 == 0:
-                        graph_name, mean_eval_reward = self.evaluate(num_episode=5)
+                    #if (episode+ 1)*(g_index+1)*(epoch+1) % 10 == 0:
+                    if global_episode % 10 == 0:
+                        graph_name, mean_eval_reward = self.evaluate(num_episode=20)
                         if graph_name not in graph_eval_reward:
                             graph_eval_reward[graph_name] = [mean_eval_reward]
                         else:
