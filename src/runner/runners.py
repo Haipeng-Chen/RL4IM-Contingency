@@ -37,7 +37,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episode=20):
+    def evaluate(self, num_episode=2):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = []
@@ -49,7 +49,8 @@ class Runner:
         g_index = self.args.graph_nbr_train #TODO: use one test graph for sanity chaeck, use all test graphs at last
 
         
-        for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+args.graph_nbr_test):
+        for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+self.args.graph_nbr_test):
+        #for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+5):
             print('graph index: ', g_index)
             g_name = self.environment.graphs[g_index].graph_name
             print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
@@ -186,8 +187,8 @@ class Runner:
                             break    
         
                     #if (episode+ 1)*(g_index+1)*(epoch+1) % 10 == 0:
-                    if global_episode % 10 == 0:
-                        graph_name, mean_eval_reward = self.evaluate(num_episode=20)
+                    if global_episode % 20 == 0:
+                        graph_name, mean_eval_reward = self.evaluate()
                         if graph_name not in graph_eval_reward:
                             graph_eval_reward[graph_name] = [mean_eval_reward]
                         else:
