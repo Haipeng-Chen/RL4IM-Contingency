@@ -14,6 +14,6 @@ budget: 5  # budget at each main step
 propagate_p: 0.1  # influence propagation probability
 l: 0.05  # influence of each neighbor in LT cascade
 d: 1  # d in SC cascade
-q: 1  # probability of invited node being present
+q: 0.6  # probability of invited node being present
 cascade: 'IC'  # cascade model
 greedy_sample_size: 500  # sample size for value estimation of greedy algorithms

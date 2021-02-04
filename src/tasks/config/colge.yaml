@@ -2,7 +2,7 @@ environment_name: 'MVC'  #', metavar='ENV_CLASS', type=str, default='MVC', help=
 agent: 'Agent' # metavar='AGENT_CLASS', default='Agent', type=str, help='Class to use for the agent. Must be in the \'agent\' module.')
 model: 'S2V_QN_1' #, type=str, default='S2V_QN_1', help='model name') # ['S2V_QN_1', 'S2V_QN_2', 'GCN_QN_1', 'LINE_QN', 'W2V_QN']
 ngames: 1  # type=int, metavar='n', default=1, help='number of games to simulate')
-max_episodes: 20  # type=int, metavar='n', default='1000', help='max number of iterations per game')
+max_episodes: 1  # type=int, metavar='n', default='1000', help='max number of iterations per game')
 nbr_epoch: 10 # type=int, metavar='nepoch', default=50, help="number of epochs")
 lr: 1e-4 # type=float, default=1e-4, help="learning rate")
 bs: 32 # type=int, default=32, help="minibatch size for training")
