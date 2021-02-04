@@ -37,7 +37,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episode=2):
+    def evaluate(self, num_episode=10):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = []
@@ -187,7 +187,7 @@ class Runner:
                             break    
         
                     #if (episode+ 1)*(g_index+1)*(epoch+1) % 10 == 0:
-                    if global_episode % 20 == 0:
+                    if global_episode % 50 == 0:
                         graph_name, mean_eval_reward = self.evaluate()
                         if graph_name not in graph_eval_reward:
                             graph_eval_reward[graph_name] = [mean_eval_reward]
