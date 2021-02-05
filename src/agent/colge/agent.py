@@ -67,6 +67,7 @@ class DQAgent:
         elif self.model_name == 'W2V_QN':
             self.model = models.W2V_QN(G=self.graphs[self.games], **args_init)
 
+        self.loss = 0
         self.criterion = torch.nn.MSELoss(reduction='sum')
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.T = 5
@@ -174,6 +175,7 @@ class DQAgent:
             target_f[range(self.minibatch_length), action_tens, :] = target
             loss = self.criterion(target_p, target_f)
 
+            self.loss = loss
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
@@ -245,11 +247,6 @@ class DQAgent:
                 else:
                     self.memory_n.append((step_init[0], step_init[1], cum_reward,self.memory[-1][-3], False, self.memory[-1][-1]))
 
-    def save_model(self, save_path):
-        save_dir = os.path.join(save_path, str(self.global_t))
-        os.makedirs(save_dir, exist_ok=True)
-        torch.save(self.model.state_dict(), os.path.join(save_dir, 'model.pt'))
-
     def cuda(self):
         self.model.cuda()
 
@@ -258,5 +255,26 @@ class DQAgent:
             return tensor.cuda()
         else:
             return tensor
+    
+    def save_model(self, save_path):
+        save_path = os.path.join(save_path, str(self.global_t))
+        os.makedirs(save_path, exist_ok=True)
+        
+        torch.save({
+            'global_t': self.global_t,  # time step is very important
+            'model_state_dict': self.model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+            'loss': self.loss,
+            'epsilon': self.curr_epsilon,
+            }, os.path.join(save_path, 'model.pt'))
+
+    def load_model(self, ckpt_path):
+        checkpoint = torch.load(os.path.join(ckpt_path, 'model.pt'))
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        self.global_t = checkpoint['global_t']
+        self.loss = checkpoint['loss']
+        self.curr_epsilon = checkpoint['epsilon']
+        self.model.eval()
 
 #Agent = DQAgent

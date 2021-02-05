@@ -12,8 +12,8 @@ from src.agent.baseline import *
 from src.environment.graph import Graph
 from src.environment.env import NetworkEnv, Environment
 from src.tasks.task_basic_dqn import get_graph
+from src.runner.utils import try_load_checkpint
 import ipdb
-
 
 def run_colge(_run, config, logger, run_args=None):
     args = SimpleNamespace(**config)
@@ -42,22 +42,23 @@ def run_colge(_run, config, logger, run_args=None):
                            propagate_p=args.propagate_p, l=args.l, d=args.d, q=args.q, graphs=graph_dic)
 
     if args.method == 'rl':
-        agent_class = DQAgent(graph_dic, args.model, args.lr, args.bs, args.n_step, args=args)
+        agent = DQAgent(graph_dic, args.model, args.lr, args.bs, args.n_step, args=args)
         if args.use_cuda:
-            agent_class.cuda()
+            agent.cuda()
     elif args.method == 'random':
-        agent_class = randomAgent()
+        agent = randomAgent()
     elif args.method == 'maxdegree': 
-        agent_class = maxdegreeAgent()
+        agent = maxdegreeAgent()
     elif args.method == 'adaptive_greedy':
-        agent_class = adaptive_greedyAgent()
+        agent = adaptive_greedyAgent()
     elif args.method == 'lazy_adaptive_greedy':
-        agent_class = lazy_adaptive_greedyAgent()
+        agent = lazy_adaptive_greedyAgent()
     else: 
         assert(False)
 
-    my_runner = runners.Runner(args, env_class, agent_class, args.verbose, logger=logger)
-
+    my_runner = runners.Runner(args, env_class, agent, args.verbose, logger=logger)
+    try_load_checkpint(args=args, runner=my_runner, agent=agent)
+    
     if args.method == 'rl':
         final_reward = my_runner.loop()
     else:

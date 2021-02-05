@@ -15,6 +15,7 @@ fi
 NV_GPU="$GPU" ${cmd} run -i \
     --name $name \
     --user $(id -u):$(id -g) \
+    -p 3000:3000 \
     -v `pwd`:/home/docker/app \
     -t im_rl:1.0 \
     ${@:2}

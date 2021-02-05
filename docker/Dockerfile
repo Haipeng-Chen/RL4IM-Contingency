@@ -2,6 +2,8 @@ FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
 
 MAINTAINER Wei Qiu
 
+EXPOSE 3000
+
 ENV CUDA_PATH /usr/local/cuda
 ENV CUDA_INCLUDE_PATH /usr/local/cuda/include
 ENV CUDA_LIBRARY_PATH /usr/local/cuda/lib64
@@ -22,7 +24,9 @@ RUN adduser --disabled-password --gecos '' docker && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN mkdir -p /.cache/pip
+RUN mkdir -p /.local/share
 RUN chown -R docker:docker /.cache/pip
+RUN chown -R docker:docker /.local
 
 USER docker 
 
@@ -38,6 +42,7 @@ RUN python3.7 -m pip install https://pytorch-geometric.com/whl/torch-1.7.0+cu101
 RUN python3.7 -m pip install https://pytorch-geometric.com/whl/torch-1.7.0+cu101/torch_scatter-2.0.5-cp37-cp37m-linux_x86_64.whl
 RUN python3.7 -m pip install tensorboard==2.3.0
 RUN python3.7 -m pip uninstall dataclasses -y
+RUN python3.7 -m pip install jupyter
 RUN pwd
 
 ENV PYTHONPATH "${PYTHONPATH}:/home/docker/.local/lib/python3.7/site-packages/"

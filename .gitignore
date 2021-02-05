@@ -7,3 +7,5 @@ tmp*
 log*
 results
 test_*.txt
+run_new_*
+fixed_feasible_action
