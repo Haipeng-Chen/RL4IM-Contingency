@@ -23,3 +23,344 @@ main.py:52: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecate
 [INFO 23:30:53] Experiments Started run with ID "131"
 [DEBUG 23:30:53] Experiments Starting Heartbeat
 [DEBUG 23:30:53] my_main Started
+[DEBUG 01:22:03] my_main Finished after 1:51:10.
+[INFO 01:22:03] Experiments Completed after 1:51:10
+Loading train graph:  erdos_renyi
+train graphs in total:  200
+Loading test graph:  erdos_renyi
+merged graphs length:  210
+----------------------------------------------start evaluation---------------------------------------------------------
+graph index:  200
+graph: 200, nodes: 100, edges: 514
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 24.06
+invited:  [32, 33, 49, 5, 44, 30]
+present:  [33, 44, 30]
+accumulated reward of episode 1 is: 30.336
+invited:  [32, 33, 11, 12, 3, 61]
+present:  [32, 11, 12, 3, 61]
+accumulated reward of episode 2 is: 27.282
+invited:  [33, 35, 98, 99, 72, 30]
+present:  [33, 35, 99, 30]
+accumulated reward of episode 3 is: 31.377
+invited:  [33, 98, 9, 30, 49, 52]
+present:  [33, 98, 9, 49, 52]
+accumulated reward of episode 4 is: 31.347
+invited:  [33, 63, 32, 3, 24, 35]
+present:  [33, 63, 3, 24, 35]
+accumulated reward of episode 5 is: 30.875
+invited:  [33, 49, 98, 99, 9, 66]
+present:  [33, 98, 99, 9, 66]
+accumulated reward of episode 6 is: 30.311
+invited:  [32, 33, 24, 2, 68, 20]
+present:  [32, 33, 24, 68, 20]
+accumulated reward of episode 7 is: 30.679
+invited:  [32, 33, 98, 35, 9, 75]
+present:  [33, 98, 35, 9, 75]
+accumulated reward of episode 8 is: 27.272
+invited:  [32, 33, 12, 5, 89, 41]
+present:  [32, 12, 89, 41]
+accumulated reward of episode 9 is: 30.472
+invited:  [33, 98, 9, 75, 49, 53]
+present:  [33, 98, 9, 75, 53]
+graph index:  201
+graph: 201, nodes: 100, edges: 514
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 31.141
+invited:  [33, 5, 9, 98, 49, 53]
+present:  [33, 5, 9, 98, 53]
+accumulated reward of episode 1 is: 26.592
+invited:  [33, 9, 20, 63, 80, 1]
+present:  [33, 9, 63, 80]
+accumulated reward of episode 2 is: 27.227
+invited:  [32, 33, 98, 75, 3, 6]
+present:  [33, 98, 75, 6]
+accumulated reward of episode 3 is: 30.515
+invited:  [33, 30, 32, 41, 98, 84]
+present:  [33, 30, 32, 98, 84]
+accumulated reward of episode 4 is: 33.838
+invited:  [33, 98, 2, 20, 32, 75]
+present:  [33, 98, 2, 20, 32, 75]
+accumulated reward of episode 5 is: 27.653
+invited:  [32, 33, 5, 7, 88, 75]
+present:  [32, 5, 88, 75]
+accumulated reward of episode 6 is: 23.775
+invited:  [33, 98, 89, 41, 75, 35]
+present:  [33, 89, 35]
+accumulated reward of episode 7 is: 30.842
+invited:  [24, 33, 49, 75, 41, 6]
+present:  [24, 33, 49, 75, 41]
+accumulated reward of episode 8 is: 31.015
+invited:  [32, 33, 41, 20, 98, 54]
+present:  [32, 33, 41, 20, 98]
+accumulated reward of episode 9 is: 30.594
+invited:  [32, 33, 98, 3, 82, 69]
+present:  [32, 33, 98, 3, 82]
+graph index:  202
+graph: 202, nodes: 100, edges: 481
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 28.107
+invited:  [33, 49, 75, 79, 44, 13]
+present:  [33, 49, 44, 13]
+accumulated reward of episode 1 is: 32.897
+invited:  [33, 27, 9, 98, 40, 81]
+present:  [33, 27, 9, 98, 40, 81]
+accumulated reward of episode 2 is: 26.579
+invited:  [32, 33, 12, 5, 3, 75]
+present:  [12, 5, 3, 75]
+accumulated reward of episode 3 is: 30.61
+invited:  [33, 59, 20, 5, 98, 99]
+present:  [33, 59, 20, 5, 99]
+accumulated reward of episode 4 is: 30.163
+invited:  [33, 66, 32, 59, 9, 2]
+present:  [33, 66, 32, 59, 9]
+accumulated reward of episode 5 is: 30.999
+invited:  [33, 35, 9, 78, 40, 98]
+present:  [33, 9, 78, 40, 98]
+accumulated reward of episode 6 is: 23.562
+invited:  [33, 98, 32, 41, 73, 30]
+present:  [33, 41, 30]
+accumulated reward of episode 7 is: 19.765
+invited:  [32, 33, 98, 35, 27, 78]
+present:  [33, 98]
+accumulated reward of episode 8 is: 31.113
+invited:  [32, 33, 41, 2, 75, 3]
+present:  [32, 33, 41, 2, 75]
+accumulated reward of episode 9 is: 33.956
+invited:  [33, 49, 98, 68, 59, 52]
+present:  [33, 49, 98, 68, 59, 52]
+graph index:  203
+graph: 203, nodes: 100, edges: 479
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 21.911
+invited:  [33, 98, 89, 74, 24, 9]
+present:  [98, 74, 24]
+accumulated reward of episode 1 is: 33.57
+invited:  [33, 35, 98, 78, 59, 84]
+present:  [33, 35, 98, 78, 59, 84]
+accumulated reward of episode 2 is: 28.236
+invited:  [33, 59, 73, 41, 11, 78]
+present:  [33, 59, 41, 78]
+accumulated reward of episode 3 is: 33.479
+invited:  [33, 63, 2, 44, 64, 9]
+present:  [33, 63, 2, 44, 64, 9]
+accumulated reward of episode 4 is: 34.003
+invited:  [33, 5, 9, 98, 49, 53]
+present:  [33, 5, 9, 98, 49, 53]
+accumulated reward of episode 5 is: 33.303
+invited:  [33, 41, 32, 5, 52, 79]
+present:  [33, 41, 32, 5, 52, 79]
+accumulated reward of episode 6 is: 27.807
+invited:  [33, 5, 9, 49, 60, 20]
+present:  [33, 5, 9, 49]
+accumulated reward of episode 7 is: 32.807
+invited:  [33, 98, 32, 5, 49, 15]
+present:  [33, 98, 32, 5, 49, 15]
+accumulated reward of episode 8 is: 33.476
+invited:  [33, 44, 41, 63, 24, 97]
+present:  [33, 44, 41, 63, 24, 97]
+accumulated reward of episode 9 is: 27.783
+invited:  [33, 9, 12, 5, 49, 99]
+present:  [9, 5, 49, 99]
+graph index:  204
+graph: 204, nodes: 100, edges: 511
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 24.669
+invited:  [33, 49, 98, 2, 59, 3]
+present:  [33, 49, 3]
+accumulated reward of episode 1 is: 30.799
+invited:  [33, 98, 49, 5, 32, 3]
+present:  [33, 98, 5, 32, 3]
+accumulated reward of episode 2 is: 26.651
+invited:  [33, 98, 99, 5, 89, 3]
+present:  [98, 99, 5, 3]
+accumulated reward of episode 3 is: 31.032
+invited:  [33, 49, 64, 2, 75, 13]
+present:  [33, 49, 2, 75, 13]
+accumulated reward of episode 4 is: 30.822
+invited:  [33, 75, 49, 98, 3, 35]
+present:  [33, 75, 98, 3, 35]
+accumulated reward of episode 5 is: 17.951
+invited:  [32, 33, 98, 5, 9, 11]
+present:  [98, 9]
+accumulated reward of episode 6 is: 34.017
+invited:  [33, 98, 9, 49, 11, 75]
+present:  [33, 98, 9, 49, 11, 75]
+accumulated reward of episode 7 is: 31.008
+invited:  [33, 98, 32, 20, 30, 79]
+present:  [33, 98, 32, 20, 30]
+accumulated reward of episode 8 is: 30.496
+invited:  [33, 5, 9, 44, 75, 53]
+present:  [33, 5, 9, 44, 75]
+accumulated reward of episode 9 is: 27.715
+invited:  [33, 44, 9, 12, 27, 5]
+present:  [44, 9, 12, 5]
+graph index:  205
+graph: 205, nodes: 100, edges: 490
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 28.134
+invited:  [32, 33, 49, 98, 89, 78]
+present:  [33, 49, 98, 78]
+accumulated reward of episode 1 is: 32.993
+invited:  [33, 98, 9, 5, 66, 30]
+present:  [33, 98, 9, 5, 66, 30]
+accumulated reward of episode 2 is: 33.2
+invited:  [33, 98, 9, 78, 35, 21]
+present:  [33, 98, 9, 78, 35, 21]
+accumulated reward of episode 3 is: 30.963
+invited:  [33, 49, 9, 27, 68, 78]
+present:  [33, 49, 9, 27, 68]
+accumulated reward of episode 4 is: 30.941
+invited:  [33, 98, 32, 75, 9, 6]
+present:  [33, 98, 75, 9, 6]
+accumulated reward of episode 5 is: 27.873
+invited:  [33, 98, 32, 30, 35, 44]
+present:  [33, 98, 35, 44]
+accumulated reward of episode 6 is: 23.833
+invited:  [32, 33, 98, 3, 89, 49]
+present:  [33, 98, 3]
+accumulated reward of episode 7 is: 34.007
+invited:  [33, 98, 32, 5, 3, 52]
+present:  [33, 98, 32, 5, 3, 52]
+accumulated reward of episode 8 is: 30.663
+invited:  [32, 33, 5, 30, 75, 94]
+present:  [32, 5, 30, 75, 94]
+accumulated reward of episode 9 is: 23.178
+invited:  [33, 98, 89, 5, 34, 68]
+present:  [98, 89, 5]
+graph index:  206
+graph: 206, nodes: 100, edges: 498
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 33.678
+invited:  [33, 44, 24, 35, 17, 5]
+present:  [33, 44, 24, 35, 17, 5]
+accumulated reward of episode 1 is: 27.435
+invited:  [33, 41, 24, 9, 32, 46]
+present:  [33, 41, 9, 46]
+accumulated reward of episode 2 is: 33.807
+invited:  [33, 49, 9, 98, 2, 20]
+present:  [33, 49, 9, 98, 2, 20]
+accumulated reward of episode 3 is: 30.927
+invited:  [32, 33, 98, 5, 88, 3]
+present:  [32, 33, 98, 5, 3]
+accumulated reward of episode 4 is: 33.438
+invited:  [33, 44, 9, 60, 2, 19]
+present:  [33, 44, 9, 60, 2, 19]
+accumulated reward of episode 5 is: 30.371
+invited:  [33, 35, 98, 44, 19, 95]
+present:  [33, 35, 44, 19, 95]
+accumulated reward of episode 6 is: 30.425
+invited:  [33, 98, 99, 5, 88, 20]
+present:  [98, 99, 5, 88, 20]
+accumulated reward of episode 7 is: 33.309
+invited:  [32, 33, 41, 54, 52, 5]
+present:  [32, 33, 41, 54, 52, 5]
+accumulated reward of episode 8 is: 31.499
+invited:  [33, 41, 32, 44, 20, 30]
+present:  [33, 41, 32, 20, 30]
+accumulated reward of episode 9 is: 30.316
+invited:  [33, 35, 32, 98, 6, 30]
+present:  [33, 32, 98, 6, 30]
+graph index:  207
+graph: 207, nodes: 100, edges: 499
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 27.441
+invited:  [33, 9, 98, 11, 75, 84]
+present:  [9, 98, 75, 84]
+accumulated reward of episode 1 is: 29.508
+invited:  [33, 98, 35, 78, 59, 92]
+present:  [33, 98, 78, 59, 92]
+accumulated reward of episode 2 is: 30.625
+invited:  [33, 98, 32, 2, 41, 18]
+present:  [33, 32, 2, 41, 18]
+accumulated reward of episode 3 is: 34.055
+invited:  [33, 49, 9, 75, 98, 20]
+present:  [33, 49, 9, 75, 98, 20]
+accumulated reward of episode 4 is: 22.768
+invited:  [33, 35, 89, 99, 41, 11]
+present:  [99, 41, 11]
+accumulated reward of episode 5 is: 33.595
+invited:  [33, 44, 2, 27, 41, 13]
+present:  [33, 44, 2, 27, 41, 13]
+accumulated reward of episode 6 is: 30.409
+invited:  [33, 5, 9, 27, 64, 54]
+present:  [33, 5, 27, 64, 54]
+accumulated reward of episode 7 is: 27.245
+invited:  [32, 33, 41, 75, 9, 78]
+present:  [33, 41, 75, 78]
+accumulated reward of episode 8 is: 34.358
+invited:  [32, 33, 16, 98, 75, 5]
+present:  [32, 33, 16, 98, 75, 5]
+accumulated reward of episode 9 is: 27.62
+invited:  [33, 98, 59, 35, 41, 9]
+present:  [33, 59, 41, 9]
+graph index:  208
+graph: 208, nodes: 100, edges: 457
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 33.665
+invited:  [33, 9, 49, 98, 62, 6]
+present:  [33, 9, 49, 98, 62, 6]
+accumulated reward of episode 1 is: 31.078
+invited:  [33, 49, 41, 27, 9, 5]
+present:  [33, 41, 27, 9, 5]
+accumulated reward of episode 2 is: 27.476
+invited:  [33, 49, 9, 98, 72, 44]
+present:  [33, 49, 9, 44]
+accumulated reward of episode 3 is: 30.6
+invited:  [33, 41, 32, 89, 3, 5]
+present:  [33, 41, 89, 3, 5]
+accumulated reward of episode 4 is: 27.669
+invited:  [33, 49, 20, 5, 9, 30]
+present:  [33, 49, 9, 30]
+accumulated reward of episode 5 is: 27.866
+invited:  [33, 49, 73, 75, 98, 11]
+present:  [33, 49, 75, 11]
+accumulated reward of episode 6 is: 33.183
+invited:  [33, 98, 35, 78, 25, 9]
+present:  [33, 98, 35, 78, 25, 9]
+accumulated reward of episode 7 is: 24.128
+invited:  [33, 98, 59, 30, 49, 61]
+present:  [33, 59, 61]
+accumulated reward of episode 8 is: 30.746
+invited:  [33, 98, 49, 5, 68, 7]
+present:  [33, 98, 49, 5, 7]
+accumulated reward of episode 9 is: 27.183
+invited:  [33, 98, 32, 49, 41, 97]
+present:  [33, 32, 49, 41]
+graph index:  209
+graph: 209, nodes: 100, edges: 502
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 29.942
+invited:  [33, 98, 89, 49, 9, 78]
+present:  [98, 89, 49, 9, 78]
+accumulated reward of episode 1 is: 34.026
+invited:  [33, 59, 73, 30, 49, 98]
+present:  [33, 59, 73, 30, 49, 98]
+accumulated reward of episode 2 is: 30.359
+invited:  [33, 49, 9, 20, 24, 73]
+present:  [33, 49, 20, 24, 73]
+accumulated reward of episode 3 is: 24.019
+invited:  [33, 9, 41, 98, 44, 68]
+present:  [33, 9, 68]
+accumulated reward of episode 4 is: 31.077
+invited:  [33, 98, 9, 49, 3, 59]
+present:  [33, 98, 9, 49, 3]
+accumulated reward of episode 5 is: 33.21
+invited:  [33, 5, 9, 98, 46, 6]
+present:  [33, 5, 9, 98, 46, 6]
+accumulated reward of episode 6 is: 33.729
+invited:  [89, 5, 98, 99, 32, 16]
+present:  [89, 5, 98, 99, 32, 16]
+accumulated reward of episode 7 is: 22.584
+invited:  [33, 12, 89, 5, 3, 30]
+present:  [12, 5, 30]
+accumulated reward of episode 8 is: 30.626
+invited:  [33, 98, 49, 75, 83, 61]
+present:  [33, 98, 49, 75, 83]
+accumulated reward of episode 9 is: 25.938
+invited:  [33, 78, 89, 41, 26, 12]
+present:  [78, 89, 41, 26]
+average cummulative reward is:  29.642069999999993
+----------------------------------------------end evaluation---------------------------------------------------------
+ 
+[DEBUG 01:22:03] Experiments Stopping Heartbeat

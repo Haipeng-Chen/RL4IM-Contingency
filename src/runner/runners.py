@@ -163,8 +163,8 @@ class Runner:
                         print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Epsilon: {self.agent.curr_epsilon:.2f}")
                         
                         # save the model
-                        if (self.agent.global_t + 1) % 100 == 0:
-                            self.agent.save_model(self.model_path)
+                        #if (self.agent.global_t + 1) % 100 == 0:
+                        #    self.agent.save_model(self.model_path)
 
                         if done:
                             print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
@@ -188,6 +188,7 @@ class Runner:
         
                     #if (episode+ 1)*(g_index+1)*(epoch+1) % 10 == 0:
                     if global_episode % 50 == 0:
+                        self.agent.save_model(self.model_path)
                         graph_name, mean_eval_reward = self.evaluate()
                         if graph_name not in graph_eval_reward:
                             graph_eval_reward[graph_name] = [mean_eval_reward]
