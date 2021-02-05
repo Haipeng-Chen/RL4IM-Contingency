@@ -18,4 +18,12 @@ Other commands:
 python -m src.environment.env --baseline 'random' --cascade 'DIC'
 ```
 
+Load Models
+```
+python3.7 main.py --config=colge --env-config=basic_env --results-dir=results/tmp with lr=1e-2 T=6 checkpoint_path=./results/tmp/colge/sacred/2/models
+```
+
+It will load the model with the max step. If you want to load the specified model, add `load_step=600`.
+
+
 Install `pytorch_sparse` via wheel files go to this site: https://github.com/rusty1s/pytorch_sparse
