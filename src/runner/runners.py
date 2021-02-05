@@ -37,7 +37,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episode=10):
+    def evaluate(self, num_episode=15):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = []
