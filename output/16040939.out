@@ -1,0 +1,200 @@
+[DEBUG 01:39:40] git.cmd Popen(['git', 'version'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'version'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'diff', '--cached', '--abbrev=40', '--full-index', '--raw'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'diff', '--abbrev=40', '--full-index', '--raw'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'cat-file', '--batch-check'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=<valid stream>)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'diff', '--cached', '--abbrev=40', '--full-index', '--raw'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'diff', '--abbrev=40', '--full-index', '--raw'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'cat-file', '--batch-check'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=<valid stream>)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'diff', '--cached', '--abbrev=40', '--full-index', '--raw'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'diff', '--abbrev=40', '--full-index', '--raw'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'cat-file', '--batch-check'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=<valid stream>)
+[DEBUG 01:39:40] git.cmd Popen(['git', 'diff', '--cached', '--abbrev=40', '--full-index', '--raw'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:41] git.cmd Popen(['git', 'diff', '--abbrev=40', '--full-index', '--raw'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=None)
+[DEBUG 01:39:41] git.cmd Popen(['git', 'cat-file', '--batch-check'], cwd=/n/home07/haipeng/network-opt-rl, universal_newlines=False, shell=None, istream=<valid stream>)
+main.py:130: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  config_dict = yaml.load(f)
+main.py:52: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  config_dict = yaml.load(f)
+[INFO 01:39:41] root Saving to FileStorageObserver in temp_dir/colge/sacred.
+[DEBUG 01:39:42] Experiments Using capture mode "fd"
+[INFO 01:39:42] Experiments Running command 'my_main'
+[INFO 01:39:42] Experiments Started run with ID "156"
+[DEBUG 01:39:42] Experiments Starting Heartbeat
+[DEBUG 01:39:42] my_main Started
+[DEBUG 02:40:16] my_main Finished after 1:00:34.
+[INFO 02:40:16] Experiments Completed after 1:00:34
+Loading train graph:  erdos_renyi
+train graphs in total:  200
+Loading test graph:  erdos_renyi
+merged graphs length:  205
+----------------------------------------------start evaluation---------------------------------------------------------
+graph index:  200
+graph: 200, nodes: 100, edges: 514
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 33.273
+invited:  [33, 98, 73, 49, 59, 3]
+present:  [33, 98, 73, 49, 59, 3]
+accumulated reward of episode 1 is: 32.845
+invited:  [33, 49, 97, 98, 73, 29]
+present:  [33, 49, 97, 98, 73, 29]
+accumulated reward of episode 2 is: 33.547
+invited:  [33, 49, 41, 11, 73, 9]
+present:  [33, 49, 41, 11, 73, 9]
+accumulated reward of episode 3 is: 34.387
+invited:  [33, 75, 49, 9, 98, 79]
+present:  [33, 75, 49, 9, 98, 79]
+accumulated reward of episode 4 is: 33.056
+invited:  [33, 9, 32, 41, 16, 2]
+present:  [33, 9, 32, 41, 16, 2]
+accumulated reward of episode 5 is: 33.284
+invited:  [33, 35, 98, 20, 43, 75]
+present:  [33, 35, 98, 20, 43, 75]
+accumulated reward of episode 6 is: 33.103
+invited:  [33, 98, 99, 59, 66, 79]
+present:  [33, 98, 99, 59, 66, 79]
+accumulated reward of episode 7 is: 33.275
+invited:  [32, 33, 2, 3, 75, 76]
+present:  [32, 33, 2, 3, 75, 76]
+accumulated reward of episode 8 is: 34.237
+invited:  [33, 49, 9, 98, 37, 78]
+present:  [33, 49, 9, 98, 37, 78]
+accumulated reward of episode 9 is: 33.504
+invited:  [33, 75, 32, 98, 21, 30]
+present:  [33, 75, 32, 98, 21, 30]
+graph index:  201
+graph: 201, nodes: 100, edges: 514
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 33.067
+invited:  [32, 33, 41, 3, 97, 75]
+present:  [32, 33, 41, 3, 97, 75]
+accumulated reward of episode 1 is: 33.367
+invited:  [33, 98, 75, 29, 9, 6]
+present:  [33, 98, 75, 29, 9, 6]
+accumulated reward of episode 2 is: 33.237
+invited:  [33, 63, 9, 78, 75, 95]
+present:  [33, 63, 9, 78, 75, 95]
+accumulated reward of episode 3 is: 34.088
+invited:  [33, 49, 9, 98, 68, 79]
+present:  [33, 49, 9, 98, 68, 79]
+accumulated reward of episode 4 is: 34.011
+invited:  [33, 98, 32, 30, 75, 3]
+present:  [33, 98, 32, 30, 75, 3]
+accumulated reward of episode 5 is: 33.382
+invited:  [32, 33, 91, 5, 89, 98]
+present:  [32, 33, 91, 5, 89, 98]
+accumulated reward of episode 6 is: 33.333
+invited:  [33, 98, 32, 5, 75, 79]
+present:  [33, 98, 32, 5, 75, 79]
+accumulated reward of episode 7 is: 33.543
+invited:  [33, 98, 9, 5, 3, 85]
+present:  [33, 98, 9, 5, 3, 85]
+accumulated reward of episode 8 is: 33.136
+invited:  [33, 98, 9, 19, 78, 55]
+present:  [33, 98, 9, 19, 78, 55]
+accumulated reward of episode 9 is: 32.732
+invited:  [32, 33, 98, 11, 3, 5]
+present:  [32, 33, 98, 11, 3, 5]
+graph index:  202
+graph: 202, nodes: 100, edges: 481
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 33.853
+invited:  [33, 98, 9, 3, 49, 2]
+present:  [33, 98, 9, 3, 49, 2]
+accumulated reward of episode 1 is: 33.548
+invited:  [32, 33, 98, 30, 2, 85]
+present:  [32, 33, 98, 30, 2, 85]
+accumulated reward of episode 2 is: 32.994
+invited:  [33, 35, 98, 22, 16, 83]
+present:  [33, 35, 98, 22, 16, 83]
+accumulated reward of episode 3 is: 33.76
+invited:  [33, 49, 98, 3, 75, 5]
+present:  [33, 49, 98, 3, 75, 5]
+accumulated reward of episode 4 is: 32.867
+invited:  [33, 35, 24, 98, 99, 52]
+present:  [33, 35, 24, 98, 99, 52]
+accumulated reward of episode 5 is: 33.669
+invited:  [32, 33, 82, 3, 98, 68]
+present:  [32, 33, 82, 3, 98, 68]
+accumulated reward of episode 6 is: 34.109
+invited:  [32, 33, 75, 63, 24, 3]
+present:  [32, 33, 75, 63, 24, 3]
+accumulated reward of episode 7 is: 33.169
+invited:  [32, 33, 98, 21, 75, 68]
+present:  [32, 33, 98, 21, 75, 68]
+accumulated reward of episode 8 is: 33.36
+invited:  [33, 63, 9, 3, 44, 68]
+present:  [33, 63, 9, 3, 44, 68]
+accumulated reward of episode 9 is: 33.478
+invited:  [33, 98, 75, 35, 2, 59]
+present:  [33, 98, 75, 35, 2, 59]
+graph index:  203
+graph: 203, nodes: 100, edges: 479
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 33.393
+invited:  [33, 59, 98, 78, 35, 4]
+present:  [33, 59, 98, 78, 35, 4]
+accumulated reward of episode 1 is: 33.685
+invited:  [32, 33, 2, 98, 35, 20]
+present:  [32, 33, 2, 98, 35, 20]
+accumulated reward of episode 2 is: 33.847
+invited:  [32, 33, 2, 12, 24, 59]
+present:  [32, 33, 2, 12, 24, 59]
+accumulated reward of episode 3 is: 33.662
+invited:  [32, 33, 89, 98, 2, 68]
+present:  [32, 33, 89, 98, 2, 68]
+accumulated reward of episode 4 is: 33.375
+invited:  [32, 33, 41, 20, 81, 59]
+present:  [32, 33, 41, 20, 81, 59]
+accumulated reward of episode 5 is: 33.4
+invited:  [33, 98, 35, 61, 17, 59]
+present:  [33, 98, 35, 61, 17, 59]
+accumulated reward of episode 6 is: 33.703
+invited:  [33, 49, 24, 79, 41, 75]
+present:  [33, 49, 24, 79, 41, 75]
+accumulated reward of episode 7 is: 33.499
+invited:  [32, 33, 20, 13, 75, 6]
+present:  [32, 33, 20, 13, 75, 6]
+accumulated reward of episode 8 is: 32.508
+invited:  [33, 75, 98, 59, 2, 58]
+present:  [33, 75, 98, 59, 2, 58]
+accumulated reward of episode 9 is: 33.201
+invited:  [33, 41, 9, 43, 24, 66]
+present:  [33, 41, 9, 43, 24, 66]
+graph index:  204
+graph: 204, nodes: 100, edges: 511
+method is : adaptive_greedy
+accumulated reward of episode 0 is: 32.609
+invited:  [32, 33, 98, 20, 9, 17]
+present:  [32, 33, 98, 20, 9, 17]
+accumulated reward of episode 1 is: 33.565
+invited:  [33, 98, 9, 5, 49, 20]
+present:  [33, 98, 9, 5, 49, 20]
+accumulated reward of episode 2 is: 32.686
+invited:  [32, 33, 20, 5, 75, 30]
+present:  [32, 33, 20, 5, 75, 30]
+accumulated reward of episode 3 is: 33.519
+invited:  [33, 35, 2, 75, 49, 20]
+present:  [33, 35, 2, 75, 49, 20]
+accumulated reward of episode 4 is: 32.363
+invited:  [33, 27, 89, 6, 41, 13]
+present:  [33, 27, 89, 6, 41, 13]
+accumulated reward of episode 5 is: 33.148
+invited:  [33, 98, 75, 35, 3, 30]
+present:  [33, 98, 75, 35, 3, 30]
+accumulated reward of episode 6 is: 34.038
+invited:  [33, 98, 49, 75, 3, 68]
+present:  [33, 98, 49, 75, 3, 68]
+accumulated reward of episode 7 is: 33.054
+invited:  [33, 41, 91, 59, 16, 11]
+present:  [33, 41, 91, 59, 16, 11]
+accumulated reward of episode 8 is: 32.808
+invited:  [24, 33, 41, 35, 44, 36]
+present:  [24, 33, 41, 35, 44, 36]
+accumulated reward of episode 9 is: 33.773
+invited:  [33, 49, 41, 9, 2, 75]
+present:  [33, 49, 41, 9, 2, 75]
+average cummulative reward is:  33.381
+----------------------------------------------end evaluation---------------------------------------------------------
+ 
+[DEBUG 02:40:16] Experiments Stopping Heartbeat

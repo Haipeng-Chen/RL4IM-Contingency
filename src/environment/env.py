@@ -84,20 +84,14 @@ class NetworkEnv(object):
             present, absent = self.transition(invited)
             state=self.state.copy()
             for v in present:
-                #self.G.nodes[v]['attr']=1 #TODO: remove this?
                 self.state[0][v]=1
             for v in absent:
-                #self.G.nodes[v]['attr']=2
                 self.state[1][v]=1
             self.state[2].fill(0)
             if i == self.T:
-                #seeds = []
-                #[seeds.append(v) for v in range(self.N) if self.state[0][v] == 1]
-                #self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 next_state = None
                 self.done = True
             else:
-                #self.reward = 0 
                 next_state = self.state.copy()
                 self.done = False
         else:
@@ -106,14 +100,13 @@ class NetworkEnv(object):
             next_state = self.state.copy()
             self.done = False
 
-        if i == self.T:  # i%self.budget == 0 may not True when i == self.T
+        if i == self.T:  
             next_state = None
             self.done = True
 
         return next_state, self.reward, self.done
             
     def run_cascade(self, seeds, cascade='IC', sample=1000):
-        #print('running cascade')
         #there may be better ways of passing the arguments
         if cascade == 'IC':
             reward, _ = runIC_repeat(self.G.g, seeds, p=self.propagate_p, sample=sample)
@@ -204,79 +197,6 @@ class Environment(NetworkEnv):
         finally:
             return feasible_actions
 
-    #def get_approx(self):
-    #    if self.name == "MVC":
-    #        cover_edge=[]
-    #        edges= list(self.graph_init.edges)
-    #        while len(edges) > 0:
-    #            edge = edges[np.random.choice(len(edges))]
-    #            cover_edge.append(edge[0])
-    #            cover_edge.append(edge[1])
-    #            to_remove=[]
-    #            for edge_ in edges:
-    #                if edge_[0]==edge[0] or edge_[0]==edge[1]:
-    #                    to_remove.append(edge_)
-    #                else:
-    #                    if edge_[1]==edge[1] or edge_[1]==edge[0]:
-    #                        to_remove.append(edge_)
-    #            for i in to_remove:
-    #                edges.remove(i)
-    #        return len(cover_edge)
-
-    #    elif self.name=="MAXCUT":
-    #        return 1
-    #    else:
-    #        return 'you pass a wrong environment name'
-
-
-    #def get_optimal_sol(self):
-    #    if self.name =="MVC":
-    #        x = list(range(self.graph_init.g.number_of_nodes()))
-    #        xv = pulp.LpVariable.dicts('is_opti', x,
-    #                                   lowBound=0,
-    #                                   upBound=1,
-    #                                   cat=pulp.LpInteger)
-
-    #        mdl = pulp.LpProblem("MVC", pulp.LpMinimize)
-    #        mdl += sum(xv[k] for k in xv)
-    #        for edge in self.graph_init.edges:
-    #            mdl += xv[edge[0]] + xv[edge[1]] >= 1, "constraint :" + str(edge)
-    #        mdl.solve()
-
-    #        #print("Status:", pulp.LpStatus[mdl.status])
-    #        optimal=0
-    #        for x in xv:
-    #            optimal += xv[x].value()
-    #            #print(xv[x].value())
-    #        return optimal
-
-    #    elif self.name=="MAXCUT":
-    #        x = list(range(self.graph_init.g.number_of_nodes()))
-    #        e = list(self.graph_init.edge)
-    #        xv = pulp.LpVariable.dicts('is_opti', x,
-    #                                   lowBound=0,
-    #                                   upBound=1,
-    #                                   cat=pulp.LpInteger)
-    #        ev = pulp.LpVariable.dicts('ev', e,
-    #                                   lowBound=0,
-    #                                   upBound=1,
-    #                                   cat=pulp.LpInteger)
-
-    #        mdl = pulp.LpProblem("MVC", pulp.LpMaximize)
-
-    #        mdl += sum(ev[k] for k in ev)
-
-    #        for i in e:
-    #            mdl+= ev[i] <= xv[i[0]]+xv[i[1]]
-
-    #        for i in e:
-    #            mdl+= ev[i]<= 2 -(xv[i[0]]+xv[i[1]])
-
-    #        #pulp.LpSolverDefault.msg = 1
-    #        mdl.solve()
-    #        # print("Status:", pulp.LpStatus[mdl.status])
-    #        return mdl.objective.value()
-
 
 def arg_parse():
     parser = argparse.ArgumentParser(description='Arguments of influence maximzation')
@@ -309,75 +229,74 @@ def arg_parse():
     return parser.parse_args()
 
 # THE FOLLOWING CODE ARE FOR TESTING
-if __name__ == '__main__':
-
-    args = arg_parse()
-    graph_index = args.graph_index 
-    baseline = args.baseline
-    T = args.T
-    #budget_ratio = args.budget_ratio
-    budget = args.budget
-    cascade = args.cascade
-    propagate_p = args.propagate_p
-    l = args.l
-    d = args.d
-    q = args.q
-    num_simul = args.num_simul
-    greedy_sample_size = args.greedy_sample_size
-
-    graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
-    graph_name = graph_list[graph_index]
-    path = 'graph_data/' + graph_name + '.txt'
-    G = nx.read_edgelist(path, nodetype=int)
-    mapping = dict(zip(G.nodes(),range(len(G))))
-    G = nx.relabel_nodes(G,mapping)
-    print('selected graph: ', graph_name)
-    print('#nodes: ', len(G.nodes))
-    print('#edges: ', len(G.edges))
-    env=NetworkEnv(G=G, T=T, budget=budget, propagate_p = propagate_p, l=l, d=d, q=q, cascade=cascade)
-
-
-    rewards = []
-    def f_multi(x):
-        s=list(x) 
-        #print('cascade model is: ', env.cascade)
-        val = env.run_cascade(seeds=s, cascade=env.cascade, sample=greedy_sample_size)
-        return val
-
-    episodes = 5 
-    runtime1 = 0
-    runtime2 = 0
-    for i in range(episodes):
-        print('----------------------------------------------')
-        print('episode: ', i)
-        env.reset()
-        actions = []
-        presents = []
-        while(env.done == False):
-            start = time.time()
-            if baseline == 'random':
-                action = random.sample(env.feasible_actions, env.budget) 
-            elif baseline == 'maxdegree':
-                action = max_degree(env.feasible_actions, env.G, env.budget)
-            elif baseline == 'ada_greedy':
-                action, _ = adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
-            elif baseline == 'lazy_ada_greedy':
-                action, _ = lazy_adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
-            else:
-                assert(False)
-            runtime1 += time.time()-start
-            start = time.time()
-            actions.append(action)
-            invited = action
-            present, _ = env.transition(action)
-            presents+=present
-            runtime2 += time.time()-start
-            env.step(action)
-        rewards.append(env.reward) 
-        print('reward: ', env.reward)
-        print('invited: ', actions)
-        print('present: ', presents)
-    print()
-    print('----------------------------------------------')
-    print('average reward for {} policy is: {}, std is: {}'.format(baseline, np.mean(rewards), np.std(rewards)))
-    print('total runtime for action selection is: {}, total runtime for env.step is: {}'.format(runtime1, runtime2))
+#if __name__ == '__main__':
+#
+#    args = arg_parse()
+#    graph_index = args.graph_index 
+#    baseline = args.baseline
+#    T = args.T
+#    #budget_ratio = args.budget_ratio
+#    budget = args.budget
+#    cascade = args.cascade
+#    propagate_p = args.propagate_p
+#    l = args.l
+#    d = args.d
+#    q = args.q
+#    num_simul = args.num_simul
+#    greedy_sample_size = args.greedy_sample_size
+#
+#    graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
+#    graph_name = graph_list[graph_index]
+#    path = 'graph_data/' + graph_name + '.txt'
+#    G = nx.read_edgelist(path, nodetype=int)
+#    mapping = dict(zip(G.nodes(),range(len(G))))
+#    G = nx.relabel_nodes(G,mapping)
+#    print('selected graph: ', graph_name)
+#    print('#nodes: ', len(G.nodes))
+#    print('#edges: ', len(G.edges))
+#    env=NetworkEnv(G=G, T=T, budget=budget, propagate_p = propagate_p, l=l, d=d, q=q, cascade=cascade)
+#
+#
+#    rewards = []
+#    def f_multi(x):
+#        s=list(x) 
+#        val = env.run_cascade(seeds=s, cascade=env.cascade, sample=greedy_sample_size)
+#        return val
+#
+#    episodes = 5 
+#    runtime1 = 0
+#    runtime2 = 0
+#    for i in range(episodes):
+#        print('----------------------------------------------')
+#        print('episode: ', i)
+#        env.reset()
+#        actions = []
+#        presents = []
+#        while(env.done == False):
+#            start = time.time()
+#            if baseline == 'random':
+#                action = random.sample(env.feasible_actions, env.budget) 
+#            elif baseline == 'maxdegree':
+#                action = max_degree(env.feasible_actions, env.G, env.budget)
+#            elif baseline == 'ada_greedy':
+#                action, _ = adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
+#            elif baseline == 'lazy_ada_greedy':
+#                action, _ = lazy_adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
+#            else:
+#                assert(False)
+#            runtime1 += time.time()-start
+#            start = time.time()
+#            actions.append(action)
+#            invited = action
+#            present, _ = env.transition(action)
+#            presents+=present
+#            runtime2 += time.time()-start
+#            env.step(action)
+#        rewards.append(env.reward) 
+#        print('reward: ', env.reward)
+#        print('invited: ', actions)
+#        print('present: ', presents)
+#    print()
+#    print('----------------------------------------------')
+#    print('average reward for {} policy is: {}, std is: {}'.format(baseline, np.mean(rewards), np.std(rewards)))
+#    print('total runtime for action selection is: {}, total runtime for env.step is: {}'.format(runtime1, runtime2))

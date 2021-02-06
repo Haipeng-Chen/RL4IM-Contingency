@@ -37,18 +37,13 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episode=15):
+    def evaluate(self, num_episode=10):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = []
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
 
-        #the last graph in graphs is the test graph 
-        #g_index = random.choice([i for i, g in enumerate(self.environment.graphs) if i != self.environment.graph_index])
-        g_index = self.args.graph_nbr_train #TODO: use one test graph for sanity chaeck, use all test graphs at last
-
-        
         for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+self.args.graph_nbr_test):
         #for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+5):
             print('graph index: ', g_index)
