@@ -94,7 +94,6 @@ class Runner:
                     for i in range(1, self.environment.T+1):
                         if (i-1) % self.environment.budget == 0:
                             #note that the other methods select budget number of nodes a time
-                            #print('step: {}, feasible actions: {}'.format(i, len(feasible_actions)))
                             pri_action, _ = self.agent.act(feasible_actions, self.environment.budget, self.environment.f_multi,presents)
                             invited+=pri_action
                             present, _ = self.environment.transition(pri_action)
@@ -122,6 +121,8 @@ class Runner:
         mode = 'train'
         st = time.time()
         global_episode = 0
+        #TODO: use a probability instead
+        fine_tune_episode = self.args.nbr_epoch*self.args.graph_nbr_train*self.args.max_episodes*0.25
 
         for epoch in range(self.args.nbr_epoch):
             print('epoch: ', epoch)
@@ -149,7 +150,7 @@ class Runner:
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
-                        next_state, reward, done = self.environment.step(i, pri_action, sec_action=sec_action)
+                        next_state, reward, done = self.environment.step(i, pri_action=pri_action, sec_action=sec_action, global_episode=global_episode, fine_tune_episode=fine_tune_episode)
 
                         # learning the model
                         #loss = self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)

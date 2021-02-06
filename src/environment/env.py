@@ -36,9 +36,9 @@ class NetworkEnv(object):
     note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     
-    def __init__(self, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None):
-        #self.G = G
+    def __init__(self, mode='train', T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None):
         self.graphs = graphs
+        self.mode = mode
         #self.N = len(self.G)
         #self.budget = math.floor(self.N * budget_ratio/T)
         #self.budget = budget
@@ -58,24 +58,56 @@ class NetworkEnv(object):
         #self.observation = self.state
         #nx.set_node_attributes(self.G, 0, 'attr')
 
-    def step(self, i, pri_action, sec_action):
+    def step(self, i, pri_action, sec_action, global_episode=100, fine_tune_episode=0):
+        #TODO: pass a global_t/global_episode argument, if it is more than half of the total episodes, then use the more accurate estimate
         #pri_action is a list, sec_action is an int
+
         #compute reward as marginal contribution of a node
-        if i == 1:
-            seeds = [sec_action]
-            #print('seeds are ', seeds)
-            self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-            #print('reward:', self.reward)
-        else:
-            seeds = []
-            [seeds.append(v) for v in range(self.N) if (self.state[0][v]==1 or self.state[2][v]==1)] #I am treating state[2][v]==1 as q=1 TODO: change it to probabilistic
-            #print('seeds without {} are {}'.format(sec_action, seeds))
-            influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-            #print('influence without is ', influece_without)
-            seeds.append(sec_action)
-            #print('seeds with it  are ',seeds)
-            influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-            self.reward = influence_with - influece_without
+        if self.mode == 'train':
+            if global_episode < fine_tune_episode:
+                seeds = []
+                [seeds.append(v) for v in range(self.N) if (self.state[0][v]==1 or self.state[2][v]==1)] 
+                #print('seeds without {} are {}'.format(sec_action, seeds))
+                influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                #print('influence without is ', influece_without)
+                seeds.append(sec_action)
+                #print('seeds with it  are ',seeds)
+                influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                self.reward = influence_with - influece_without
+            else:
+                fix_seeds = []
+                [fix_seeds.append(v) for v in range(self.N) if self.state[0][v]==1 ]
+                uncertain_seeds = []
+                [uncertain_seeds.append(v) for v in range(self.N) if self.state[2][v]==1 ]
+                # reward_max
+                seeds = fix_seeds
+                influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                seeds.append(sec_action)
+                influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                reward_max = influence_with - influece_without
+                # reward_min
+                seeds = fix_seeds + uncertain_seeds
+                influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                seeds.append(sec_action)
+                influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                reward_min = influence_with - influece_without
+                self.reward = (reward_max+reward_min)/2
+
+        #if i == 1:
+        #    seeds = [sec_action]
+        #    #print('seeds are ', seeds)
+        #    self.reward = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+        #    #print('reward:', self.reward)
+        #else:
+        #    seeds = []
+        #    [seeds.append(v) for v in range(self.N) if (self.state[0][v]==1 or self.state[2][v]==1)] #I am treating state[2][v]==1 as q=1 
+        #    #print('seeds without {} are {}'.format(sec_action, seeds))
+        #    influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+        #    #print('influence without is ', influece_without)
+        #    seeds.append(sec_action)
+        #    #print('seeds with it  are ',seeds)
+        #    influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+        #    self.reward = influence_with - influece_without
 
         #update next_state and done      
         if i%self.budget == 0:
@@ -137,6 +169,7 @@ class NetworkEnv(object):
         return present, absent
 
     def reset(self, g_index=0, mode='train'):
+        self.mode = mode
         if mode == 'test': 
             #self.graph_index = g_index 
             self.G = self.graphs[g_index]
