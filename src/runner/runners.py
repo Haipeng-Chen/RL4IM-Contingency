@@ -68,7 +68,7 @@ class Runner:
                             state = self.state_abstraction(state) ####
                         #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
                                                 #feasible_actions=feasible_actions.copy(), mode=mode)
-                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) #TODO: check whether global_t increases at evaluate() steps 
+                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
                         _, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
@@ -110,7 +110,9 @@ class Runner:
                             print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             print('invited: ', invited)
                             print('present: ', presents)
-        ave_cummulative_reward = np.mean(episode_accumulated_rewards, axis=1)
+        ave_cummulative_rewards = np.mean(episode_accumulated_rewards, axis=1)
+        ave_cummulative_reward = np.mean(ave_cummulative_rewards)
+        print('average cummulative reward vector is: ', ave_cummulative_rewards)
         print('average cummulative reward is: ', ave_cummulative_reward)
         print('----------------------------------------------end evaluation---------------------------------------------------------')
         print(' ')
