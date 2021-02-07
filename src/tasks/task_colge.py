@@ -25,16 +25,16 @@ def run_colge(_run, config, logger, run_args=None):
         #G, g, graph_name = get_graph(args.graph_index)
         #graph_dic[graph_] = Graph.create_graph(g)
         #graph_dic[graph_].graph_name = graph_name
-        seed = graph_ #fix seed for now; TODO: revise later
-        graph_dic[graph_]=Graph(graph_type=args.graph_type, cur_n=args.node_train, p=args.p,m=args.m,seed=seed)
+        seed = graph_ + args.seed
+        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_train, p=args.p, m=args.m, seed=seed)
         graph_dic[graph_].graph_name = str(graph_)
     print('train graphs in total: ', len(graph_dic))   
 
     #test graph
     print('Loading test graph: ', args.graph_type) 
     for graph_ in range(args.graph_nbr_train, args.graph_nbr_train+args.graph_nbr_test):
-        seed = graph_
-        graph_dic[graph_]=Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p,m=args.m,seed=seed)
+        seed = graph_ + args.seed
+        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed)
         graph_dic[graph_].graph_name = str(graph_)
     print('merged graphs length: ', len(graph_dic))
 
