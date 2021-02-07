@@ -17,3 +17,5 @@ d: 1  # d in SC cascade
 q: 0.6  # probability of invited node being present
 cascade: 'IC'  # cascade model
 greedy_sample_size: 500  # sample size for value estimation of greedy algorithms
+
+mode: 'train' # str, {'train', 'test'}

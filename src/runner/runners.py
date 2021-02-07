@@ -121,8 +121,6 @@ class Runner:
         mode = 'train'
         st = time.time()
         global_episode = 0
-        #TODO: use a probability instead
-        fine_tune_episode = self.args.nbr_epoch*self.args.graph_nbr_train*self.args.max_episodes*0.25
 
         for epoch in range(self.args.nbr_epoch):
             print('epoch: ', epoch)
@@ -150,7 +148,7 @@ class Runner:
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
-                        next_state, reward, done = self.environment.step(i, pri_action=pri_action, sec_action=sec_action, global_episode=global_episode, fine_tune_episode=fine_tune_episode)
+                        next_state, reward, done = self.environment.step(i, pri_action=pri_action, sec_action=sec_action, reward_type=self.args.reward_type) 
 
                         # learning the model
                         #loss = self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
@@ -182,8 +180,8 @@ class Runner:
 
                             break    
         
-                    #if (episode+ 1)*(g_index+1)*(epoch+1) % 10 == 0:
                     if global_episode % 50 == 0:
+                        # save the model
                         self.agent.save_model(self.model_path)
                         graph_name, mean_eval_reward = self.evaluate()
                         if graph_name not in graph_eval_reward:
@@ -194,10 +192,6 @@ class Runner:
                         self.logger.log_stat(key=f'{graph_name}/eval_episode_reward', 
                                              value=mean_eval_reward, 
                                              t=self.agent.global_t)
-
-                #if self.verbose:
-                    #print(" <=> Finished game number: {} <=>".format(g_index))
-                    #print("")
 
                 # save per episode
                 with open(os.path.join(self.results_path, 'train_episode_rewards.json'), 'w') as f:
