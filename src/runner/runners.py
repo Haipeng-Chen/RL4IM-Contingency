@@ -37,20 +37,22 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episode=10):
+    def evaluate(self, num_episodes=15):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
-        episode_accumulated_rewards = []
+        episode_accumulated_rewards = np.empty((self.args.graph_nbr_test, num_episodes))
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
+        g_names = []
 
         for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+self.args.graph_nbr_test):
         #for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+5):
             print('graph index: ', g_index)
             g_name = self.environment.graphs[g_index].graph_name
+            g_names.append(g_name)
             print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
             if self.agent.method == 'rl':
-                for episode in range(num_episode):
+                for episode in range(num_episodes):
                     # select other graphs
                     self.environment.reset(g_index=g_index, mode=mode)
                     self.agent.reset(g_index=g_index, mode=mode)  
@@ -66,7 +68,7 @@ class Runner:
                             state = self.state_abstraction(state) ####
                         #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
                                                 #feasible_actions=feasible_actions.copy(), mode=mode)
-                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) ####
+                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) #TODO: check whether global_t increases at evaluate() steps 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
                         _, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
@@ -79,13 +81,13 @@ class Runner:
 
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
-                            episode_accumulated_rewards.append(accumulated_reward)
+                            episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward
                             print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             print('invited: ', invited)
                             print('present: ', presents) 
             else:
                 print('method is :', self.agent.method)
-                for episode in range(num_episode):
+                for episode in range(num_episodes):
                     self.environment.reset(mode=mode)
                     feasible_actions = list(range(self.environment.N))
                     invited = []
@@ -103,17 +105,18 @@ class Runner:
 
                         if i == self.environment.T:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
-                            episode_accumulated_rewards.append(accumulated_reward)
+                            #episode_accumulated_rewards.append(accumulated_reward)
+                            episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward
                             print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             print('invited: ', invited)
                             print('present: ', presents)
-        ave_cummulative_reward = np.mean(episode_accumulated_rewards)
+        ave_cummulative_reward = np.mean(episode_accumulated_rewards, axis=1)
         print('average cummulative reward is: ', ave_cummulative_reward)
         print('----------------------------------------------end evaluation---------------------------------------------------------')
         print(' ')
-        return g_name, ave_cummulative_reward 
+        return g_names, episode_accumulated_rewards
     
-    def loop(self):
+    def train(self):
 
         cumul_reward = 0.0
         graph_cumul_reward = {}
@@ -183,15 +186,20 @@ class Runner:
                     if global_episode % 50 == 0:
                         # save the model
                         self.agent.save_model(self.model_path)
-                        graph_name, mean_eval_reward = self.evaluate()
-                        if graph_name not in graph_eval_reward:
-                            graph_eval_reward[graph_name] = [mean_eval_reward]
-                        else:
-                            graph_eval_reward[graph_name].append(mean_eval_reward)
+                        g_names, episode_accumulated_rewards = self.evaluate()
+                        mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
+                        for i, graph_name in enumerate(g_names):
+                            self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
+                                                 value=mean_accumulated_reward_per_graph[i],
+                                                 t=self.agent.global_t)
+                            if graph_name not in graph_eval_reward:
+                                graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
+                            else:
+                                graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
                         
-                        self.logger.log_stat(key=f'{graph_name}/eval_episode_reward', 
-                                             value=mean_eval_reward, 
-                                             t=self.agent.global_t)
+                        #self.logger.log_stat(key=f'{graph_name}/eval_episode_reward', 
+                        #                     value=mean_eval_reward, 
+                        #                     t=self.agent.global_t)
 
                 # save per episode
                 with open(os.path.join(self.results_path, 'train_episode_rewards.json'), 'w') as f:

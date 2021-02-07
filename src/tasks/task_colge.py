@@ -60,7 +60,7 @@ def run_colge(_run, config, logger, run_args=None):
     try_load_checkpint(args=args, runner=my_runner, agent=agent)
 
     if args.mode == 'train':
-        final_reward = my_runner.loop()
+        final_reward = my_runner.train()
     elif args.mode == 'test':
         final_reward = my_runner.evaluate()
     else:
