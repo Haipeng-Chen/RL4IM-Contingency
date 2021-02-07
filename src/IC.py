@@ -1,4 +1,6 @@
 from copy import deepcopy
+import os
+
 import random
 import networkx as nx
 import numpy as np
@@ -6,6 +8,7 @@ from src.agent.baseline import *
 from multiprocessing import Process, Manager
 
 import pdb
+import tqdm
 import time
 
 #RIS
@@ -396,7 +399,7 @@ if __name__ == '__main__':
     graph_index=2
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
-    path = 'graph_data/' + graph_name + '.txt'
+    path =  os.path.join('data', 'graph_data', graph_name + '.txt')
     G = nx.read_edgelist(path, nodetype=int)
     mapping = dict(zip(G.nodes(),range(len(G))))
     g = nx.relabel_nodes(G,mapping)
@@ -413,8 +416,15 @@ if __name__ == '__main__':
     #T = runIC(g, S)
     #print(T)
     start_time = time.time()
-    infl_mean, infl_std = runIC_repeat(g, S, p=0.1, sample=1000)
-    infl_mean_e = runIC_estimate(g, S, p=0.1, sample=1000)
+    for i in tqdm.tqdm(range(100)):
+        infl_mean, infl_std = runIC_repeat(g, S, p=0.1, sample=1000)
+    print(f'runIC_repeat: {time.time()-start_time}')
+
+    start_time = time.time()
+    for i in tqdm.tqdm(range(100)):
+        infl_mean_e = runIC_estimate(g, S, p=0.1, sample=1000)
+    print(f'ICrunIC_estimate: {time.time()-start_time}')
+    
     # infl_mean, infl_std = runLT_repeat(g, S, l=0.01, sample=1000)
     # infl_mean, infl_std = runSC_repeat(g, S, d=1, sample=1000)
     #infl_mean, infl_std = parallel_influence(g, S, times=10, sample=10)

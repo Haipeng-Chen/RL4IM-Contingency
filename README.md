@@ -25,5 +25,15 @@ python3.7 main.py --config=colge --env-config=basic_env --results-dir=results/tm
 
 It will load the model with the max step. If you want to load the specified model, add `load_step=600`.
 
+Test
+
+run the `IC.py` in home dir via 
+
+```
+python3.7 -m src.IC 
+```
+
+
+Misc.
 
 Install `pytorch_sparse` via wheel files go to this site: https://github.com/rusty1s/pytorch_sparse
