@@ -43,7 +43,9 @@ def run_colge(_run, config, logger, run_args=None):
         
         graph_dic[graph_].graph_name = str(graph_)
     print('merged graphs length: ', len(graph_dic))
-
+    
+    # seed is changed in Graph and change back to the args.seed
+    np.random.seed(args.seed)
     env_class = Environment(cascade=args.cascade, T=args.T, budget=args.budget,
                            propagate_p=args.propagate_p, l=args.l, d=args.d, q=args.q, graphs=graph_dic)
 
