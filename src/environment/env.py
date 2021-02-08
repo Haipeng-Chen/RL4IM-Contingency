@@ -41,9 +41,9 @@ class NetworkEnv(object):
         self.mode = mode
 
     def step(self, i, pri_action, sec_action, reward_type=0):
-        #TODO: pass a global_t/global_episode argument, if it is more than half of the total episodes, then use the more accurate estimate
-        #pri_action is a list, sec_action is an int
         '''
+        pri_action is a list, sec_action is an int
+
         reward type categories, example seed nodes before {1, 2, 3}, new node x
         0: reward0 = f({1, 2, 3, x}) - f({1, 2, 3})
         1: reward1 = f({x}) - f({ })
@@ -59,14 +59,14 @@ class NetworkEnv(object):
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-                self.reward = influence_with - influece_without
+                self.reward = self.q*(influence_with - influece_without)
             if reward_type == 1:
                 seeds = []
                 [seeds.append(v) for v in range(self.N) if self.state[0][v]==1] 
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-                self.reward = influence_with - influece_without
+                self.reward = self.q*(influence_with - influece_without) 
             elif reward_type == 2:
                 fix_seeds = []
                 [fix_seeds.append(v) for v in range(self.N) if self.state[0][v]==1]
@@ -77,13 +77,13 @@ class NetworkEnv(object):
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-                reward_max = influence_with - influece_without
+                reward_max = self.q*(influence_with - influece_without) 
                 # reward_min
                 seeds = fix_seeds + uncertain_seeds
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
-                reward_min = influence_with - influece_without
+                reward_min = self.q*(influence_with - influece_without) 
                 self.reward = (reward_max+reward_min)/2
             #TODO: add probabilistic way
             #else    
