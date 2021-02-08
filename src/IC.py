@@ -416,12 +416,12 @@ if __name__ == '__main__':
     #T = runIC(g, S)
     #print(T)
     start_time = time.time()
-    for i in tqdm.tqdm(range(100)):
+    for i in tqdm.tqdm(range(10)):
         infl_mean, infl_std = runIC_repeat(g, S, p=0.1, sample=1000)
     print(f'runIC_repeat: {time.time()-start_time}')
 
     start_time = time.time()
-    for i in tqdm.tqdm(range(100)):
+    for i in tqdm.tqdm(range(10)):
         infl_mean_e = runIC_estimate(g, S, p=0.1, sample=1000)
     print(f'ICrunIC_estimate: {time.time()-start_time}')
     
