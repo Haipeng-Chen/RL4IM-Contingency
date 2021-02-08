@@ -8,7 +8,7 @@ import collections
 class Graph:
     def __init__(self, g=None, graph_type=None, cur_n=None, p=None, m=None, seed=None):
         self.seed = seed
-        cur_n += np.random.choice([0, 50, 100, 150], p=[0.30, 0.40, 0.2, 0.1])
+        cur_n +=  np.random.choice(range(-20, 21, 1))
         if graph_type == 'erdos_renyi':
             self.g = nx.erdos_renyi_graph(n=cur_n, p=p, seed=seed)
         elif graph_type == 'powerlaw':
