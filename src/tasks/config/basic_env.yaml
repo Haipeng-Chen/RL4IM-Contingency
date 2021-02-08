@@ -4,8 +4,8 @@
 graph_type: 'erdos_renyi' # , metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
 graph_nbr_train: 200 # , type=int, default='1', help='number of differente graph to generate for the training sample')
 graph_nbr_test: 5 # , type=int, default='1', help='number of differente graph to generate for the test sample')
-node_train: 100 # type=int, metavar='nnode', default=20, help="number of node in generated train graphs")
-node_test: 100 # type=int, metavar='nnode', default=20, help="number of node in generated test graphs")
+node_train: 100 # "number of node in generated train graphs", 100+ 50, 100
+node_test: 100 # "number of node in generated test graphs", 100+ 50, 100
 p: 0.1  #, default=0.14, help="p, parameter in graph degree distribution")
 m: 4  #, default=4, help="m, parameter in graph degree distribution")
 T: 20  # time horizon
