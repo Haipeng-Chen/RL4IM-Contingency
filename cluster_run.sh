@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH -n 2              # Number of cores (-n)
 #SBATCH -N 1                # Ensure that all cores are on one Node (-N)
-#SBATCH -t 0-8:00          # Runtime in D-HH:MM, minimum of 10 minutes
+#SBATCH -t 0-24:00          # Runtime in D-HH:MM, minimum of 10 minutes
 #SBATCH -p tambe_gpu     # Partition to submit to
-#SBATCH --mem=3000           # Memory pool for all cores (see also --mem-per-cpu)
+#SBATCH --mem=5000           # Memory pool for all cores (see also --mem-per-cpu)
 #SBATCH --gres=gpu:1
 #SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
 
@@ -43,7 +43,7 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 method='adaptive_greedy'
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 method='lazy_adaptive_greedy'
 
-#Feb 9 11.55pm ET 178-181: to test reward_type
+#Feb 6 11.55pm ET 178-181: to test reward_type
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.2 reward_type=0
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.2 reward_type=1
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.2 reward_type=2
@@ -62,7 +62,27 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=500 method='adaptive_greedy'
 
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=1000 checkpoint_path=./temp_dir/colge/sacred/159/models
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=1000 method='adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=1000 method='adaptive_greedy'
+
+#Feb 7 11:15pm 192-196 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.2 mode='test' node_test=200 p=0.05 method='lazy_adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=200 p=0.05 method='lazy_adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=300 p=0.033 method='lazy_adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=400 p=0.025 method='lazy_adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=5 q=0.6 mode='test' node_test=500 p=0.02 method='lazy_adaptive_greedy'
+
+# 197 - 203
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.2 node_train=200 node_test=200 p=0.05 reward_type=0
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.2 node_train=200 node_test=200 p=0.05 reward_type=1
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.2 node_train=200 node_test=200 p=0.05 reward_type=2
+
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 reward_type=1
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='train' node_train=300 node_test=300 p=0.033 reward_type=1
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='train' node_train=400 node_test=400 p=0.025 reward_type=1
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=5 q=0.6 mode='train' node_train=500 node_test=500 p=0.02 reward_type=1
+
+
+
 
 
 
