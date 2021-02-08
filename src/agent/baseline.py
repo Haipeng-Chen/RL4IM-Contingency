@@ -88,6 +88,7 @@ class lazy_adaptive_greedyAgent:
         #pdb.set_trace()
         return list(action), starting_objective
 
+#TODO: check why this is not performing good; running so slow
 class adaptive_greedyAgent:
     def __init__(self):
         self.method = 'adaptive_greedy'

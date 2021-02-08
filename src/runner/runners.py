@@ -88,8 +88,9 @@ class Runner:
             else:
                 print('method is :', self.agent.method)
                 for episode in range(num_episodes):
-                    self.environment.reset(mode=mode)
+                    self.environment.reset(g_index=g_index, mode=mode)
                     feasible_actions = list(range(self.environment.N))
+                    print('g_index: ', g_index)
                     invited = []
                     presents = []
                     accumulated_reward = 0
