@@ -21,7 +21,7 @@ method: 'rl'  # ['rl', 'ada_greedy', 'lazy_adaptive_greedy']
 #
 # these are used as ablation study
 use_state_abs: True
-reward_type: 0 #int {0, 1, 2, 3}
+reward_type: 2 #int {0, 1, 2, 3}
 #
 # #graph_type: 'erdos_renyi' # , metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
 # #graph_nbr: 8 # , type=int, default='1', help='number of differente graph to generate for the training sample')
