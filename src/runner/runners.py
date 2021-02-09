@@ -183,7 +183,7 @@ class Runner:
                                                  t=self.agent.global_t)
                             if loss is not None:
                                 self.logger.log_stat(key=f'{graph_name}/loss', 
-                                                     value=loss.detach().cpu().numpy(), 
+                                                     value=loss.detach().item(), 
                                                      t=self.agent.global_t)
                             
 
