@@ -115,7 +115,7 @@ class Runner:
             with open(os.path.join(self.results_path, 'test_mode_results.json'), 'w') as f:
                 data = {
                     'g_names': g_names, 
-                    'episode_accumulated_rewards': episode_accumulated_rewards,
+                    'episode_accumulated_rewards': episode_accumulated_rewards.tolist(),
                 }
                 json.dump(data, f, indent=4)
         
