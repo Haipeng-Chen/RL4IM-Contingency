@@ -111,6 +111,14 @@ class Runner:
                             print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             print('invited: ', invited)
                             print('present: ', presents)
+
+            with open(os.path.join(self.results_path, 'test_mode_results.json'), 'w') as f:
+                data = {
+                    'g_names': g_names, 
+                    'episode_accumulated_rewards': episode_accumulated_rewards,
+                }
+                json.dump(data, f, indent=4)
+        
         ave_cummulative_rewards = np.mean(episode_accumulated_rewards, axis=1)
         ave_cummulative_reward = np.mean(ave_cummulative_rewards)
         print('average cummulative reward vector is: ', ave_cummulative_rewards)
