@@ -87,8 +87,7 @@ class NetworkEnv(object):
                 self.reward = (reward_max+reward_min)/2
             #TODO: add probabilistic way
             elif reward_type == 3:
-                    
-
+                pass
 
         #update next_state and done      
         if i%self.budget == 0:
