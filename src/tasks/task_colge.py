@@ -33,9 +33,10 @@ def run_colge(_run, config, logger, run_args=None):
 
     #test graph
     print('Loading test graph: ', args.graph_type) 
-    for graph_ in range(args.graph_nbr_train, args.graph_nbr_train+args.graph_nbr_test):
+    for i, graph_ in enumerate(range(args.graph_nbr_train, args.graph_nbr_train+args.graph_nbr_test)):
         #seed = graph_ + args.seed
-        seed = graph_
+        #seed = graph_
+        seed = 100000 + i 
         graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed)
         #curr_graph = graph_dic[graph_].g
         #print('neighbors of node 0: in graph {}: {}'.format(graph_, curr_graph[0]))

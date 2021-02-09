@@ -85,9 +85,26 @@ class NetworkEnv(object):
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_min = self.q*(influence_with - influece_without) 
                 self.reward = (reward_max+reward_min)/2
-            #TODO: add probabilistic way
             elif reward_type == 3:
-                pass
+                fix_seeds = []
+                [fix_seeds.append(v) for v in range(self.N) if self.state[0][v]==1]
+                uncertain_seeds = []
+                [uncertain_seeds.append(v) for v in range(self.N) if self.state[2][v]==1]
+                # reward_max
+                seeds = fix_seeds
+                influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                seeds.append(sec_action)
+                influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                reward_max = self.q*(influence_with - influece_without)
+                # reward_min
+                seeds = fix_seeds + uncertain_seeds
+                influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                seeds.append(sec_action)
+                influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
+                reward_min = self.q*(influence_with - influece_without)
+                self.reward = reward_min*(1-self.q)+reward_max*self.q
+            else:
+                assert(False)
 
         #update next_state and done      
         if i%self.budget == 0:
