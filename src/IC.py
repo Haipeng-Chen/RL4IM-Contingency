@@ -396,7 +396,7 @@ def runIC_estimate(G, S, p=0.01, sample=1000):
 
 if __name__ == '__main__':
     # g = nx.erdos_renyi_graph(200,0.5)
-    graph_index=2
+    graph_index = 3
     graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
     graph_name = graph_list[graph_index]
     path =  os.path.join('data', 'graph_data', graph_name + '.txt')

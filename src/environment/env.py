@@ -86,7 +86,8 @@ class NetworkEnv(object):
                 reward_min = self.q*(influence_with - influece_without) 
                 self.reward = (reward_max+reward_min)/2
             #TODO: add probabilistic way
-            #else    
+            elif reward_type == 3:
+                    
 
 
         #update next_state and done      
