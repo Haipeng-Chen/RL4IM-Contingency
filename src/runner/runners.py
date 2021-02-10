@@ -37,7 +37,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episodes=15):
+    def evaluate(self, num_episodes=20):
         """ Start evaluation """
         print('----------------------------------------------start evaluation---------------------------------------------------------')
         episode_accumulated_rewards = np.empty((self.args.graph_nbr_test, num_episodes))
