@@ -28,3 +28,6 @@ reward_type: 3 #int {0, 1, 2, 3}
 # #node: 20 # type=int, metavar='nnode', default=20, help="number of node in generated graphs")
 # #p: 0.14  #, default=0.14, help="p, parameter in graph degree distribution")
 # #m: 4  #, default=4, help="m, parameter in graph degree distribution")
+
+model_scheme: 'normal'  # {'normal': 'run without graphs with various node', 
+                        #  'type1': 'for loop for graphs with various nodes', 'type2': padding}

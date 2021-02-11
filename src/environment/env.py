@@ -184,7 +184,7 @@ class NetworkEnv(object):
 
 
 class Environment(NetworkEnv):
-    def __init__(self, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None, name='MVC'):
+    def __init__(self, T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None, name='MVC', args=None):
         super().__init__(T=T,
                          budget=budget,
                          propagate_p=propagate_p,
@@ -194,6 +194,7 @@ class Environment(NetworkEnv):
                          cascade=cascade,
                          num_simul=num_simul,
                          graphs=graphs)
+        self.args = args
         self.name = name
         self.G = graphs[0] ####
         self.graph_init = self.G  #####
@@ -217,6 +218,17 @@ class Environment(NetworkEnv):
         self.state = np.zeros((3, self.N)) 
         self.observation = self.state
         nx.set_node_attributes(self.G.g, 0, 'attr')
+
+    def get_state(self, g_index):
+        curr_g = self.graphs[g_index]
+        available_action_mask = np.array([1] * curr_g.cur_n + [0] * (curr_g.max_node_num - curr_g.cur_n))
+
+        # padding the state for storing
+        obs_padding = self.observation.copy()
+        if self.args.model_scheme == 'type1':
+            padding = np.repeat(np.array([-1] * (curr_g.max_node_num - curr_g.cur_n))[None, ...], self.observation.shape[0], axis=0)
+            obs_padding = np.concatenate((self.observation.copy(), padding), axis=-1)
+        return self.observation.copy(), obs_padding, available_action_mask
 
     def try_remove_feasible_action(self, feasible_actions, sec_action):
         try:

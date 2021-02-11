@@ -19,3 +19,5 @@ cascade: 'IC'  # cascade model
 greedy_sample_size: 500  # sample size for value estimation of greedy algorithms
 
 mode: 'train' # str, {'train', 'test'}
+
+graph_node_var: 25

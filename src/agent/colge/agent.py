@@ -92,7 +92,7 @@ class DQAgent:
             self.games = g_index
         
         if (len(self.memory_n) != 0) and (len(self.memory_n) % 300000 == 0):
-            self.memory_n =random.sample(self.memory_n,120000)
+            self.memory_n = random.sample(self.memory_n, 120000)
 
         self.nodes = self.graphs[self.games].node
         self.adj = self.graphs[self.games].adj
@@ -112,8 +112,10 @@ class DQAgent:
         #self.epislon_decay_steps = 100
         #self.global_t = 0
 
-    def act(self, observation, feasible_actions, mode):
+    def act(self, observation, feasible_actions, mode, mask=None):
         # to cuda
+
+        mask = th.from_numpy(mask).float()[None, :, None]
 
         if self.args.use_state_abs:
             observation = th.from_numpy(observation).float()[None, :, None]
@@ -124,13 +126,14 @@ class DQAgent:
             observation = observation.cuda()
             self.adj = self.adj.cuda()
 
-        if self.curr_epsilon > np.random.rand() and mode != 'test':
+        # if self.curr_epsilon > np.random.rand() and mode != 'test':
+        if False:
             action = np.random.choice(feasible_actions)
         else:  # called for both test and train mode
             #if mode == 'test' and len(feasible_actions)==200:
                 #print('observation: ', observation)
                 #ipdb.set_trace()
-            q_a = self.model(observation, self.adj)
+            q_a = self.model(observation, self.adj, mask=mask)
             q_a = q_a.detach().cpu().numpy()
             
             # mask out unavailable action
@@ -139,6 +142,10 @@ class DQAgent:
             if len(masked_out_action_id) > 0:
                 q_a[0, masked_out_action_id, 0] = -9999999
             
+            # mask out node dim outside the current range
+            if q_a.shape[0] > 1:  #  batch mode mask out q values
+                q_a[mask == 0] = -9999999
+
             #action = np.where((q_a[0, :, 0] == np.max(q_a[0, :, 0][observation.cpu().numpy()[0, :, 0] == 0])))[0][0]
             action = int(np.argmax(q_a[0, :, 0]))
             #if mode == 'test' and len(feasible_actions)==200:
@@ -155,8 +162,10 @@ class DQAgent:
         
         return action
 
-    def reward(self, observation, action, reward,done):
+    def reward(self, observation, action, reward, done, mask):
         
+        mask = th.from_numpy(mask).float()[None, :, None]
+
         if self.args.use_state_abs:
             observation = th.from_numpy(observation).float()[None, :, None]
         else:
@@ -165,12 +174,12 @@ class DQAgent:
         loss = None
         if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:
 
-            (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens,adj_tens) = self.get_sample()
+            (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask) = self.get_sample()
             # TODO further check
             aux_tensor = self.to_cuda(th.tensor(observation_tens * (-1e5) if self.args.use_state_abs else 0).float())
             target = self.to_cuda(reward_tens) + self.gamma *(1-self.to_cuda(done_tens)) * \
                 torch.max(self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens)), dim=1)[0]
-            target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens))
+            target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
             target_p = target_f.clone()
             target_f[range(self.minibatch_length), action_tens, :] = target
             loss = self.criterion(target_p, target_f)
@@ -184,14 +193,14 @@ class DQAgent:
             #self.epsilon = self.eps_end + max(0., (self.eps_start- self.eps_end) * (self.eps_step - self.t) / self.eps_step)
             #if self.epsilon_ > self.epsilon_min:
                #self.epsilon_ *= self.discount_factor
-        if self.iter>1:
-            self.remember(self.last_observation, self.last_action, self.last_reward, observation.clone(),self.last_done*1)
+        if self.iter > 1:
+            self.remember(self.last_observation, self.last_action, self.last_reward, observation.clone(), self.last_done*1, mask)
 
-        if done & self.iter> self.n_step:
+        if done & self.iter > self.n_step:
               self.remember_n(False)
               new_observation = observation.clone()
               new_observation[:,action,:]=1
-              self.remember(observation,action,reward,new_observation,done*1)
+              self.remember(observation, action, reward, new_observation, done*1, mask)
 
         if self.iter > self.n_step:
             self.remember_n(done)
@@ -207,15 +216,18 @@ class DQAgent:
         minibatch = random.sample(self.memory_n, self.minibatch_length - 1)
         minibatch.append(self.memory_n[-1])
         last_observation_tens = minibatch[0][0]
+        obs_mask = minibatch[0][-1]
         action_tens = torch.Tensor([minibatch[0][1]]).type(torch.LongTensor)
         reward_tens = torch.Tensor([[minibatch[0][2]]])
         observation_tens = minibatch[0][3]
         done_tens =torch.Tensor([[minibatch[0][4]]])
         adj_tens = self.graphs[minibatch[0][5]].adj.todense()
+        # TODO padding the adj
         adj_tens = torch.from_numpy(np.expand_dims(adj_tens.astype(int), axis=0)).type(torch.FloatTensor)
 
-        for last_observation_, action_, reward_, observation_, done_, games_ in minibatch[-self.minibatch_length + 1:]:
+        for last_observation_, action_, reward_, observation_, done_, games_, mask_ in minibatch[-self.minibatch_length + 1:]:
             last_observation_tens = torch.cat((last_observation_tens, last_observation_))
+            obs_mask = torch.cat((obs_mask, mask_))
             action_tens = torch.cat((action_tens, torch.Tensor([action_]).type(torch.LongTensor)))
             reward_tens = torch.cat((reward_tens, torch.Tensor([[reward_]])))
             observation_tens = torch.cat((observation_tens, observation_))
@@ -223,29 +235,48 @@ class DQAgent:
             adj_ = self.graphs[games_].adj.todense()
             adj = torch.from_numpy(np.expand_dims(adj_.astype(int), axis=0)).type(torch.FloatTensor)
             adj_tens = torch.cat((adj_tens, adj))
-        return (last_observation_tens, action_tens, reward_tens, observation_tens,done_tens, adj_tens)
+        return (last_observation_tens, action_tens, reward_tens, observation_tens,done_tens, adj_tens, obs_mask)
 
-    def remember(self, last_observation, last_action, last_reward, observation,done):
-        self.memory.append((last_observation, last_action, last_reward, observation,done, self.games))
+    def remember(self, last_observation, last_action, last_reward, observation, done, mask):
+        self.memory.append((last_observation, last_action, last_reward, observation, done, self.games, mask))
 
-    def remember_n(self,done):
+    def remember_n(self, done):
         if not done:
             step_init = self.memory[-self.n_step]
-            cum_reward=step_init[2]
+            cum_reward = step_init[2]
             for step in range(1,self.n_step):
-                cum_reward+=self.memory[-step][2]
-            self.memory_n.append((step_init[0], step_init[1], cum_reward, self.memory[-1][-3],self.memory[-1][-2], self.memory[-1][-1]))
+                cum_reward += self.memory[-step][2]
+            
+            self.memory_n.append((step_init[0],
+                                  step_init[1],
+                                  cum_reward,
+                                  self.memory[-1][-4],
+                                  self.memory[-1][-3],
+                                  self.memory[-1][-2],
+                                  step_init[-1][-1]))
         else:
             for i in range(1,self.n_step):
                 step_init = self.memory[-self.n_step+i]
-                cum_reward=step_init[2]
+                cum_reward = step_init[2]
                 for step in range(1,self.n_step-i):
-                    cum_reward+=self.memory[-step][2]
-                if i==self.n_step-1:
+                    cum_reward += self.memory[-step][2]
+                if i == self.n_step-1:
                     self.memory_n.append(
-                        (step_init[0], step_init[1], cum_reward, self.memory[-1][-3], False, self.memory[-1][-1]))
+                        (step_init[0],
+                         step_init[1],
+                         cum_reward,
+                         self.memory[-1][-4],
+                         False,
+                         self.memory[-1][-2],
+                         self.memory[-1][-1]))
                 else:
-                    self.memory_n.append((step_init[0], step_init[1], cum_reward,self.memory[-1][-3], False, self.memory[-1][-1]))
+                    self.memory_n.append((step_init[0],
+                                          step_init[1],
+                                          cum_reward,
+                                          self.memory[-1][-4],
+                                          False,
+                                          self.memory[-1][-2],
+                                          self.memory[-1][-1]))
 
     def cuda(self):
         self.model.cuda()

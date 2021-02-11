@@ -151,14 +151,15 @@ class Runner:
                     feasible_actions = list(range(self.environment.N))
 
                     for i in range(1, self.environment.T+1):
-                        state = self.environment.state.copy()
+                        state, state_padding, available_action_mask = self.environment.get_state(g_index)
                         if self.args.use_state_abs:
                             state = self.state_abstraction(state) ####
+                            state_padding = self.state_abstraction(state_padding)
                         if (i-1) % self.environment.budget == 0:
                             pri_action=[ ]
                         #sec_action = self.agent.act(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...],
                                                 #feasible_actions=feasible_actions.copy(), mode=mode)
-                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) ####
+                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode, mask=available_action_mask) ####
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
@@ -166,7 +167,7 @@ class Runner:
 
                         # learning the model
                         #loss = self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
-                        loss = self.agent.reward(state, sec_action, reward, done) ####
+                        loss = self.agent.reward(state_padding, sec_action, reward, done, available_action_mask) ####
                         cumul_reward += reward
                         print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Epsilon: {self.agent.curr_epsilon:.2f}")
                         

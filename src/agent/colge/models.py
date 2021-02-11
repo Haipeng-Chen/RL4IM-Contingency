@@ -49,32 +49,45 @@ class S2V_QN_1(torch.nn.Module):
             self.q = torch.nn.Linear((2 if self.args.use_state_abs else 4) * embed_dim, 1)
         torch.nn.init.normal_(self.q.weight, mean=0, std=0.01)
  
-    def forward(self, xv, adj):
+    def forward(self, xv, adj, mask=None):
         minibatch_size = xv.shape[0]
         nbr_node = xv.shape[1]
+
+        def _mask_out(mu, mask, minibatch_size):
+            # batch and type1 mode
+            if minibatch_size > 1 and self.args.model_scheme == 'type1':
+                mu = mu * mask
+            return mu
 
         for t in range(self.T):
             if t == 0:
                 #mu = self.mu_1(xv).clamp(0)
                 mu = torch.matmul(xv, self.mu_1).clamp(0)
+                mu = _mask_out(mu, mask, minibatch_size)
+                
                 #mu.transpose_(1,2)
                 #mu_2 = self.mu_2(torch.matmul(adj, mu_init))
                 #mu = torch.add(mu_1, mu_2).clamp(0)
             else:
                 #mu_1 = self.mu_1(xv).clamp(0)
                 mu_1 = torch.matmul(xv, self.mu_1).clamp(0)
+                mu_1 = _mask_out(mu_1, mask, minibatch_size)
+
                 #mu_1.transpose_(1,2)
                 # before pooling:
                 for i in range(self.len_pre_pooling):
                     mu = self.list_pre_pooling[i](mu).clamp(0)
 
                 mu_pool = torch.matmul(adj, mu)
+                mu_pool = _mask_out(mu_pool, mask, minibatch_size)
 
                 # after pooling
                 for i in range(self.len_post_pooling):
                     mu_pool = self.list_post_pooling[i](mu_pool).clamp(0)
 
                 mu_2 = self.mu_2(mu_pool)
+                mu_2 = _mask_out(mu_2, mask, minibatch_size)
+
                 mu = torch.add(mu_1, mu_2).clamp(0)
 
         q_1 = self.q_1(torch.matmul(xv.transpose(1,2), mu)).view(minibatch_size, 1, -1)

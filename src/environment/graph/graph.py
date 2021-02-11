@@ -6,10 +6,20 @@ import collections
 # seed = np.random.seed(120)
 
 class Graph:
-    def __init__(self, g=None, graph_type=None, cur_n=None, p=None, m=None, seed=None):
+    def __init__(self, g=None, graph_type=None, cur_n=None, p=None, m=None, seed=None, args=None):
         self.seed = seed
-        np.random.seed(self.seed)
-        cur_n += np.random.choice(range(-25, 26, 1))
+        self.args = args
+
+        np.random.seed(seed)
+
+        self.max_node_num = cur_n + (self.args.graph_node_var if self.args.model_scheme != 'normal' else 0)
+        
+        if args.model_scheme != 'normal':
+            cur_n += np.random.choice(range(-self.args.graph_node_var, self.args.graph_node_var+1, 1))
+
+        self.cur_n = cur_n
+
+        # create graph with networkx
         if graph_type == 'erdos_renyi':
             self.g = nx.erdos_renyi_graph(n=cur_n, p=p, seed=seed)
         elif graph_type == 'powerlaw':

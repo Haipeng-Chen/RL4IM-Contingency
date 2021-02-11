@@ -27,7 +27,7 @@ def run_colge(_run, config, logger, run_args=None):
         #graph_dic[graph_].graph_name = graph_name
         #seed = graph_ + args.seed
         seed = graph_
-        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_train, p=args.p, m=args.m, seed=seed)
+        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_train, p=args.p, m=args.m, seed=seed, args=args)
         graph_dic[graph_].graph_name = str(graph_)
     print('train graphs in total: ', len(graph_dic))   
 
@@ -37,7 +37,7 @@ def run_colge(_run, config, logger, run_args=None):
         #seed = graph_ + args.seed
         #seed = graph_
         seed = 100000 + i 
-        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed)
+        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed, args=args)
         #curr_graph = graph_dic[graph_].g
         #print('neighbors of node 0: in graph {}: {}'.format(graph_, curr_graph[0]))
         #ipdb.set_trace()
@@ -48,7 +48,7 @@ def run_colge(_run, config, logger, run_args=None):
     # seed is changed in Graph and change back to the args.seed
     np.random.seed(args.seed)
     env_class = Environment(cascade=args.cascade, T=args.T, budget=args.budget,
-                           propagate_p=args.propagate_p, l=args.l, d=args.d, q=args.q, graphs=graph_dic)
+                           propagate_p=args.propagate_p, l=args.l, d=args.d, q=args.q, graphs=graph_dic, args=args)
 
     if args.method == 'rl':
         agent = DQAgent(graph_dic, args.model, args.lr, args.bs, args.n_step, args=args)
