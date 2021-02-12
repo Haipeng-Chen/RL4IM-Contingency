@@ -137,6 +137,9 @@ class Runner:
         global_episode = 0
 
         for epoch in range(self.args.nbr_epoch):
+            if self.agent.global_t >= 160000:
+            #maximal number of training steps 
+                break
             print('epoch: ', epoch)
             for g_index in range(self.args.graph_nbr_train):  # graph list; first  graph_nbr_train graphs are training, the rest are for test
                 graph_name = self.agent.graphs[g_index].graph_name
@@ -195,7 +198,7 @@ class Runner:
 
                             break    
         
-                    if global_episode % 50 == 0:
+                    if self.agent.global_t % 100 == 0:
                         # save the model
                         self.agent.save_model(self.model_path)
                         g_names, episode_accumulated_rewards = self.evaluate()
