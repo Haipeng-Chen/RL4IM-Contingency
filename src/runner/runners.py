@@ -63,12 +63,12 @@ class Runner:
                     presents = []
 
                     for i in range(1, self.environment.T+1):
-                        state = self.environment.state.copy()
+                        state, state_padding, available_action_mask = self.environment.get_state(g_index)
                         if self.args.use_state_abs:
                             state = self.state_abstraction(state) ####
                         #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
                                                 #feasible_actions=feasible_actions.copy(), mode=mode)
-                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode) 
+                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode, mask=available_action_mask) 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
                         _, _, done = self.environment.step(i, pri_action, sec_action=sec_action)
