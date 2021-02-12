@@ -56,6 +56,8 @@ class S2V_QN_1(torch.nn.Module):
         def _mask_out(mu, mask, minibatch_size):
             # batch and type1 mode
             if minibatch_size > 1 and self.args.model_scheme == 'type1':
+                mask = mask.view(minibatch_size, -1, 1)
+                mask = mask.repeat(1, 1, mu.shape[-1])
                 mu = mu * mask
             return mu
 
@@ -101,6 +103,10 @@ class S2V_QN_1(torch.nn.Module):
         else:
             q_ = q_.clamp(0)
             q = self.q(q_)
+
+        # mask out
+        if self.args.model_scheme == 'type1' and minibatch_size > 1:
+            q[mask.view(minibatch_size, -1, 1)==0] = -99999
         return q
 
 

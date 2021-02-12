@@ -9,6 +9,7 @@ import numpy as np
 import torch.nn.functional as F
 
 import src.agent.colge.models as models
+from src.environment.graph import Graph
 from src.agent.colge.utils.config import load_model_config
 
 import ipdb
@@ -115,7 +116,8 @@ class DQAgent:
     def act(self, observation, feasible_actions, mode, mask=None):
         # to cuda
 
-        mask = th.from_numpy(mask).float()[None, :, None]
+        if self.args.model_scheme == 'type1':
+            mask = th.from_numpy(mask).float()[None, :, None]
 
         if self.args.use_state_abs:
             observation = th.from_numpy(observation).float()[None, :, None]
@@ -176,12 +178,12 @@ class DQAgent:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask) = self.get_sample()
             # TODO further check
-            aux_tensor = self.to_cuda(th.tensor(observation_tens * (-1e5) if self.args.use_state_abs else 0).float())
-            target = self.to_cuda(reward_tens) + self.gamma *(1-self.to_cuda(done_tens)) * \
-                torch.max(self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens)), dim=1)[0]
+            aux_tensor = self.to_cuda(observation_tens * (-1e5) if self.args.use_state_abs else th.tensor(0).float())
+            target = self.to_cuda(reward_tens) + self.gamma * (1-self.to_cuda(done_tens)) * \
+                torch.max(self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask)), dim=1)[0]
             target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
             target_p = target_f.clone()
-            target_f[range(self.minibatch_length), action_tens, :] = target
+            target_f[range(target_f.shape[0]), action_tens, :] = target
             loss = self.criterion(target_p, target_f)
 
             self.loss = loss
@@ -204,7 +206,8 @@ class DQAgent:
 
         if self.iter > self.n_step:
             self.remember_n(done)
-        self.iter+=1
+        
+        self.iter += 1
         self.t += 1
         self.last_action = action
         self.last_observation = observation.clone()
@@ -213,26 +216,32 @@ class DQAgent:
         return loss
 
     def get_sample(self):
-        minibatch = random.sample(self.memory_n, self.minibatch_length - 1)
+        minibatch = random.sample(self.memory_n, 5)
         minibatch.append(self.memory_n[-1])
         last_observation_tens = minibatch[0][0]
-        obs_mask = minibatch[0][-1]
+        obs_mask = minibatch[0][-1].view(*minibatch[0][0].shape)
         action_tens = torch.Tensor([minibatch[0][1]]).type(torch.LongTensor)
         reward_tens = torch.Tensor([[minibatch[0][2]]])
         observation_tens = minibatch[0][3]
         done_tens =torch.Tensor([[minibatch[0][4]]])
         adj_tens = self.graphs[minibatch[0][5]].adj.todense()
-        # TODO padding the adj
+        
         adj_tens = torch.from_numpy(np.expand_dims(adj_tens.astype(int), axis=0)).type(torch.FloatTensor)
+        if self.args.model_scheme == 'type1':
+            adj_tens = self._pad_adj(self.graphs[minibatch[0][5]], adj_tens)
 
         for last_observation_, action_, reward_, observation_, done_, games_, mask_ in minibatch[-self.minibatch_length + 1:]:
             last_observation_tens = torch.cat((last_observation_tens, last_observation_))
-            obs_mask = torch.cat((obs_mask, mask_))
+            obs_mask = torch.cat((obs_mask, mask_.view(1, obs_mask.shape[1], 1)))
             action_tens = torch.cat((action_tens, torch.Tensor([action_]).type(torch.LongTensor)))
             reward_tens = torch.cat((reward_tens, torch.Tensor([[reward_]])))
             observation_tens = torch.cat((observation_tens, observation_))
             done_tens = torch.cat((done_tens,torch.Tensor([[done_]])))
-            adj_ = self.graphs[games_].adj.todense()
+            
+            adj_ = self.graphs[games_].adj
+            if self.args.model_scheme == 'type1':
+                adj_ = self._pad_adj(self.graphs[games_], adj_.todense()).numpy()
+            
             adj = torch.from_numpy(np.expand_dims(adj_.astype(int), axis=0)).type(torch.FloatTensor)
             adj_tens = torch.cat((adj_tens, adj))
         return (last_observation_tens, action_tens, reward_tens, observation_tens,done_tens, adj_tens, obs_mask)
@@ -307,5 +316,25 @@ class DQAgent:
         self.loss = checkpoint['loss']
         self.curr_epsilon = checkpoint['epsilon']
         self.model.eval()
+
+    @staticmethod
+    def _pad_adj(graph: Graph, adj):
+        max_node_num = graph.max_node_num
+        cur_n = graph.cur_n
+        right_pad = torch.zeros(cur_n, max_node_num-cur_n).float()
+        down_pad = torch.zeros(max_node_num-cur_n, max_node_num).float()
+
+        flag = True
+        if len(adj.shape) == 3 and adj.shape[0] == 1:
+            right_pad = right_pad[None, ...]
+            down_pad = down_pad[None, ...]
+            flag = False
+        
+        if not isinstance(adj, torch.Tensor):
+            adj = torch.from_numpy(adj).float()
+        
+        adj = torch.cat((adj, right_pad), axis=-1)
+        adj = torch.cat((adj, down_pad), axis=1-flag)
+        return adj
 
 #Agent = DQAgent
