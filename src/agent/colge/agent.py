@@ -178,7 +178,7 @@ class DQAgent:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask) = self.get_sample()
             if self.args.model_scheme == 'type2':
-                target_p_list, target_f_list = [], []
+                losses = []
                 for last_obs, act, reward, obs, done, adj, mask in zip(last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask):
                     aux_tensor = self.to_cuda(obs * (-1e5) if self.args.use_state_abs else th.tensor(0).float())
                     q = self.model(self.to_cuda(obs) + aux_tensor, self.to_cuda(th.from_numpy(adj)), mask=self.to_cuda(mask))
@@ -186,11 +186,8 @@ class DQAgent:
                     target_f = self.model(self.to_cuda(last_obs), self.to_cuda(th.from_numpy(adj)), mask=self.to_cuda(mask))
                     target_p = target_f.clone()
                     target_f[range(1), act, :] = target
-                    target_p_list.append(target_p)
-                    target_f_list.append(target_f)
-
-                target_p = th.cat(target_p_list)
-                target_f = th.cat(target_f_list)
+                    losses.append(self.criterion(target_p, target_f))
+                loss = th.mean(th.tensor(losses, requires_grad=True))
             else:
                 aux_tensor = self.to_cuda(observation_tens * (-1e5) if self.args.use_state_abs else th.tensor(0).float())
                 target = self.to_cuda(reward_tens) + self.gamma * (1-self.to_cuda(done_tens)) * \
@@ -198,8 +195,8 @@ class DQAgent:
                 target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
                 target_p = target_f.clone()
                 target_f[range(self.minibatch_length), action_tens, :] = target
-
-            loss = self.criterion(target_p, target_f)
+                loss = self.criterion(target_p, target_f)
+            
             self.loss = loss
             self.optimizer.zero_grad()
             loss.backward()
@@ -288,7 +285,7 @@ class DQAgent:
                                   self.memory[-1][-4],
                                   self.memory[-1][-3],
                                   self.memory[-1][-2],
-                                  step_init[-1][-1]))
+                                  self.memory[-1][-1]))
         else:
             for i in range(1,self.n_step):
                 step_init = self.memory[-self.n_step+i]
