@@ -128,8 +128,7 @@ class DQAgent:
             observation = observation.cuda()
             self.adj = self.adj.cuda()
 
-        # if self.curr_epsilon > np.random.rand() and mode != 'test':
-        if False:
+        if self.curr_epsilon > np.random.rand() and mode != 'test':
             action = np.random.choice(feasible_actions)
         else:  # called for both test and train mode
             #if mode == 'test' and len(feasible_actions)==200:
