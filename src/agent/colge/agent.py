@@ -230,7 +230,7 @@ class DQAgent:
         return loss
 
     def get_sample(self):
-        minibatch = random.sample(self.memory_n, 5)
+        minibatch = random.sample(self.memory_n, self.minibatch_length - 1)
         minibatch.append(self.memory_n[-1])
         last_observation_tens = minibatch[0][0]
         obs_mask = minibatch[0][-1].view(1, -1, 1)
