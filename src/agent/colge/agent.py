@@ -183,7 +183,7 @@ class DQAgent:
                 torch.max(self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask)), dim=1)[0]
             target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
             target_p = target_f.clone()
-            target_f[range(target_f.shape[0]), action_tens, :] = target
+            target_f[range(self.minibatch_length), action_tens, :] = target
             loss = self.criterion(target_p, target_f)
 
             self.loss = loss
