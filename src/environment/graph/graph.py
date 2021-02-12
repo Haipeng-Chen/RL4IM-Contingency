@@ -14,7 +14,7 @@ class Graph:
 
         self.max_node_num = cur_n + (self.args.graph_node_var if self.args.model_scheme != 'normal' else 0)
         
-        if args.model_scheme != 'normal':
+        if args.model_scheme != 'normal' or args.mode == 'test':
             cur_n += np.random.choice(range(-self.args.graph_node_var, self.args.graph_node_var+1, 1))
 
         self.cur_n = cur_n

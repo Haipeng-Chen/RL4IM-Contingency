@@ -99,7 +99,13 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=5 q=0.6 mode='test' node_test=500 p=0.02 method='adaptive_greedy' 
 
 # Feb 12 2pm 
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='train' node_train=200 node_test=200 p=0.05
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 model_scheme='type1'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 model_scheme='type2'
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 model_scheme='normal'
+
+#
+#this is not run yet
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=200 p=0.05 model_scheme='normal' checkpoint_path=./temp_dir/colge/sacred/200/models 
 
 
 

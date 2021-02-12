@@ -137,7 +137,7 @@ class Runner:
         global_episode = 0
 
         for epoch in range(self.args.nbr_epoch):
-            if self.agent.global_t >= 160000:
+            if self.agent.global_t+1 >= 160000:
             #maximal number of training steps 
                 break
             print('epoch: ', epoch)
@@ -174,7 +174,21 @@ class Runner:
                         cumul_reward += reward
                         print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Epsilon: {self.agent.curr_epsilon:.2f}")
                         
-                        # save the model
+                        if (self.agent.global_t+1) % 100 == 0:
+                            # save the model
+                            self.agent.save_model(self.model_path)
+                            g_names, episode_accumulated_rewards = self.evaluate()
+                            mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
+                            for i, graph_name in enumerate(g_names):
+                                self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
+                                                     value=mean_accumulated_reward_per_graph[i],
+                                                     t=self.agent.global_t)
+                                if graph_name not in graph_eval_reward:
+                                    graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
+                                else:
+                                    graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
+
+
                         #if (self.agent.global_t + 1) % 100 == 0:
                         #    self.agent.save_model(self.model_path)
 
@@ -198,19 +212,19 @@ class Runner:
 
                             break    
         
-                    if self.agent.global_t % 100 == 0:
-                        # save the model
-                        self.agent.save_model(self.model_path)
-                        g_names, episode_accumulated_rewards = self.evaluate()
-                        mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
-                        for i, graph_name in enumerate(g_names):
-                            self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
-                                                 value=mean_accumulated_reward_per_graph[i],
-                                                 t=self.agent.global_t)
-                            if graph_name not in graph_eval_reward:
-                                graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
-                            else:
-                                graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
+                    #if self.agent.global_t % 100 == 0:
+                    #    # save the model
+                    #    self.agent.save_model(self.model_path)
+                    #    g_names, episode_accumulated_rewards = self.evaluate()
+                    #    mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
+                    #    for i, graph_name in enumerate(g_names):
+                    #        self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
+                    #                             value=mean_accumulated_reward_per_graph[i],
+                    #                             t=self.agent.global_t)
+                    #        if graph_name not in graph_eval_reward:
+                    #            graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
+                    #        else:
+                    #            graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
                         
                         #self.logger.log_stat(key=f'{graph_name}/eval_episode_reward', 
                         #                     value=mean_eval_reward, 
