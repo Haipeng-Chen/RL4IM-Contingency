@@ -177,15 +177,29 @@ class DQAgent:
         if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask) = self.get_sample()
-            # TODO further check
-            aux_tensor = self.to_cuda(observation_tens * (-1e5) if self.args.use_state_abs else th.tensor(0).float())
-            target = self.to_cuda(reward_tens) + self.gamma * (1-self.to_cuda(done_tens)) * \
-                torch.max(self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask)), dim=1)[0]
-            target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
-            target_p = target_f.clone()
-            target_f[range(self.minibatch_length), action_tens, :] = target
-            loss = self.criterion(target_p, target_f)
+            if self.args.model_scheme == 'type2':
+                target_p_list, target_f_list = [], []
+                for last_obs, act, reward, obs, done, adj, mask in zip(last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask):
+                    aux_tensor = self.to_cuda(obs * (-1e5) if self.args.use_state_abs else th.tensor(0).float())
+                    q = self.model(self.to_cuda(obs) + aux_tensor, self.to_cuda(th.from_numpy(adj)), mask=self.to_cuda(mask))
+                    target = self.to_cuda(torch.Tensor([[reward]])) + self.gamma * (1-self.to_cuda(torch.Tensor([[done]]))) * torch.max(q, dim=1)[0]
+                    target_f = self.model(self.to_cuda(last_obs), self.to_cuda(th.from_numpy(adj)), mask=self.to_cuda(mask))
+                    target_p = target_f.clone()
+                    target_f[range(1), act, :] = target
+                    target_p_list.append(target_p)
+                    target_f_list.append(target_f)
 
+                target_p = th.cat(target_p_list)
+                target_f = th.cat(target_f_list)
+            else:
+                aux_tensor = self.to_cuda(observation_tens * (-1e5) if self.args.use_state_abs else th.tensor(0).float())
+                target = self.to_cuda(reward_tens) + self.gamma * (1-self.to_cuda(done_tens)) * \
+                    torch.max(self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask)), dim=1)[0]
+                target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
+                target_p = target_f.clone()
+                target_f[range(self.minibatch_length), action_tens, :] = target
+
+            loss = self.criterion(target_p, target_f)
             self.loss = loss
             self.optimizer.zero_grad()
             loss.backward()
@@ -219,7 +233,7 @@ class DQAgent:
         minibatch = random.sample(self.memory_n, 5)
         minibatch.append(self.memory_n[-1])
         last_observation_tens = minibatch[0][0]
-        obs_mask = minibatch[0][-1].view(*minibatch[0][0].shape)
+        obs_mask = minibatch[0][-1].view(1, -1, 1)
         action_tens = torch.Tensor([minibatch[0][1]]).type(torch.LongTensor)
         reward_tens = torch.Tensor([[minibatch[0][2]]])
         observation_tens = minibatch[0][3]
@@ -229,6 +243,18 @@ class DQAgent:
         adj_tens = torch.from_numpy(np.expand_dims(adj_tens.astype(int), axis=0)).type(torch.FloatTensor)
         if self.args.model_scheme == 'type1':
             adj_tens = self._pad_adj(self.graphs[minibatch[0][5]], adj_tens)
+
+        if self.args.model_scheme == 'type2':  # return list of experience
+            last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask = [], [], [], [], [], [], []
+            for last_observation_, action_, reward_, observation_, done_, games_, mask_ in minibatch[-self.minibatch_length:]:
+                last_observation_tens.append(last_observation_)
+                action_tens.append(action_)
+                reward_tens.append(reward_)
+                observation_tens.append(observation_)
+                done_tens.append(done_)
+                obs_mask.append(mask_)
+                adj_tens.append(self.graphs[games_].adj.todense())
+            return (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask)
 
         for last_observation_, action_, reward_, observation_, done_, games_, mask_ in minibatch[-self.minibatch_length + 1:]:
             last_observation_tens = torch.cat((last_observation_tens, last_observation_))

@@ -80,7 +80,7 @@ class S2V_QN_1(torch.nn.Module):
                 for i in range(self.len_pre_pooling):
                     mu = self.list_pre_pooling[i](mu).clamp(0)
 
-                mu_pool = torch.matmul(adj, mu)
+                mu_pool = torch.matmul(adj.float(), mu)
                 mu_pool = _mask_out(mu_pool, mask, minibatch_size)
 
                 # after pooling
