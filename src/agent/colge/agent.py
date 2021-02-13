@@ -260,9 +260,9 @@ class DQAgent:
             observation_tens = torch.cat((observation_tens, observation_))
             done_tens = torch.cat((done_tens,torch.Tensor([[done_]])))
             
-            adj_ = self.graphs[games_].adj
+            adj_ = self.graphs[games_].adj.todense()
             if self.args.model_scheme == 'type1':
-                adj_ = self._pad_adj(self.graphs[games_], adj_.todense()).numpy()
+                adj_ = self._pad_adj(self.graphs[games_], adj_).numpy()
             
             adj = torch.from_numpy(np.expand_dims(adj_.astype(int), axis=0)).type(torch.FloatTensor)
             adj_tens = torch.cat((adj_tens, adj))
