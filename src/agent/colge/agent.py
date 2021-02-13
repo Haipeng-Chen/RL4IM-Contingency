@@ -143,10 +143,6 @@ class DQAgent:
             if len(masked_out_action_id) > 0:
                 q_a[0, masked_out_action_id, 0] = -9999999
             
-            # mask out node dim outside the current range
-            if q_a.shape[0] > 1:  #  batch mode mask out q values
-                q_a[mask == 0] = -9999999
-
             #action = np.where((q_a[0, :, 0] == np.max(q_a[0, :, 0][observation.cpu().numpy()[0, :, 0] == 0])))[0][0]
             action = int(np.argmax(q_a[0, :, 0]))
             #if mode == 'test' and len(feasible_actions)==200:
