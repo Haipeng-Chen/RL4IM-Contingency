@@ -2,18 +2,18 @@
 #graph_index: 2  # graph index
 #graph_name: "default_graph"
 graph_type: 'erdos_renyi' # , metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
-graph_nbr_train: 200 # , type=int, default='1', help='number of differente graph to generate for the training sample')
+graph_nbr_train: 500 # , type=int, default='1', help='number of differente graph to generate for the training sample')
 graph_nbr_test: 5 # , type=int, default='1', help='number of differente graph to generate for the test sample')
-node_train: 100 # "number of node in generated train graphs", 100+ 50, 100
-node_test: 100 # "number of node in generated test graphs", 100+ 50, 100
+node_train: 200 # "number of node in generated train graphs", 100+ 50, 100
+node_test: 200 # "number of node in generated test graphs", 100+ 50, 100
 p: 0.1  #, default=0.14, help="p, parameter in graph degree distribution")
 m: 4  #, default=4, help="m, parameter in graph degree distribution")
-T: 20  # time horizon
+T: 9  # time horizon
 #budget_ratio: 0.06 #', dest='budget_ratio', type=float, default=0.06, help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
-budget: 5  # budget at each main step
+budget: 3  # budget at each main step
 propagate_p: 0.1  # influence propagation probability
-l: 0.05  # influence of each neighbor in LT cascade
-d: 1  # d in SC cascade
+#l: 0.05  # influence of each neighbor in LT cascade
+#d: 1  # d in SC cascade
 q: 0.6  # probability of invited node being present
 cascade: 'IC'  # cascade model
 greedy_sample_size: 500  # sample size for value estimation of greedy algorithms

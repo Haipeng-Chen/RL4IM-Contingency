@@ -1,5 +1,6 @@
 import sys
 import argparse
+import time
 
 import numpy as np
 import networkx as nx
@@ -73,7 +74,10 @@ def run_colge(_run, config, logger, run_args=None):
     if args.mode == 'train':
         final_reward = my_runner.train()
     elif args.mode == 'test':
+        evaluate_start = time.time()
         final_reward = my_runner.evaluate()
+        evaluate_end = time.time()
+        print('runtime in seconds is: ', evaluate_end-evaluate_start)
     else:
         assert(False)
     
