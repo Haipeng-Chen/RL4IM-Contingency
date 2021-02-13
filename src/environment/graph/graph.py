@@ -6,7 +6,7 @@ import collections
 # seed = np.random.seed(120)
 
 class Graph:
-    def __init__(self, g=None, graph_type=None, cur_n=None, p=None, m=None, seed=None, args=None):
+    def __init__(self, g=None, graph_type=None, cur_n=None, p=None, m=None, seed=None, args=None, is_train=True):
         self.seed = seed
         self.args = args
 
@@ -14,7 +14,7 @@ class Graph:
 
         self.max_node_num = cur_n + (self.args.graph_node_var if self.args.model_scheme != 'normal' else 0)
         
-        if args.model_scheme != 'normal' or args.mode == 'test':
+        if args.model_scheme != 'normal' or not is_train:
             cur_n += np.random.choice(range(-self.args.graph_node_var, self.args.graph_node_var+1, 1))
 
         self.cur_n = cur_n

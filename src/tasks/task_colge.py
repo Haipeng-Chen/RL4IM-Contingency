@@ -21,23 +21,25 @@ def run_colge(_run, config, logger, run_args=None):
     #seed = 125
     #graph_one = graph.Graph(graph_type=args.graph_type, cur_n=20, p=0.15,m=4, seed=seed)
     print('Loading train graph: ', args.graph_type) 
+    is_train = True
     for graph_ in range(args.graph_nbr_train):
         #G, g, graph_name = get_graph(args.graph_index)
         #graph_dic[graph_] = Graph.create_graph(g)
         #graph_dic[graph_].graph_name = graph_name
         #seed = graph_ + args.seed
         seed = graph_
-        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_train, p=args.p, m=args.m, seed=seed, args=args)
+        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_train, p=args.p, m=args.m, seed=seed, args=args, is_train=is_train)
         graph_dic[graph_].graph_name = str(graph_)
     print('train graphs in total: ', len(graph_dic))   
 
     #test graph
     print('Loading test graph: ', args.graph_type) 
+    is_train = False
     for i, graph_ in enumerate(range(args.graph_nbr_train, args.graph_nbr_train+args.graph_nbr_test)):
         #seed = graph_ + args.seed
         #seed = graph_
         seed = 100000 + i 
-        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed, args=args)
+        graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed, args=args, is_train=is_train)
         #curr_graph = graph_dic[graph_].g
         #print('neighbors of node 0: in graph {}: {}'.format(graph_, curr_graph[0]))
         #ipdb.set_trace()

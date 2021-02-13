@@ -174,19 +174,19 @@ class Runner:
                         cumul_reward += reward
                         print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Epsilon: {self.agent.curr_epsilon:.2f}")
                         
-                        if (self.agent.global_t+1) % 100 == 0:
-                            # save the model
-                            self.agent.save_model(self.model_path)
-                            g_names, episode_accumulated_rewards = self.evaluate()
-                            mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
-                            for i, graph_name in enumerate(g_names):
-                                self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
-                                                     value=mean_accumulated_reward_per_graph[i],
-                                                     t=self.agent.global_t)
-                                if graph_name not in graph_eval_reward:
-                                    graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
-                                else:
-                                    graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
+                        #if (self.agent.global_t+1) % 100 == 0:
+                        #    # save the model
+                        #    self.agent.save_model(self.model_path)
+                        #    g_names, episode_accumulated_rewards = self.evaluate()
+                        #    mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
+                        #    for i, graph_name in enumerate(g_names):
+                        #        self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
+                        #                             value=mean_accumulated_reward_per_graph[i],
+                        #                             t=self.agent.global_t)
+                        #        if graph_name not in graph_eval_reward:
+                        #            graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
+                        #        else:
+                        #            graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
 
 
                         #if (self.agent.global_t + 1) % 100 == 0:
@@ -212,19 +212,19 @@ class Runner:
 
                             break    
         
-                    #if self.agent.global_t % 100 == 0:
-                    #    # save the model
-                    #    self.agent.save_model(self.model_path)
-                    #    g_names, episode_accumulated_rewards = self.evaluate()
-                    #    mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
-                    #    for i, graph_name in enumerate(g_names):
-                    #        self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
-                    #                             value=mean_accumulated_reward_per_graph[i],
-                    #                             t=self.agent.global_t)
-                    #        if graph_name not in graph_eval_reward:
-                    #            graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
-                    #        else:
-                    #            graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
+                    if global_episode % self.args.save_every  == 0:
+                        # save the model
+                        self.agent.save_model(self.model_path)
+                        g_names, episode_accumulated_rewards = self.evaluate()
+                        mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
+                        for i, graph_name in enumerate(g_names):
+                            self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
+                                                 value=mean_accumulated_reward_per_graph[i],
+                                                 t=self.agent.global_t)
+                            if graph_name not in graph_eval_reward:
+                                graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
+                            else:
+                                graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
                         
                         #self.logger.log_stat(key=f'{graph_name}/eval_episode_reward', 
                         #                     value=mean_eval_reward, 
