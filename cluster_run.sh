@@ -98,9 +98,9 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 mode='test' node_test=400 p=0.025 method='adaptive_greedy' 
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=5 q=0.6 mode='test' node_test=500 p=0.02 method='adaptive_greedy' 
 
-# Feb 12 2pm 
-#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 model_scheme='type1'
+# Feb 12 2pm 226 - 228
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 model_scheme='type2'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 model_scheme='type1'
 python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 model_scheme='normal'
 
 #

@@ -137,7 +137,7 @@ class Runner:
         global_episode = 0
 
         for epoch in range(self.args.nbr_epoch):
-            if self.agent.global_t+1 >= 160000:
+            if self.agent.global_t+1 >= self.args.max_global_t:
             #maximal number of training steps 
                 break
             print('epoch: ', epoch)
@@ -145,7 +145,6 @@ class Runner:
                 graph_name = self.agent.graphs[g_index].graph_name
                 print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
                 for episode in range(self.args.max_episodes):
-                    print('episode: {}'.format(episode))
                     global_episode += 1
                     self.environment.reset(g_index=g_index)
                     self.agent.reset(g_index)  
