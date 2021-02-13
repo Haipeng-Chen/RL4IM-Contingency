@@ -44,7 +44,7 @@ def run_colge(_run, config, logger, run_args=None):
         #print('neighbors of node 0: in graph {}: {}'.format(graph_, curr_graph[0]))
         #ipdb.set_trace()
         
-        graph_dic[graph_].graph_name = str(graph_)
+        graph_dic[graph_].graph_name = str(seed)
     print('merged graphs length: ', len(graph_dic))
     
     # seed is changed in Graph and change back to the args.seed
