@@ -31,6 +31,6 @@ reward_type: 3 #int {0, 1, 2, 3}
 # #p: 0.14  #, default=0.14, help="p, parameter in graph degree distribution")
 # #m: 4  #, default=4, help="m, parameter in graph degree distribution")
 
-model_scheme: 'normal'  # {'normal': 'run graphs with same sizes', 
+model_scheme: 'type2'  # {'normal': 'run graphs with same sizes', 
                         #  'type1': 'padding', 
                         #  'type2': 'for loop for graphs with various nodes'}
