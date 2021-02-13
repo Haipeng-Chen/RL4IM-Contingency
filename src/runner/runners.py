@@ -221,9 +221,9 @@ class Runner:
                                                  value=mean_accumulated_reward_per_graph[i],
                                                  t=self.agent.global_t)
                             if graph_name not in graph_eval_reward:
-                                graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
+                                graph_eval_reward[graph_name] = [episode_accumulated_rewards[i].tolist()]
                             else:
-                                graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
+                                graph_eval_reward[graph_name].append(episode_accumulated_rewards[i].tolist())
                         
                         #self.logger.log_stat(key=f'{graph_name}/eval_episode_reward', 
                         #                     value=mean_eval_reward, 
