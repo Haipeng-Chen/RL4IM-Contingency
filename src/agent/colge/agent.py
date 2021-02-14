@@ -77,7 +77,7 @@ class DQAgent:
         self.init_epsilon = self.args.init_epsilon
         self.final_epsilon = self.args.final_epsilon
         self.curr_epsilon = self.init_epsilon
-        self.epislon_decay_steps = self.args.epislon_decay_steps
+        self.epsilon_decay_steps = self.args.epsilon_decay_steps
         self.global_t = 0
 
 
@@ -110,7 +110,7 @@ class DQAgent:
         #self.init_epsilon = 1.
         #self.final_epsilon = 0.01
         #self.curr_epsilon = self.init_epsilon
-        #self.epislon_decay_steps = 100
+        #self.epsilon_decay_steps = 100
         #self.global_t = 0
 
     def act(self, observation, feasible_actions, mode, mask=None):
@@ -154,7 +154,7 @@ class DQAgent:
             self.curr_epsilon = epsilon_decay(init_v=self.init_epsilon,
                                             final_v=self.final_epsilon,
                                             step_t=self.global_t,
-                                            decay_step=self.epislon_decay_steps)
+                                            decay_step=self.epsilon_decay_steps)
             self.global_t += 1
         
         return action
