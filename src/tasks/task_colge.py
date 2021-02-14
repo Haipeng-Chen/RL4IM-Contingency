@@ -1,6 +1,8 @@
+import os
 import sys
-import argparse
+import json
 import time
+import argparse
 
 import numpy as np
 import networkx as nx
@@ -48,7 +50,14 @@ def run_colge(_run, config, logger, run_args=None):
         
         graph_dic[graph_].graph_name = str(seed)
     print('merged graphs length: ', len(graph_dic))
-    
+
+    # save graph info
+    with open(os.path.join(args.local_results_path, 'graph_info.json'), 'w') as f:
+        node_num = {}
+        for g_id, g in graph_dic.items():
+            node_num[g.graph_name] = int(g.cur_n)
+        json.dump(node_num, f, indent=4)
+
     # seed is changed in Graph and change back to the args.seed
     np.random.seed(args.seed)
     env_class = Environment(cascade=args.cascade, T=args.T, budget=args.budget,
