@@ -1,0 +1,119 @@
+{
+  "artifacts": [],
+  "command": "my_main",
+  "experiment": {
+    "base_dir": "/home/docker/app",
+    "dependencies": [
+      "munch==2.5.0",
+      "numpy==1.19.4",
+      "PyYAML==5.4.1",
+      "sacred==0.8.2",
+      "torch==1.7.0+cu101"
+    ],
+    "mainfile": "main.py",
+    "name": "Experiments",
+    "repositories": [
+      {
+        "commit": "d4f3b53c29110f181860d0cb62274f1e090ed77b",
+        "dirty": false,
+        "url": "git@github.com:Haipeng-Chen/network-opt-rl.git"
+      },
+      {
+        "commit": "d4f3b53c29110f181860d0cb62274f1e090ed77b",
+        "dirty": false,
+        "url": "git@github.com:Haipeng-Chen/network-opt-rl.git"
+      },
+      {
+        "commit": "d4f3b53c29110f181860d0cb62274f1e090ed77b",
+        "dirty": false,
+        "url": "git@github.com:Haipeng-Chen/network-opt-rl.git"
+      },
+      {
+        "commit": "d4f3b53c29110f181860d0cb62274f1e090ed77b",
+        "dirty": false,
+        "url": "git@github.com:Haipeng-Chen/network-opt-rl.git"
+      }
+    ],
+    "sources": [
+      [
+        "main.py",
+        "_sources/main_1782df1cb1e5c2af35659fd10689f599.py"
+      ],
+      [
+        "src/__init__.py",
+        "_sources/__init___d41d8cd98f00b204e9800998ecf8427e.py"
+      ],
+      [
+        "src/utils/__init__.py",
+        "_sources/__init___d41d8cd98f00b204e9800998ecf8427e.py"
+      ],
+      [
+        "src/utils/logging.py",
+        "_sources/logging_68951f7cd969f13a5460ef95c9738c8b.py"
+      ]
+    ]
+  },
+  "heartbeat": "2021-02-14T02:12:28.379803",
+  "host": {
+    "ENV": {},
+    "cpu": "Intel(R) Xeon(R) CPU           L5640  @ 2.27GHz",
+    "gpus": {
+      "driver_version": "440.100",
+      "gpus": [
+        {
+          "model": "GeForce GTX TITAN X",
+          "persistence_mode": false,
+          "total_memory": 12211
+        }
+      ]
+    },
+    "hostname": "2a9db0024b69",
+    "os": [
+      "Linux",
+      "Linux-5.3.0-62-generic-x86_64-with-Ubuntu-18.04-bionic"
+    ],
+    "python_version": "3.7.9"
+  },
+  "meta": {
+    "command": "my_main",
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false,
+      "COMMAND": null,
+      "UPDATE": [
+        "T=9",
+        "budget=3",
+        "save_every=11",
+        "q=0.6",
+        "mode=train",
+        "node_train=200",
+        "node_test=200",
+        "p=0.05",
+        "graph_nbr_train=10"
+      ],
+      "help": false,
+      "with": true
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2021-02-13T08:34:07.378939",
+  "status": "RUNNING"
+}
