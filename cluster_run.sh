@@ -126,9 +126,10 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.4 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.8 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=1.0 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=1.0 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
 
-
+#
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=0.6 mode='test' node_test=50 p=0.15 graph_nbr_train=500 graph_node_var=10 method='adaptive_greedy'
 
 
 
