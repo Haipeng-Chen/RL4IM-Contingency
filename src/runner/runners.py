@@ -47,10 +47,9 @@ class Runner:
 
         for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+self.args.graph_nbr_test):
         #for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+5):
-            print('graph index: ', g_index)
             g_name = self.environment.graphs[g_index].graph_name
             g_names.append(g_name)
-            print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
+            print('graph: {}, nodes: {}, edges: {}'.format(g_name, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
             if self.agent.method == 'rl':
                 for episode in range(num_episodes):
                     # select other graphs
@@ -82,15 +81,14 @@ class Runner:
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
                             episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward
-                            print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
-                            print('invited: ', invited)
-                            print('present: ', presents) 
+                            #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
+                            #print('invited: ', invited)
+                            #print('present: ', presents) 
             else:
                 print('method is :', self.agent.method)
                 for episode in range(num_episodes):
                     self.environment.reset(g_index=g_index, mode=mode)
                     feasible_actions = list(range(self.environment.N))
-                    print('g_index: ', g_index)
                     invited = []
                     presents = []
                     accumulated_reward = 0
@@ -108,9 +106,9 @@ class Runner:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
                             #episode_accumulated_rewards.append(accumulated_reward)
                             episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward
-                            print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
-                            print('invited: ', invited)
-                            print('present: ', presents)
+                            #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
+                            #print('invited: ', invited)
+                            #print('present: ', presents)
 
             with open(os.path.join(self.results_path, 'test_mode_results.json'), 'w') as f:
                 data = {

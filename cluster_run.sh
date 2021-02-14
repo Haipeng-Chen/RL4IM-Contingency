@@ -114,8 +114,19 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 graph_nbr_train=200
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 graph_nbr_train=500
 
+# Feb 13 4pm  # 240 - 244 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.2 mode='train' node_train=200 node_test=200 p=0.05 graph_nbr_train=500
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.4 mode='train' node_train=200 node_test=200 p=0.05 graph_nbr_train=500
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 graph_nbr_train=500
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.8 mode='train' node_train=200 node_test=200 p=0.05 graph_nbr_train=500
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=1.0 mode='train' node_train=200 node_test=200 p=0.05 graph_nbr_train=500
 
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=11 q=0.2 mode='train' node_train=200 node_test=200 p=0.05 graph_nbr_train=500
+# Feb 13 4.30pm # 245 - 249
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.2 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.4 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.8 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=1.0 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
 
 
 

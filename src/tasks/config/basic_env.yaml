@@ -9,11 +9,10 @@ node_test: 200 # "number of node in generated test graphs", 100+ 50, 100
 p: 0.1  #, default=0.14, help="p, parameter in graph degree distribution")
 m: 4  #, default=4, help="m, parameter in graph degree distribution")
 T: 9  # time horizon
-#budget_ratio: 0.06 #', dest='budget_ratio', type=float, default=0.06, help='budget ratio; do the math: budget at each step = graph_size*budget_ratio/T')
 budget: 3  # budget at each main step
 propagate_p: 0.1  # influence propagation probability
-#l: 0.05  # influence of each neighbor in LT cascade
-#d: 1  # d in SC cascade
+l: 0.05  # influence of each neighbor in LT cascade
+d: 1  # d in SC cascade
 q: 0.6  # probability of invited node being present
 cascade: 'IC'  # cascade model
 greedy_sample_size: 500  # sample size for value estimation of greedy algorithms
