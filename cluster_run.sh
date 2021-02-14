@@ -129,7 +129,17 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=1.0 mode='test' node_test=200 p=0.05 method='adaptive_greedy'
 
 #
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=0.6 mode='test' node_test=50 p=0.15 graph_nbr_train=500 graph_node_var=10 method='adaptive_greedy'
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=0.6 mode='test' node_test=50 p=0.15 graph_nbr_train=500 graph_node_var=10 method='adaptive_greedy'
+
+#--------------------------really start formal expeirments --------------------------
+# Feb 14 11am 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=5 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=20
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=50
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=100
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
+
 
 
 
