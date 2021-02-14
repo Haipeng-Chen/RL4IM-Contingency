@@ -189,6 +189,10 @@ class Runner:
                         #if (self.agent.global_t + 1) % 100 == 0:
                         #    self.agent.save_model(self.model_path)
 
+                        self.logger.log_stat(key=f'{graph_name}/epsilon', 
+                                             value=self.agent.curr_epsilon, 
+                                             t=self.agent.global_t)
+
                         if done:
                             print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
                             print('--------------------------------------')

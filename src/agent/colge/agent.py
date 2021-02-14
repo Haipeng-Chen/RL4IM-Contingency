@@ -176,7 +176,7 @@ class DQAgent:
                 losses = []
                 for last_obs, act, reward, obs, done, adj, mask in zip(last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask):
                     aux_tensor = self.to_cuda(obs * (-1e5) if self.args.use_state_abs else th.tensor(0).float())
-                    q = self.model(self.to_cuda(obs) + aux_tensor, self.to_cuda(th.from_numpy(adj)), mask=self.to_cuda(mask))
+                    q = self.model(self.to_cuda(obs), self.to_cuda(th.from_numpy(adj)), mask=self.to_cuda(mask))
                     target = self.to_cuda(torch.Tensor([[reward]])) + self.gamma * (1-self.to_cuda(torch.Tensor([[done]]))) * torch.max(q, dim=1)[0]
                     target_f = self.model(self.to_cuda(last_obs), self.to_cuda(th.from_numpy(adj)), mask=self.to_cuda(mask))
                     target_p = target_f.clone()
@@ -185,8 +185,9 @@ class DQAgent:
                 loss = th.mean(th.tensor(losses, requires_grad=True))
             else:
                 aux_tensor = self.to_cuda(observation_tens * (-1e5) if self.args.use_state_abs else th.tensor(0).float())
+                q = self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
                 target = self.to_cuda(reward_tens) + self.gamma * (1-self.to_cuda(done_tens)) * \
-                    torch.max(self.model(self.to_cuda(observation_tens) + aux_tensor, self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask)), dim=1)[0]
+                    torch.max(q, dim=1)[0]
                 target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
                 target_p = target_f.clone()
                 target_f[range(self.minibatch_length), action_tens, :] = target
