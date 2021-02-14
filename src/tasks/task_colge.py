@@ -51,7 +51,7 @@ def run_colge(_run, config, logger, run_args=None):
     # seed is changed in Graph and change back to the args.seed
     np.random.seed(args.seed)
     env_class = Environment(cascade=args.cascade, T=args.T, budget=args.budget,
-                           propagate_p=args.propagate_p, l=args.l, d=args.d, q=args.q, graphs=graph_dic, args=args)
+                            propagate_p=args.propagate_p, q=args.q, graphs=graph_dic, args=args)
 
     if args.method == 'rl':
         agent = DQAgent(graph_dic, args.model, args.lr, args.bs, args.n_step, args=args)
