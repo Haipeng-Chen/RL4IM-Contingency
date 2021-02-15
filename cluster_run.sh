@@ -170,9 +170,32 @@
 
 # Feb 14 9pm 
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.2 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.4 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.4 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.8 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=1.0 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
+
+# Feb 14 11pm  Exp 2.2
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.2 mode='train' node_train=100 node_test=100 p=0.1 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 use_state_abs=False reward_type=0
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.4 mode='train' node_train=100 node_test=100 p=0.1 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 use_state_abs=False reward_type=0
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.4 mode='train' node_train=100 node_test=100 p=0.1 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 use_state_abs=False reward_type=0
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.8 mode='train' node_train=100 node_test=100 p=0.1 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 use_state_abs=False reward_type=0
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=1.0 mode='train' node_train=100 node_test=100 p=0.1 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 use_state_abs=False reward_type=0
+
+# Feb 15 2.30am Exp 3.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=1 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=2 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=6 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=12 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+
+# Feb 15 2.50am Exp 4.3 (not run yet)
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=0.6 mode='test' node_test=50 p=0.2 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=200 p=0.05 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 mode='test' node_test=300 p=0.033 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=5 q=0.6 mode='test' node_test=400 p=0.025 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+
 
 
 
