@@ -68,7 +68,9 @@ def run_colge(_run, config, logger, run_args=None):
         if args.use_cuda:
             agent.cuda()
     elif args.method == 'random':
-        agent = randomAgent()
+        agent = None  
+    elif args.method == 'greedy':
+        agent = None  
     elif args.method == 'maxdegree': 
         agent = maxdegreeAgent()
     elif args.method == 'adaptive_greedy':

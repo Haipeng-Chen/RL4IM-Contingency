@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -n 2              # Number of cores (-n)
 #SBATCH -N 1                # Ensure that all cores are on one Node (-N)
-#SBATCH -t 0-24:00          # Runtime in D-HH:MM, minimum of 10 minutes
-#SBATCH -p tambe_gpu     # Partition to submit to
+#SBATCH -t 0-8:00          # Runtime in D-HH:MM, minimum of 10 minutes
+#SBATCH -p gpu_requeue # Partition to submit to
 #SBATCH --mem=5000           # Memory pool for all cores (see also --mem-per-cpu)
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:0
 #SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
 
 #155-156 #these models are used as the base model; theoretically these models are enough for all tasks
@@ -132,7 +132,7 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=0.6 mode='test' node_test=50 p=0.15 graph_nbr_train=500 graph_node_var=10 method='adaptive_greedy'
 
 #--------------------------really start formal expeirments --------------------------
-# Feb 14 11am  270-27
+# Feb 14 11am  270-275 ############# these are useful models
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=5 
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=10
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=20
@@ -166,8 +166,13 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/272/models load_step=1908 graph_nbr_test=10
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/273/models load_step=1440 graph_nbr_test=10
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/274/models load_step=1872 graph_nbr_test=10
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/275/models load_step=1332 graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/275/models load_step=1332 graph_nbr_test=10
 
+# Feb 14 9pm 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.2 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.4 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.8 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=1.0 mode='train' node_train=100 node_test=100 p=0.1 model_scheme='type1' graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
 
 
 

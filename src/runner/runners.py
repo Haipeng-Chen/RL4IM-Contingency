@@ -8,6 +8,8 @@ import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
 
+from src.IC import celf
+
 from src.utils.logging import Logger
 from src.utils.os_utils import generate_id
 import ipdb
@@ -50,7 +52,7 @@ class Runner:
             g_name = self.environment.graphs[g_index].graph_name
             g_names.append(g_name)
             print('graph: {}, nodes: {}, edges: {}'.format(g_name, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
-            if self.agent.method == 'rl':
+            if self.args.method == 'rl':
                 for episode in range(num_episodes):
                     # select other graphs
                     self.environment.reset(g_index=g_index, mode=mode)
@@ -84,8 +86,8 @@ class Runner:
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents) 
-            else:
-                print('method is :', self.agent.method)
+            elif self.args.method == 'adaptive_greedy' or self.args.method == 'lazy_adaptive_greedy':
+                print('method is :', self.args.method)
                 for episode in range(num_episodes):
                     self.environment.reset(g_index=g_index, mode=mode)
                     feasible_actions = list(range(self.environment.N))
@@ -109,6 +111,32 @@ class Runner:
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents)
+            elif self.args.method == 'random':
+                print('method is: ', self.args.method)
+                for episode in range(num_episodes):
+                    self.environment.reset(g_index=g_index, mode=mode)
+                    feasible_actions = list(range(self.environment.N))
+                    accumulated_reward = 0
+                    invited = random.sample(feasible_actions, self.environment.T)
+                    presents, _ = self.environment.transition(invited)
+                    print('invited: ', invited)
+                    print('present: ', presents)
+                    accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                    episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
+                    print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
+            elif self.args.method == 'greedy':
+                print('method is: ', self.args.method)
+                for episode in range(num_episodes):
+                    self.environment.reset(g_index=g_index, mode=mode)
+                    feasible_actions = list(range(self.environment.N))
+                    accumulated_reward = 0
+                    invited = celf(self.environment.graphs[g_index].g, self.environment.T)
+                    presents, _ = self.environment.transition(invited)
+                    accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                    episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
+                    print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
+                    print('invited: ', invited)
+                    print('present: ', presents)
 
             with open(os.path.join(self.results_path, 'test_mode_results.json'), 'w') as f:
                 data = {
