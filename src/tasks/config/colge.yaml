@@ -11,12 +11,12 @@ n_step: 3 # type=int, default=3, help="n step in RL")
 batch: None  # type=int, metavar='nagent', default=None, help='batch run several agent at the same time')
 verbose: True # action='store_true', default=True, help='Display cumulative results at each step')
 task: 'colge'
-save_every: 20 # save model and do validation every few episodes, default 20
+save_every: 2 # save model and do validation every few episodes, default 20
 
 # epsilon greedy
 init_epsilon: 0.99
 final_epsilon: 0.01
-epsilon_decay_steps: 2000
+epsilon_decay_steps: 1000
 #
 #
 method: 'rl'  # ['rl', 'ada_greedy', 'lazy_adaptive_greedy']

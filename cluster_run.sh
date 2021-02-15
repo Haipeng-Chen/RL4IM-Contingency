@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH -n 2              # Number of cores (-n)
 #SBATCH -N 1                # Ensure that all cores are on one Node (-N)
-#SBATCH -t 0-8:00          # Runtime in D-HH:MM, minimum of 10 minutes
-#SBATCH -p gpu_requeue # Partition to submit to
+#SBATCH -t 0-72:00          # Runtime in D-HH:MM, minimum of 10 minutes
+#SBATCH -p serial_requeue # Partition to submit to
 #SBATCH --mem=5000           # Memory pool for all cores (see also --mem-per-cpu)
 #SBATCH --gres=gpu:0
 #SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
@@ -189,11 +189,11 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=6 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=12 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
 
-# Feb 15 2.50am Exp 4.3 (not run yet)
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=0.6 mode='test' node_test=50 p=0.2 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=200 p=0.05 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 mode='test' node_test=300 p=0.033 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+# Feb 15 2.50am Exp 4.3 335 - 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=0.6 mode='test' node_test=50 p=0.2 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=200 p=0.05 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 mode='test' node_test=300 p=0.033 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
 python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=5 q=0.6 mode='test' node_test=400 p=0.025 graph_node_var=20 method='adaptive_greedy' graph_nbr_test=10
 
 
