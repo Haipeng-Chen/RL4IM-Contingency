@@ -41,8 +41,8 @@ def run_colge(_run, config, logger, run_args=None):
     for i, graph_ in enumerate(range(args.graph_nbr_train, args.graph_nbr_train+args.graph_nbr_test)):
         #seed = graph_ + args.seed
         #seed = graph_
-        seed = 100000 + i 
-        #seed = 100000 + i if mode == 'train' else 200000 + i #if test then use another seed 
+        #seed = 100000 + i 
+        seed = 100000 + i if args.mode == 'train' else 200000 + i #if test then use another seed 
         graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed, args=args, is_train=is_train)
         #curr_graph = graph_dic[graph_].g
         #print('neighbors of node 0: in graph {}: {}'.format(graph_, curr_graph[0]))

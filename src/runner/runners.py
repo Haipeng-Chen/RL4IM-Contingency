@@ -80,7 +80,7 @@ class Runner:
 
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
-                            episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward
+                            episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents) 
@@ -105,7 +105,7 @@ class Runner:
                         if i == self.environment.T:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
                             #episode_accumulated_rewards.append(accumulated_reward)
-                            episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward
+                            episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents)
@@ -133,16 +133,20 @@ class Runner:
         mode = 'train'
         st = time.time()
         global_episode = 0
+        terminate  = False
 
         for epoch in range(self.args.nbr_epoch):
-            if self.agent.global_t+1 >= self.args.max_global_t:
-            #maximal number of training steps 
-                break
             print('epoch: ', epoch)
+            if terminate:
+                break
             for g_index in range(self.args.graph_nbr_train):  # graph list; first  graph_nbr_train graphs are training, the rest are for test
+                if terminate:
+                    break
                 graph_name = self.agent.graphs[g_index].graph_name
                 print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
                 for episode in range(self.args.max_episodes):
+                    if terminate:
+                        break
                     global_episode += 1
                     self.environment.reset(g_index=g_index)
                     self.agent.reset(g_index)  
@@ -212,7 +216,11 @@ class Runner:
                                 graph_cumul_reward[graph_name].append(cumul_reward)
 
                             break    
-        
+                                    
+                        if self.agent.global_t+1 >= self.args.max_global_t:
+                        #maximal number of training steps 
+                            terminate = True
+                            break 
                     if global_episode % self.args.save_every  == 0:
                         # save the model
                         self.agent.save_model(self.model_path)
