@@ -326,6 +326,8 @@ def celf(G,k,p=0.5,mc=1000):
     # --------------------
     
     # Compute marginal gain for each node
+    G = make_edge_df(G) 
+
     candidates, start_time = np.unique(G['source']), time.time()
     marg_gain = [IC_celf(G,[node],p=p,mc=mc) for node in candidates]
 
