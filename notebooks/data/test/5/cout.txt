@@ -1,0 +1,37 @@
+[INFO 03:56:01] Experiments Running command 'my_main'
+[INFO 03:56:01] Experiments Started run with ID "1"
+[DEBUG 03:56:01] Experiments Starting Heartbeat
+[DEBUG 03:56:01] my_main Started
+Loading train graph:  erdos_renyi
+train graphs in total:  500
+Loading test graph:  erdos_renyi
+merged graphs length:  510
+----------------------------------------------start evaluation---------------------------------------------------------
+graph: 200000, nodes: 81, edges: 313
+method is : adaptive_greedy
+graph: 200001, nodes: 84, edges: 364
+method is : adaptive_greedy
+graph: 200002, nodes: 86, edges: 379
+method is : adaptive_greedy
+graph: 200003, nodes: 82, edges: 339
+method is : adaptive_greedy
+graph: 200004, nodes: 91, edges: 402
+method is : adaptive_greedy
+graph: 200005, nodes: 120, edges: 719
+method is : adaptive_greedy
+graph: 200006, nodes: 107, edges: 550
+method is : adaptive_greedy
+graph: 200007, nodes: 101, edges: 484
+method is : adaptive_greedy
+graph: 200008, nodes: 100, edges: 510
+method is : adaptive_greedy
+graph: 200009, nodes: 114, edges: 643
+method is : adaptive_greedy
+average cummulative reward vector is:  [0.32152531 0.35888452 0.36004826 0.3450128  0.35295165 0.47296375
+ 0.38816028 0.36720347 0.3946855  0.43906842]
+average cummulative reward is:  0.38005039582681477
+----------------------------------------------end evaluation---------------------------------------------------------
+ 
+runtime in seconds is:  50432.81512975693
+[DEBUG 17:56:38] my_main Finished after 14:00:38.
+[INFO 17:56:38] Experiments Completed after 14:00:38

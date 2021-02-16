@@ -1,0 +1,10 @@
+[INFO 16:06:17] Experiments Running command 'my_main'
+[INFO 16:06:17] Experiments Started run with ID "371"
+[DEBUG 16:06:17] Experiments Starting Heartbeat
+[DEBUG 16:06:17] my_main Started
+[WARNING 16:06:17] my_main CUDA flag use_cuda was switched OFF automatically because no CUDA devices are available!
+/n/home07/haipeng/network-opt-rl/src/agent/colge/utils/config.py:10: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  model_config = yaml.load(config_file)
+[INFO 16:06:18] my_main Loading model from ./temp_dir/colge/sacred/347/models/1944
+[DEBUG 16:06:30] my_main Finished after 0:00:13.
+[INFO 16:06:30] Experiments Completed after 0:00:13
