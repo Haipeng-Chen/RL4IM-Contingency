@@ -60,7 +60,7 @@ class NetworkEnv(object):
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 self.reward = self.q*(influence_with - influece_without)
-            if reward_type == 1:
+            elif reward_type == 1:
                 seeds = []
                 [seeds.append(v) for v in range(self.N) if self.state[0][v]==1] 
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
