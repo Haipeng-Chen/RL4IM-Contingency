@@ -2,9 +2,9 @@
 #SBATCH -n 2              # Number of cores (-n)
 #SBATCH -N 1                # Ensure that all cores are on one Node (-N)
 #SBATCH -t 0-12:00          # Runtime in D-HH:MM, minimum of 10 minutes
-#SBATCH -p gpu_requeue # Partition to submit to
+#SBATCH -p gpu_requeue  # Partition to submit to
 #SBATCH --mem=5000           # Memory pool for all cores (see also --mem-per-cpu)
-#SBATCH --gres=gpu:0
+#SBATCH --gres=gpu:1
 #SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
 
 #155-156 #these models are used as the base model; theoretically these models are enough for all tasks
@@ -245,7 +245,60 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 save_every=2 q=0.6 mode='train' node_train=100 node_test=100 p=0.1 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 p=0.05 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=2 q=0.6 mode='train' node_train=300 node_test=300 p=0.033 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=5 save_every=2 q=0.6 mode='train' node_train=400 node_test=400 p=0.025 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=5 save_every=2 q=0.6 mode='train' node_train=400 node_test=400 p=0.025 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200
+
+# rerun RL4IM test for q=0.6
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/365/models load_step=1044 graph_nbr_test=10;
+
+
+# Exp 2.5 CELF  #10053 10054 10055 10056 10058 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.2 mode='test' node_test=100 p=0.1 graph_node_var=20 method='greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.4 mode='test' node_test=100 p=0.1 graph_node_var=20 method='greedy' graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='greedy' graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=0.8 mode='test' node_test=100 p=0.1 graph_node_var=20 method='greedy' graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=9 budget=3 q=1.0 mode='test' node_test=100 p=0.1 graph_node_var=20 method='greedy' graph_nbr_test=10;
+
+# Exp 3.1.1 Test RL4IM 10059 - 10064
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=1 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10007/models load_step=1032 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=2 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10008/models load_step=1800 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10009/models load_step=1632 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10010/models load_step=1080 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=6 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10011/models load_step=1512 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=12 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10012/models load_step=1800 graph_nbr_test=10;
+
+# Exp 3.2.1 test BaseRL 10065 - 10070
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=1 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10013/models load_step=1824 graph_nbr_test=10 use_state_abs=False reward_type=0;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=2 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10014/models load_step=1368 graph_nbr_test=10 use_state_abs=False reward_type=0;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10015/models load_step=1128 graph_nbr_test=10 use_state_abs=False reward_type=0;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10016/models load_step=1416 graph_nbr_test=10 use_state_abs=False reward_type=0;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=6 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10017/models load_step=1968 graph_nbr_test=10 use_state_abs=False reward_type=0;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=12 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/10018/models load_step=1056 graph_nbr_test=10 use_state_abs=False reward_type=0;
+
+
+# Exp 3.5 test CELF 10071 - 10076
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=1 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method=greedy graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=2 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method=greedy graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method=greedy graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method=greedy graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=6 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method=greedy graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=12 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method=greedy graph_nbr_test=10
+
+# Exp 3.4 random 10077 - 10082
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=1 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=2 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=6 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=12 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10;
+
+
+
+
+
+
+
+
+
 
 
 

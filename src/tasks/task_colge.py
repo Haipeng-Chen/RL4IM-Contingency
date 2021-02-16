@@ -35,6 +35,8 @@ def load_grah(args):
             graph_dic[graph_].graph_name = str(args.realgraph)
         graph_dic[1] = graph_dic[0] # for evaluation
     else:
+        is_train = True
+        print('Loading train graph: ', args.graph_type)
         for graph_ in range(args.graph_nbr_train):
             #G, g, graph_name = get_graph(args.graph_index)
             #graph_dic[graph_] = Graph.create_graph(g)
@@ -68,8 +70,6 @@ def run_colge(_run, config, logger, run_args=None):
     
     #seed = 125
     #graph_one = graph.Graph(graph_type=args.graph_type, cur_n=20, p=0.15,m=4, seed=seed)
-    print('Loading train graph: ', args.graph_type) 
-    is_train = True
 
     graph_dic = load_grah(args)
 
