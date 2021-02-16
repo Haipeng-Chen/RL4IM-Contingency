@@ -33,6 +33,7 @@ def load_grah(args):
             G = nx.read_edgelist(os.path.join('data', 'graph_data', args.realgraph + '.txt'), nodetype=int)
             graph_dic[graph_] = Graph(g=G, args=args)
             graph_dic[graph_].graph_name = str(args.realgraph)
+        graph_dic[1] = graph_dic[0] # for evaluation
     else:
         for graph_ in range(args.graph_nbr_train):
             #G, g, graph_name = get_graph(args.graph_index)
