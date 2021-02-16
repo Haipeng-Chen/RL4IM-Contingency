@@ -10,6 +10,12 @@ class Graph:
         self.seed = seed
         self.args = args
 
+        if g is not None:  # load customized graphs
+            self.g = g
+            self.cur_n = nx.number_of_nodes(self.g)
+            self.max_node_num = self.cur_n
+            return 
+        
         np.random.seed(seed)
 
         self.max_node_num = cur_n + (self.args.graph_node_var if self.args.model_scheme != 'normal' else 0)

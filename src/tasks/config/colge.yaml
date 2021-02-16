@@ -34,3 +34,4 @@ reward_type: 3 #int {0, 1, 2, 3}
 model_scheme: 'type1'  # {'normal': 'run graphs with same sizes', 
                         #  'type1': 'padding', 
                         #  'type2': 'for loop for graphs with various nodes'}
+realgraph: ""  # "Exhibition", "Flu", "Hospital", "India", "irvine"
