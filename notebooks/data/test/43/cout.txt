@@ -1,5 +1,0 @@
-[INFO 20:07:49] Experiments Running command 'my_main'
-[INFO 20:07:49] Experiments Started run with ID "43"
-[DEBUG 20:07:49] Experiments Starting Heartbeat
-[DEBUG 20:07:49] my_main Started
-[WARNING 20:07:49] my_main CUDA flag use_cuda was switched OFF automatically because no CUDA devices are available!

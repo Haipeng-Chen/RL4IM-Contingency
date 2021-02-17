@@ -1,9 +1,0 @@
-[INFO 11:29:47] Experiments Running command 'my_main'
-[INFO 11:29:47] Experiments Started run with ID "81"
-[DEBUG 11:29:47] Experiments Starting Heartbeat
-[DEBUG 11:29:47] my_main Started
-/n/home07/haipeng/network-opt-rl/src/agent/colge/utils/config.py:10: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
-  model_config = yaml.load(config_file)
-[INFO 11:29:50] my_main Loading model from ./temp_dir/colge/sacred/61/models/1212
-[DEBUG 11:30:18] my_main Finished after 0:00:31.
-[INFO 11:30:18] Experiments Completed after 0:00:31
