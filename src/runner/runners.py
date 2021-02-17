@@ -139,7 +139,7 @@ class Runner:
                     print('invited: ', invited)
                     print('present: ', presents)
             end_time = time.time()
-            print('runtime for one episode: ', end_time-start_time)
+            print('runtime for one graph is: ', end_time-start_time)
 
             with open(os.path.join(self.results_path, 'test_mode_results.json'), 'w') as f:
                 data = {
