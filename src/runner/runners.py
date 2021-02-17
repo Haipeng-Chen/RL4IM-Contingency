@@ -166,7 +166,7 @@ class Runner:
         global_episode = 0
         terminate  = False
 
-        pbar = tqdm.tqdm(total=self.args.nbr_epoch * self.args.graph_nbr_train * self.args.max_episodes * self.environment.T)
+        pbar = tqdm.tqdm(total=self.args.max_global_t)
 
         for epoch in range(self.args.nbr_epoch):
             print('epoch: ', epoch)
