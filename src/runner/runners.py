@@ -41,7 +41,7 @@ class Runner:
 
     def evaluate(self, num_episodes=20):
         """ Start evaluation """
-        print('----------------------------------------------start evaluation---------------------------------------------------------')
+        print(f'\n{"-"*50}start evaluation{"-"*50}')
         episode_accumulated_rewards = np.empty((self.args.graph_nbr_test, num_episodes))
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
@@ -152,7 +152,7 @@ class Runner:
         ave_cummulative_reward = np.mean(ave_cummulative_rewards)
         print('average cummulative reward vector is: ', ave_cummulative_rewards)
         print('average cummulative reward is: ', ave_cummulative_reward)
-        print('----------------------------------------------end evaluation---------------------------------------------------------')
+        print(f'{"-"*50}end evaluation{"-"*50}')
         print(' ')
         return g_names, episode_accumulated_rewards
     
@@ -165,6 +165,8 @@ class Runner:
         st = time.time()
         global_episode = 0
         terminate  = False
+
+        pbar = tqdm.tqdm(total=self.args.nbr_epoch * self.args.graph_nbr_train * self.args.max_episodes * self.environment.T)
 
         for epoch in range(self.args.nbr_epoch):
             print('epoch: ', epoch)
@@ -185,7 +187,11 @@ class Runner:
                     pri_action = [ ]
                     feasible_actions = list(range(self.environment.N))
 
+                    curr_episode_t = 0
                     for i in range(1, self.environment.T+1):
+                        
+                        curr_episode_t += 1
+                        
                         state, state_padding, available_action_mask = self.environment.get_state(g_index)
                         if self.args.use_state_abs:
                             state = self.state_abstraction(state) ####
@@ -229,8 +235,11 @@ class Runner:
                                              t=self.agent.global_t)
 
                         if done:
-                            print(f"[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
-                            print('--------------------------------------')
+                            # progress bar
+                            pbar.update(curr_episode_t)
+
+                            print(f"\n[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
+                            print("-"*60)
                             print(' ')
                             self.logger.log_stat(key=f'{graph_name}/episode_reward', 
                                                  value=cumul_reward, 
