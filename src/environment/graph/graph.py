@@ -79,12 +79,12 @@ class Graph:
         num_nodes = nx.number_of_nodes(self.orig_g)
         # TODO 把它重新编定序号
         _temp_g = self.orig_g.subgraph(np.random.choice(list(self.orig_g.nodes()), 
-                                       size=int(self.args.sample_nodes_ratio * num_nodes),
+                                       size=int(np.floor(self.args.sample_nodes_ratio * num_nodes)),
                                        replace=False))
 
         edges = list(_temp_g.edges())
         indices = range(len(edges))
-        indices = np.random.choice(indices, size=int(self.args.sample_nodes_prob * len(edges)), replace=False)
+        indices = np.random.choice(indices, size=int(np.floor(self.args.sample_nodes_prob * len(edges))), replace=False)
         edges = [edges[idx] for idx in indices]
 
         nodes = []  # 获得nodes的id
