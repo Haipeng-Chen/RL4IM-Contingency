@@ -23,6 +23,7 @@ class Graph:
             self.orig_g = copy.deepcopy(self.g)
             
             if self.args.sample_graph:
+                self.size = int(np.floor(self.args.sample_nodes_ratio * len(self.orig_g.nodes)))
                 self.init_sub_graph()
         
             return 
@@ -79,10 +80,7 @@ class Graph:
         return len(self.g)
 
     def init_sub_graph(self):
-        num_nodes = nx.number_of_nodes(self.orig_g)
-        _temp_g = self.orig_g.subgraph(np.random.choice(list(self.orig_g.nodes()), 
-                                       size=int(np.floor(self.args.sample_nodes_ratio * num_nodes)),
-                                       replace=False))
+        _temp_g = self.orig_g.subgraph(np.random.choice(list(self.orig_g.nodes()), size=self.size, replace=False))
 
         edges = list(_temp_g.edges())
         # indices = range(len(edges))
