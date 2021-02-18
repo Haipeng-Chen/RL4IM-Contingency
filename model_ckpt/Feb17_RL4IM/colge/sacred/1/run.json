@@ -53,7 +53,7 @@
       ]
     ]
   },
-  "heartbeat": "2021-02-17T16:43:41.723665",
+  "heartbeat": "2021-02-17T17:29:51.926317",
   "host": {
     "ENV": {},
     "cpu": "Intel(R) Core(TM) i9-9820X CPU @ 3.30GHz",
@@ -63,11 +63,11 @@
         {
           "model": "GeForce RTX 2080 Ti",
           "persistence_mode": false,
-          "total_memory": 11016
+          "total_memory": 11019
         }
       ]
     },
-    "hostname": "be7c35ca6b42",
+    "hostname": "624bfc0a2cf7",
     "os": [
       "Linux",
       "Linux-5.4.0-53-generic-x86_64-with-Ubuntu-18.04-bionic"
@@ -106,7 +106,7 @@
         "node_train=200",
         "node_test=200",
         "graph_node_var=20",
-        "epsilon_decay_steps=1000",
+        "epsilon_decay_steps=50",
         "graph_nbr_train=200"
       ],
       "help": false,
@@ -115,7 +115,6 @@
   },
   "resources": [],
   "result": null,
-  "start_time": "2021-02-17T16:03:23.422311",
-  "status": "COMPLETED",
-  "stop_time": "2021-02-17T16:43:41.551914"
+  "start_time": "2021-02-17T17:00:06.655950",
+  "status": "RUNNING"
 }
