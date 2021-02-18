@@ -21,7 +21,10 @@ class Graph:
             self.max_node_num = self.cur_n
 
             self.orig_g = copy.deepcopy(self.g)
-
+            
+            if self.args.sample_graph:
+                self.init_sub_graph()
+        
             return 
         
         self.max_node_num = cur_n + (self.args.graph_node_var if self.args.model_scheme != 'normal' else 0)
@@ -75,9 +78,8 @@ class Graph:
     def __len__(self):
         return len(self.g)
 
-    def sample(self):
+    def init_sub_graph(self):
         num_nodes = nx.number_of_nodes(self.orig_g)
-        # TODO 把它重新编定序号
         _temp_g = self.orig_g.subgraph(np.random.choice(list(self.orig_g.nodes()), 
                                        size=int(np.floor(self.args.sample_nodes_ratio * num_nodes)),
                                        replace=False))
