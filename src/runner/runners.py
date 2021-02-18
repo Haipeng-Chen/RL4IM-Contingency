@@ -74,7 +74,9 @@ class Runner:
                         #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
                                                 #feasible_actions=feasible_actions.copy(), mode=mode)
                         sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode, mask=available_action_mask) 
-                        print('current sub action: ', sec_action)
+    
+                        if self.args.verbose:
+                            print('current sub action: ', sec_action)
                         #ipdb.set_trace()
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
@@ -86,7 +88,9 @@ class Runner:
                             presents += present
                             invited += pri_action
                             pri_action=[ ]
-                            print('present: ', present)
+                            
+                            if self.args.verbose:
+                                print('present: ', present)
 
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
