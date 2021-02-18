@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 import networkx as nx
 import collections
@@ -10,14 +12,18 @@ class Graph:
         self.seed = seed
         self.args = args
 
+        if seed is not None:
+            np.random.seed(seed)
+
         if g is not None:  # load customized graphs
             self.g = g
             self.cur_n = nx.number_of_nodes(self.g)
             self.max_node_num = self.cur_n
+
+            self.orig_g = copy.deepcopy(self.g)
+
             return 
         
-        np.random.seed(seed)
-
         self.max_node_num = cur_n + (self.args.graph_node_var if self.args.model_scheme != 'normal' else 0)
         
         if args.model_scheme != 'normal' or not is_train:
@@ -36,6 +42,8 @@ class Graph:
             self.g = nx.gnp_random_graph(n=cur_n, p=p, seed=seed)
         else:
             self.g = g
+        
+        self.orig_g = copy.deepcopy(self.g)
 
     @classmethod
     def create_graph(cls, g):
@@ -66,3 +74,16 @@ class Graph:
 
     def __len__(self):
         return len(self.g)
+
+    def sample(self):
+        num_nodes = nx.number_of_nodes(self.orig_g)
+        _temp_g = self.orig_g.subgraph(np.random.choice(list(self.orig_g.nodes()), 
+                                       size=int(self.args.sample_nodes_ratio * num_nodes),
+                                       replace=False))
+
+        edges = np.random.choice(list(_temp_g.edges()), size=int(self.args.sample_nodes_prob * nx.number_of_nodes(_temp_g)), replace=False)
+        self.g = nx.Graph()
+        self.g.add_edges_from(edges)
+        self.cur_n = nx.number_of_nodes(self.g)
+        self.max_node_num = self.cur_n
+        self.graph_name = self.orig_g.graph_name

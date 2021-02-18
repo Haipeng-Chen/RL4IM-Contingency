@@ -182,6 +182,10 @@ class Runner:
             for g_index in range(self.args.graph_nbr_train):  # graph list; first  graph_nbr_train graphs are training, the rest are for test
                 if terminate:
                     break
+
+                if self.args.sample_graph:
+                    self.agent.graphs[g_index].sample()
+                
                 graph_name = self.agent.graphs[g_index].graph_name
                 print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
                 for episode in range(self.args.max_episodes):

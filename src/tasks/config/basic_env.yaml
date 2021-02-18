@@ -20,3 +20,6 @@ greedy_sample_size: 500  # sample size for value estimation of greedy algorithms
 mode: 'train' # str, {'train', 'test'}
 
 graph_node_var: 20
+
+sample_nodes_ratio: 0.5  # 50%, or more options: [0.2, 0.3, 0.7, 0.9]
+sample_nodes_prob: 0.8   # randomly keep 80% of the sampled nodes

@@ -23,6 +23,7 @@ import ipdb
 def load_grah(args):
     graph_dic = {}
     
+    path = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
     if len(args.realgraph) != 0:
         real_world_graphs = ["Exhibition", "Flu", "Hospital", "India", "irvine"]
         assert args.realgraph in real_world_graphs, f'{args.realgraph} not in the real graph list'
@@ -30,7 +31,6 @@ def load_grah(args):
         args.graph_nbr_train = 1
         args.graph_nbr_test = 1
 
-        path = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
         for graph_ in range(args.graph_nbr_train):
             G = nx.read_edgelist(os.path.join(path, 'data', 'graph_data', args.realgraph + '.txt'), nodetype=int)
             graph_dic[graph_] = Graph(g=G, args=args)
@@ -45,12 +45,18 @@ def load_grah(args):
             #graph_dic[graph_].graph_name = graph_name
             #seed = graph_ + args.seed
             seed = graph_
-            graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_train, p=args.p, m=args.m, seed=seed, args=args, is_train=is_train)
+            
+            if args.sample_graph:
+                G = nx.read_edgelist(os.path.join(path, 'data', 'graph_data', args.sample_graph_name + '.txt'), nodetype=int)
+                graph_dic[graph_] = Graph(g=G, args=args, seed=seed)
+            else:
+                graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_train, p=args.p, m=args.m, seed=seed, args=args, is_train=is_train)
+    
             graph_dic[graph_].graph_name = str(graph_)
         print('train graphs in total: ', len(graph_dic))   
 
         #test graph
-        print('Loading test graph: ', args.graph_type) 
+        print('Loading test graph: ', args.graph_type)
         is_train = False
         for i, graph_ in enumerate(range(args.graph_nbr_train, args.graph_nbr_train+args.graph_nbr_test)):
             #seed = graph_ + args.seed
