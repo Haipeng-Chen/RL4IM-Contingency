@@ -81,9 +81,10 @@ class Graph:
 
     def init_sub_graph(self):
         sampled_nodes = np.random.choice(list(self.orig_g.nodes()), size=self.size, replace=False)
-        print(f'[INFO] sampled_nodes len: {len(sampled_nodes)}')
         _temp_g = self.orig_g.subgraph(sampled_nodes.tolist())
 
+        print(f'[INFO] sampled_nodes len: {len(sampled_nodes)}, sampled_graph #nodes: {len(_temp_g.nodes)}')
+        
         edges = list(_temp_g.edges())
         # indices = range(len(edges))
         # indices = np.random.choice(indices, size=int(np.floor(self.args.sample_nodes_prob * len(edges))), replace=False)
