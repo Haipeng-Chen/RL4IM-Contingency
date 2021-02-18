@@ -7,6 +7,7 @@ import argparse
 import numpy as np
 import networkx as nx
 
+from pathlib import Path
 from types import SimpleNamespace
 
 from src.runner import runners
@@ -29,8 +30,9 @@ def load_grah(args):
         args.graph_nbr_train = 1
         args.graph_nbr_test = 1
 
+        path = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
         for graph_ in range(args.graph_nbr_train):
-            G = nx.read_edgelist(os.path.join('data', 'graph_data', args.realgraph + '.txt'), nodetype=int)
+            G = nx.read_edgelist(os.path.join(path, 'data', 'graph_data', args.realgraph + '.txt'), nodetype=int)
             graph_dic[graph_] = Graph(g=G, args=args)
             graph_dic[graph_].graph_name = str(args.realgraph)
         graph_dic[1] = graph_dic[0] # for evaluation
