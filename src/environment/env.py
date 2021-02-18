@@ -60,6 +60,7 @@ class NetworkEnv(object):
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 self.reward = self.q*(influence_with - influece_without)
+                self.reward = self.reward/self.N*100   ####
             elif reward_type == 1:
                 seeds = []
                 [seeds.append(v) for v in range(self.N) if self.state[0][v]==1] 
@@ -67,6 +68,7 @@ class NetworkEnv(object):
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 self.reward = self.q*(influence_with - influece_without) 
+                self.reward = self.reward/self.N*100  ###
             elif reward_type == 2:
                 fix_seeds = []
                 [fix_seeds.append(v) for v in range(self.N) if self.state[0][v]==1]
@@ -78,13 +80,15 @@ class NetworkEnv(object):
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_max = self.q*(influence_with - influece_without) 
+                reward_max = reward_max/self.N*100 #####
                 # reward_min
                 seeds = fix_seeds + uncertain_seeds
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_min = self.q*(influence_with - influece_without) 
-                self.reward = (reward_max+reward_min)/2
+                reward_min = reward_min/self.N*100  ####
+                self.reward = (reward_max+reward_min)/2   ####
             elif reward_type == 3:
                 fix_seeds = []
                 [fix_seeds.append(v) for v in range(self.N) if self.state[0][v]==1]
@@ -96,13 +100,15 @@ class NetworkEnv(object):
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_max = self.q*(influence_with - influece_without)
+                reward_max = reward_max/self.N*100 ####
                 # reward_min
                 seeds = fix_seeds + uncertain_seeds
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_min = self.q*(influence_with - influece_without)
-                self.reward = reward_min*(1-self.q)+reward_max*self.q
+                reward_min = reward_min/self.N*100
+                self.reward = reward_min*(1-self.q)+reward_max*self.q   ####
             else:
                 assert(False)
 
