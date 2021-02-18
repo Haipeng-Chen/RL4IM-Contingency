@@ -77,15 +77,28 @@ class Graph:
 
     def sample(self):
         num_nodes = nx.number_of_nodes(self.orig_g)
+        # TODO 把它重新编定序号
         _temp_g = self.orig_g.subgraph(np.random.choice(list(self.orig_g.nodes()), 
                                        size=int(self.args.sample_nodes_ratio * num_nodes),
                                        replace=False))
 
         edges = list(_temp_g.edges())
         indices = range(len(edges))
-        indices = np.random.choice(indices, size=int(self.args.sample_nodes_prob * nx.number_of_nodes(_temp_g)), replace=False)
+        indices = np.random.choice(indices, size=int(self.args.sample_nodes_prob * len(edges)), replace=False)
         edges = [edges[idx] for idx in indices]
-        
+
+        nodes = []  # 获得nodes的id
+        for edge in edges:
+            nodes.append(edge[0])
+            nodes.append(edge[1])
+
+        nodes = sorted(list(set(nodes)))
+        index_map = {node: idx for idx, node in zip(range(len(nodes)), nodes)}
+
+        # 转换索引 避免bug
+        for i, edge in enumerate(edges):
+            edges[i] = (index_map[edge[0]], index_map[edge[1]])
+
         self.g = nx.Graph()
         self.g.add_edges_from(edges)
         self.cur_n = nx.number_of_nodes(self.g)
