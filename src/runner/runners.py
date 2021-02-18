@@ -75,7 +75,7 @@ class Runner:
                                                 #feasible_actions=feasible_actions.copy(), mode=mode)
                         sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode, mask=available_action_mask) 
                         print('current sub action: ', sec_action)
-                        ipdb.set_trace()
+                        #ipdb.set_trace()
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
@@ -267,7 +267,7 @@ class Runner:
                         #maximal number of training steps 
                             terminate = True
                             break 
-                    if global_episode % self.args.save_every  == 0:
+                    if global_episode % self.args.save_every  == 0 and self.agent.global_t>600:
                         # save the model
                         self.agent.save_model(self.model_path)
                         g_names, episode_accumulated_rewards = self.evaluate()
