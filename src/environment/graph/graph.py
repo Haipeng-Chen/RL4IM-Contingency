@@ -85,9 +85,9 @@ class Graph:
                                        replace=False))
 
         edges = list(_temp_g.edges())
-        indices = range(len(edges))
-        indices = np.random.choice(indices, size=int(np.floor(self.args.sample_nodes_prob * len(edges))), replace=False)
-        edges = [edges[idx] for idx in indices]
+        # indices = range(len(edges))
+        # indices = np.random.choice(indices, size=int(np.floor(self.args.sample_nodes_prob * len(edges))), replace=False)
+        # edges = [edges[idx] for idx in indices]
 
         nodes = []  # 获得nodes的id
         for edge in edges:
