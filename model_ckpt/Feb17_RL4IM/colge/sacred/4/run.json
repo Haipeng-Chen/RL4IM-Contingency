@@ -14,22 +14,22 @@
     "name": "Experiments",
     "repositories": [
       {
-        "commit": "b92df38fedb9f66089db8fcc40a1e081ac23ef93",
+        "commit": "c2276c73e6e8f6f5d178dcf05d2eddbcfb4a9561",
         "dirty": true,
         "url": "git@github.com:Haipeng-Chen/network-opt-rl.git"
       },
       {
-        "commit": "b92df38fedb9f66089db8fcc40a1e081ac23ef93",
+        "commit": "c2276c73e6e8f6f5d178dcf05d2eddbcfb4a9561",
         "dirty": true,
         "url": "git@github.com:Haipeng-Chen/network-opt-rl.git"
       },
       {
-        "commit": "b92df38fedb9f66089db8fcc40a1e081ac23ef93",
+        "commit": "c2276c73e6e8f6f5d178dcf05d2eddbcfb4a9561",
         "dirty": true,
         "url": "git@github.com:Haipeng-Chen/network-opt-rl.git"
       },
       {
-        "commit": "b92df38fedb9f66089db8fcc40a1e081ac23ef93",
+        "commit": "c2276c73e6e8f6f5d178dcf05d2eddbcfb4a9561",
         "dirty": true,
         "url": "git@github.com:Haipeng-Chen/network-opt-rl.git"
       }
@@ -53,7 +53,7 @@
       ]
     ]
   },
-  "heartbeat": "2021-02-17T17:09:55.908463",
+  "heartbeat": "2021-02-18T04:02:04.558551",
   "host": {
     "ENV": {},
     "cpu": "Intel(R) Core(TM) i9-9820X CPU @ 3.30GHz",
@@ -63,11 +63,11 @@
         {
           "model": "GeForce RTX 2080 Ti",
           "persistence_mode": false,
-          "total_memory": 11016
+          "total_memory": 11019
         }
       ]
     },
-    "hostname": "d828214c30b7",
+    "hostname": "25ff2f32e70e",
     "os": [
       "Linux",
       "Linux-5.4.0-53-generic-x86_64-with-Ubuntu-18.04-bionic"
@@ -106,7 +106,7 @@
         "node_train=200",
         "node_test=200",
         "graph_node_var=20",
-        "epsilon_decay_steps=1000",
+        "epsilon_decay_steps=900",
         "graph_nbr_train=200"
       ],
       "help": false,
@@ -115,7 +115,6 @@
   },
   "resources": [],
   "result": null,
-  "start_time": "2021-02-17T16:03:37.706974",
-  "status": "COMPLETED",
-  "stop_time": "2021-02-17T17:09:55.740663"
+  "start_time": "2021-02-18T02:15:53.834526",
+  "status": "RUNNING"
 }

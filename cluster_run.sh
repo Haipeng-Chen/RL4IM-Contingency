@@ -285,17 +285,17 @@
 
 # Exp 3.4 random 10077 - 10082
 mkdir -p logs
-setsid python main.py --config=colge --env-config=basic_env --results-dir=results/Feb17_tags with T=12 budget=1 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
+setsid python main.py --config=colge --env-config=basic_env --results-dir=temp_dir/Feb17_tags with T=12 budget=1 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
 sleep 4;
-setsid python main.py --config=colge --env-config=basic_env --results-dir=results/Feb17_tags with T=12 budget=2 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
+setsid python main.py --config=colge --env-config=basic_env --results-dir=temp_dir/Feb17_tags with T=12 budget=2 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
 sleep 4;
-setsid python main.py --config=colge --env-config=basic_env --results-dir=results/Feb17_tags with T=12 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
+setsid python main.py --config=colge --env-config=basic_env --results-dir=temp_dir/Feb17_tags with T=12 budget=3 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
 sleep 4;
-setsid python main.py --config=colge --env-config=basic_env --results-dir=results/Feb17_tags with T=12 budget=4 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
+setsid python main.py --config=colge --env-config=basic_env --results-dir=temp_dir/Feb17_tags with T=12 budget=4 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
 sleep 4;
-setsid python main.py --config=colge --env-config=basic_env --results-dir=results/Feb17_tags with T=12 budget=6 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
+setsid python main.py --config=colge --env-config=basic_env --results-dir=temp_dir/Feb17_tags with T=12 budget=6 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
 sleep 4;
-setsid python main.py --config=colge --env-config=basic_env --results-dir=results/Feb17_tags with T=12 budget=12 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
+setsid python main.py --config=colge --env-config=basic_env --results-dir=temp_dir/Feb17_tags with T=12 budget=12 q=0.6 mode='test' node_test=100 p=0.1 graph_node_var=20 method='random' graph_nbr_test=10 1>logs/log.txt 2>&1 &
 
 
 
