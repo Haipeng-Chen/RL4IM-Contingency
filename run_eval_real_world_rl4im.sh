@@ -5,7 +5,7 @@ for g in Exhibition Flu Hospital India irvine;
 do
     for method in rl;
     do
-        for bud in 4;
+        for bud in 8;
         do
             echo "start running method: ${method} on graph: ${g} with budget: ${bud}"
             model_path=model_ckpt/Feb17_RL4IM/colge/sacred/3/models
