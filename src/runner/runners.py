@@ -64,8 +64,9 @@ class Runner:
                     invited = []
                     presents = []
 
-                    print('graph nodes: ', self.environment.graphs[g_index].g.nodes)
-                    print('graph edge: ', self.environment.graphs[g_index].g.edges)
+                    if self.args.verbose:
+                        print('graph nodes: ', self.environment.graphs[g_index].g.nodes)
+                        print('graph edge: ', self.environment.graphs[g_index].g.edges)
 
                     for i in range(1, self.environment.T+1):
                         state, state_padding, available_action_mask = self.environment.get_state(g_index)
