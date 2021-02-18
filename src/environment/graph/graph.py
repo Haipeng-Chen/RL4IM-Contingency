@@ -81,9 +81,12 @@ class Graph:
                                        size=int(self.args.sample_nodes_ratio * num_nodes),
                                        replace=False))
 
-        edges = np.random.choice(list(_temp_g.edges()), size=int(self.args.sample_nodes_prob * nx.number_of_nodes(_temp_g)), replace=False)
+        edges = list(_temp_g.edges())
+        indices = range(len(edges))
+        indices = np.random.choice(indices, size=int(self.args.sample_nodes_prob * nx.number_of_nodes(_temp_g)), replace=False)
+        edges = [edges[idx] for idx in indices]
+        
         self.g = nx.Graph()
         self.g.add_edges_from(edges)
         self.cur_n = nx.number_of_nodes(self.g)
         self.max_node_num = self.cur_n
-        self.graph_name = self.orig_g.graph_name
