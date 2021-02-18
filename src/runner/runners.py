@@ -86,6 +86,7 @@ class Runner:
                             presents += present
                             invited += pri_action
                             pri_action=[ ]
+                            print('present: ', present)
 
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
@@ -267,7 +268,8 @@ class Runner:
                         #maximal number of training steps 
                             terminate = True
                             break 
-                    if global_episode % self.args.save_every  == 0 and self.agent.global_t>600:
+                    #if global_episode % self.args.save_every  == 0 and self.agent.global_t>500: #TODO
+                    if global_episode % self.args.save_every  == 0:
                         # save the model
                         self.agent.save_model(self.model_path)
                         g_names, episode_accumulated_rewards = self.evaluate()

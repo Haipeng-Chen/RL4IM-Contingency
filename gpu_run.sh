@@ -170,13 +170,10 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/114/models load_step=1888 graph_nbr_test=10;
 
 
-# case study  6 
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=2 save_every=2 q=0.6 mode='train' node_train=20 node_test=20 graph_node_var=2 graph_nbr_train=200
 
 
-
-
-
+# retrain RL4IM q3 budget = 9 
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=8 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=500 graph_nbr_train=200
 
 
 
