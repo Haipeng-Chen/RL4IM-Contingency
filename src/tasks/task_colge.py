@@ -63,7 +63,12 @@ def load_grah(args):
             #seed = graph_
             #seed = 100000 + i 
             seed = 100000 + i if args.mode == 'train' else 200000 + i #if test then use another seed 
-            graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed, args=args, is_train=is_train)
+            
+            if args.sample_graph:
+                G = nx.read_edgelist(os.path.join(path, 'data', 'graph_data', args.sample_graph_name + '.txt'), nodetype=int)
+                graph_dic[graph_] = Graph(g=G, args=args, seed=seed)
+            else:
+                graph_dic[graph_] = Graph(graph_type=args.graph_type, cur_n=args.node_test, p=args.p, m=args.m, seed=seed, args=args, is_train=is_train)
             #curr_graph = graph_dic[graph_].g
             #print('neighbors of node 0: in graph {}: {}'.format(graph_, curr_graph[0]))
             #ipdb.set_trace()
