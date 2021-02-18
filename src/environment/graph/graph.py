@@ -80,7 +80,9 @@ class Graph:
         return len(self.g)
 
     def init_sub_graph(self):
-        _temp_g = self.orig_g.subgraph(np.random.choice(list(self.orig_g.nodes()), size=self.size, replace=False))
+        sampled_nodes = np.random.choice(list(self.orig_g.nodes()), size=self.size, replace=False)
+        print(f'[INFO] sampled_nodes len: {len(sampled_nodes)}')
+        _temp_g = self.orig_g.subgraph(sampled_nodes.tolist())
 
         edges = list(_temp_g.edges())
         # indices = range(len(edges))
