@@ -25,6 +25,7 @@ def load_grah(args):
     
     path = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
     if len(args.realgraph) != 0:
+        #print('loading real graph')
         real_world_graphs = ["Exhibition", "Flu", "Hospital", "India", "irvine"]
         assert args.realgraph in real_world_graphs, f'{args.realgraph} not in the real graph list'
 
@@ -56,7 +57,7 @@ def load_grah(args):
         print('train graphs in total: ', len(graph_dic))   
 
         #test graph
-        print('Loading test graph: ', args.graph_type)
+        print('Loading validation/test graph: ', args.graph_type)
         is_train = False
         for i, graph_ in enumerate(range(args.graph_nbr_train, args.graph_nbr_train+args.graph_nbr_test)):
             #seed = graph_ + args.seed

@@ -172,14 +172,55 @@
 
 
 
-# retrain RL4IM q3 budget = 9 
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=8 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=500 graph_nbr_train=200
+# retrain RL4IM q3 budget = 8 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=8 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=500 graph_nbr_train=200
+
+# test RL4IM
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=1 q=0.6 mode='test' node_test=200 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/170/models load_step=112 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=2 q=0.6 mode='test' node_test=200 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/131/models load_step=1808 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=200 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/132/models load_step=1840 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=8 q=0.6 mode='test' node_test=200 graph_node_var=20 checkpoint_path=./temp_dir/colge/sacred/173/models load_step=1792 graph_nbr_test=10;
+
+# real-world train 194-203
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=5 model_scheme=normal sample_graph=True sample_graph_name=India verbose=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=10 model_scheme=normal sample_graph=True sample_graph_name=India verbose=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=20 model_scheme=normal sample_graph=True sample_graph_name=India verbose=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=50 model_scheme=normal sample_graph=True sample_graph_name=India verbose=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=200 model_scheme=normal sample_graph=True sample_graph_name=India verbose=False
+
+
+# real world train Exhibition 
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=5 model_scheme=normal sample_graph=True sample_graph_name=Exhibition
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=10 model_scheme=normal sample_graph=True sample_graph_name=Exhibition
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=20 model_scheme=normal sample_graph=True sample_graph_name=Exhibition
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=50 model_scheme=normal sample_graph=True sample_graph_name=Exhibition
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=200 model_scheme=normal sample_graph=True sample_graph_name=Exhibition
+
+
+# RL4IM test India
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode=test graph_node_var=0  graph_nbr_test=10 sample_graph=True sample_graph_name=India checkpoint_path=./temp_dir/colge/sacred/197/models load_step=1058
+
+
+
+# RL4IM train High-School
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=5 model_scheme=normal sample_graph=True sample_graph_name=High-School
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=5 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=5 model_scheme=normal sample_graph=True sample_graph_name=High-School
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=10 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=10 model_scheme=normal sample_graph=True sample_graph_name=High-School
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=20 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=20 model_scheme=normal sample_graph=True sample_graph_name=High-School
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=50 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=50 model_scheme=normal sample_graph=True sample_graph_name=High-School
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-3 T=8 budget=4 save_every=2 q=0.6 mode=train node_train=100 node_test=200 graph_node_var=0 epsilon_decay_steps=1000 graph_nbr_train=100 model_scheme=normal sample_graph=True sample_graph_name=High-School
 
 
 
 
-
-
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=4 save_every=5 q=0.6 mode='train' node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=5 q=0.6 mode='train' node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=5 q=0.6 mode='train' node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=5 q=0.6 mode='train' node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=5 q=0.6 mode='train' node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 save_every=5 q=0.6 mode='train' node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=28 budget=4 save_every=5 q=0.6 mode='train' node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 sample_graph=False
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=32  budget=4 save_every=5 q=0.6 mode='train' node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=1000 graph_nbr_train=200 sample_graph=False
 
 
 

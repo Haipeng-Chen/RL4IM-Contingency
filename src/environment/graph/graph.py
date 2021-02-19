@@ -101,4 +101,4 @@ class Graph:
         self.cur_n = nx.number_of_nodes(self.g)
         self.max_node_num = self.cur_n
 
-        print(f'[INFO] sampled_nodes len: {len(sampled_nodes)}, sampled_graph #nodes: {len(_temp_g.nodes)}, self.g #nodes: {len(self.g.nodes)}')
+        #print(f'[INFO] sampled_nodes len: {len(sampled_nodes)}, sampled_graph #nodes: {len(_temp_g.nodes)}, self.g #nodes: {len(self.g.nodes)}')

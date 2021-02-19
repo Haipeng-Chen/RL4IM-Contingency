@@ -132,8 +132,8 @@ class Runner:
                     accumulated_reward = 0
                     invited = random.sample(feasible_actions, self.environment.T)
                     presents, _ = self.environment.transition(invited)
-                    print('invited: ', invited)
-                    print('present: ', presents)
+                    #print('invited: ', invited)
+                    #print('present: ', presents)
                     accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                     #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
@@ -148,8 +148,8 @@ class Runner:
                     accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                     #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
-                    print('invited: ', invited)
-                    print('present: ', presents)
+                    #print('invited: ', invited)
+                    #print('present: ', presents)
             end_time = time.time()
             print('runtime for one graph is: ', end_time-start_time)
 

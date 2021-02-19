@@ -2,7 +2,7 @@
 #SBATCH -n 2              # Number of cores (-n)
 #SBATCH -N 1                # Ensure that all cores are on one Node (-N)
 #SBATCH -t 0-12:00          # Runtime in D-HH:MM, minimum of 10 minutes
-#SBATCH -p serial_requeue  # Partition to submit to
+#SBATCH -p tambe_gpu # Partition to submit to
 #SBATCH --mem=5000           # Memory pool for all cores (see also --mem-per-cpu)
 #SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
 
@@ -68,13 +68,73 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=20 method='random' graph_nbr_test=10;
 
 # 139 - 143
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=50 graph_node_var=20 method='random' graph_nbr_test=10;
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=100 graph_node_var=20 method='random' graph_nbr_test=10;
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=200 graph_node_var=20 method='random' graph_nbr_test=10;
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=500 graph_node_var=20 method='random' graph_nbr_test=10;
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=20 method='random' graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=50 graph_node_var=20 method='random' graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=100 graph_node_var=20 method='random' graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=200 graph_node_var=20 method='random' graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=500 graph_node_var=20 method='random' graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=20 method='random' graph_nbr_test=10;
+
+# random  204 205
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode=test graph_node_var=0 method='random' graph_nbr_test=10 sample_graph=True sample_graph_name=India;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode=test graph_node_var=0 method='random' graph_nbr_test=10 sample_graph=True sample_graph_name=Exhibition;
+
+# change 206 207
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode=test graph_node_var=0 method=lazy_adaptive_greedy graph_nbr_test=10 sample_graph=True sample_graph_name=India;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode=test graph_node_var=0 method=lazy_adaptive_greedy graph_nbr_test=10 sample_graph=True sample_graph_name=Exhibition
+
+# High-School 216 217
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode=test graph_node_var=0 method= lazy_adaptive_greedy graph_nbr_test=10 sample_graph=True sample_graph_name=High-School;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode=test graph_node_var=0 method='random' graph_nbr_test=10 sample_graph=True sample_graph_name=High-School
 
 
+# run time of CHANGE
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=0 method='lazy_adaptive_greedy' graph_nbr_test=1 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=0 method='lazy_adaptive_greedy' graph_nbr_test=1 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=0 method='lazy_adaptive_greedy' graph_nbr_test=1 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=0 method='lazy_adaptive_greedy' graph_nbr_test=1 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=0 method='lazy_adaptive_greedy' graph_nbr_test=1 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=0 method='lazy_adaptive_greedy' graph_nbr_test=1 sample_graph=False
+
+
+# random when increase T
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=8 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=12 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=16 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=20 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=24 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=28 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=32 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False
+
+
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=0 method='lazy_adaptive_greedy' graph_nbr_test=1 sample_graph=False
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 q=0.6 mode='test' node_test=1000 graph_node_var=0 method='lazy_adaptive_greedy' graph_nbr_test=1 sample_graph=False
+
+
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=28 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=32 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False
+
+
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=4 budget=4 save_every=5 q=0.6 m=4 mode=test node_test=1000 graph_node_var=0 method=random sample_graph=False propagate_p=0.15;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=5 q=0.6 m=4 mode=test node_test=1000 graph_node_var=0 method=random sample_graph=False propagate_p=0.15;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=5 q=0.6 m=4 mode=test node_test=1000 graph_node_var=0 method=random sample_graph=False propagate_p=0.15;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=5 q=0.6 m=4 mode=test node_test=1000 graph_node_var=0 method=random sample_graph=False propagate_p=0.15;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=5 q=0.6 m=4 mode=test node_test=1000 graph_node_var=0 method=random sample_graph=False propagate_p=0.15;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 save_every=5 q=0.6 m=4 mode=test node_test=1000 graph_node_var=0 method=random sample_graph=False propagate_p=0.15;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=28 budget=4 save_every=5 q=0.6 m=4 mode=test node_test=1000 graph_node_var=0 method=random sample_graph=False propagate_p=0.15;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=32 budget=4 save_every=5 q=0.6 m=4 mode=test node_test=1000 graph_node_var=0 method=random sample_graph=False propagate_p=0.15
+
+
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=32 budget=4 save_every=5 q=0.6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False
 
 
 
