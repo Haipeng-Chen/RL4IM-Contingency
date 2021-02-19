@@ -36,5 +36,5 @@ model_scheme: 'type1'  # {'normal': 'run graphs with same sizes',
                         #  'type2': 'for loop for graphs with various nodes'}
 realgraph: ""  # "Exhibition", "Flu", "Hospital", "India", "irvine"
 
-sample_graph: True
+sample_graph: False 
 sample_graph_name: 'Hospital' # ["Exhibition", "Flu", "Hospital", "India", "irvine"]
