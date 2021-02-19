@@ -39,13 +39,15 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episodes=20):
+    def evaluate(self, num_episodes=2):
         """ Start evaluation """
         print(f'\n{"-"*50}start evaluation{"-"*50}')
         episode_accumulated_rewards = np.empty((self.args.graph_nbr_test, num_episodes))
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
         g_names = []
+        
+        pbar = tqdm.tqdm(total=self.args.graph_nbr_test * num_episodes * self.environment.T)
 
         for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+self.args.graph_nbr_test):
         #for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+5):
@@ -99,6 +101,9 @@ class Runner:
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents) 
+                        
+                        pbar.update(1)
+
             elif self.args.method == 'adaptive_greedy' or self.args.method == 'lazy_adaptive_greedy':
                 print('method is :', self.args.method)
                 for episode in range(num_episodes):
@@ -124,6 +129,9 @@ class Runner:
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents)
+
+                        pbar.update(1)
+
             elif self.args.method == 'random':
                 print('method is: ', self.args.method)
                 for episode in range(num_episodes):
