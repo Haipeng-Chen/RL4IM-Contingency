@@ -21,7 +21,11 @@ class Graph:
             self.max_node_num = self.cur_n
 
             self.orig_g = copy.deepcopy(self.g)
-
+            
+            if self.args.sample_graph:
+                self.size = int(np.floor(self.args.sample_nodes_ratio * len(self.orig_g.nodes)))
+                self.init_sub_graph()
+        
             return 
         
         self.max_node_num = cur_n + (self.args.graph_node_var if self.args.model_scheme != 'normal' else 0)
@@ -75,15 +79,26 @@ class Graph:
     def __len__(self):
         return len(self.g)
 
-    def sample(self):
-        num_nodes = nx.number_of_nodes(self.orig_g)
-        _temp_g = self.orig_g.subgraph(np.random.choice(list(self.orig_g.nodes()), 
-                                       size=int(self.args.sample_nodes_ratio * num_nodes),
-                                       replace=False))
+    def init_sub_graph(self):
+        sampled_nodes = np.random.choice(list(self.orig_g.nodes()), size=self.size, replace=False)
+        _temp_g = self.orig_g.subgraph(sampled_nodes.tolist()).copy()
 
-        edges = np.random.choice(list(_temp_g.edges()), size=int(self.args.sample_nodes_prob * nx.number_of_nodes(_temp_g)), replace=False)
-        self.g = nx.Graph()
-        self.g.add_edges_from(edges)
+        edges = list(_temp_g.edges())
+        # indices = range(len(edges))
+        # indices = np.random.choice(indices, size=int(np.floor(self.args.sample_nodes_prob * len(edges))), replace=False)
+        # edges = [edges[idx] for idx in indices]
+
+        nodes = sampled_nodes.tolist()
+        index_map = {node: idx for idx, node in zip(range(len(sampled_nodes)), nodes)}
+        _temp_g = nx.relabel_nodes(_temp_g, index_map)
+
+        # # 转换索引 避免bug
+        # for i, edge in enumerate(edges):
+        #     edges[i] = (index_map[edge[0]], index_map[edge[1]])
+
+        self.g = _temp_g
+        # self.g.add_edges_from(edges)
         self.cur_n = nx.number_of_nodes(self.g)
         self.max_node_num = self.cur_n
-        self.graph_name = self.orig_g.graph_name
+
+        #print(f'[INFO] sampled_nodes len: {len(sampled_nodes)}, sampled_graph #nodes: {len(_temp_g.nodes)}, self.g #nodes: {len(self.g.nodes)}')

@@ -190,7 +190,7 @@ class DQAgent:
                     torch.max(q, dim=1)[0]
                 target_f = self.model(self.to_cuda(last_observation_tens), self.to_cuda(adj_tens), mask=self.to_cuda(obs_mask))
                 target_p = target_f.clone()
-                target_f[range(self.minibatch_length), action_tens, :] = target
+                target_f[range(target.shape[0]), action_tens, :] = target
                 loss = self.criterion(target_p, target_f)
             
             self.loss = loss
@@ -250,13 +250,17 @@ class DQAgent:
             return (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask)
 
         for last_observation_, action_, reward_, observation_, done_, games_, mask_ in minibatch[-self.minibatch_length + 1:]:
+            if last_observation_tens.shape[1] != last_observation_.shape[1]:
+                print(f'[INFO] skip .... ')
+                continue
+            
             last_observation_tens = torch.cat((last_observation_tens, last_observation_))
             obs_mask = torch.cat((obs_mask, mask_.view(1, obs_mask.shape[1], 1)))
             action_tens = torch.cat((action_tens, torch.Tensor([action_]).type(torch.LongTensor)))
             reward_tens = torch.cat((reward_tens, torch.Tensor([[reward_]])))
             observation_tens = torch.cat((observation_tens, observation_))
             done_tens = torch.cat((done_tens,torch.Tensor([[done_]])))
-            
+
             adj_ = self.graphs[games_].adj.todense()
             if self.args.model_scheme == 'type1':
                 adj_ = self._pad_adj(self.graphs[games_], adj_).numpy()

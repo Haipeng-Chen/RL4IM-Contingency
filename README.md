@@ -33,6 +33,12 @@ run the `IC.py` in home dir via
 python3.7 -m src.IC 
 ```
 
+### Sampling real-world graph
+
+```
+python3.7 main.py --config=colge --env-config=basic_env --results-dir=temp_dir with lr=1e-2 use_cuda=True T=8 budget=8 save_every=2 q=0.6 mode=train node_train=200 node_test=200 graph_node_var=20 epsilon_decay_steps=100 graph_nbr_train=200 model_scheme=normal sample_graph=True sample_graph_name=Hospital
+```
+Note that `sample_graph=True` and `sample_graph_name=Hospital` should be set. You can also set `sample_nodes_ratio=0.5` and  `sample_nodes_prob=0.8`.
 
 Misc.
 

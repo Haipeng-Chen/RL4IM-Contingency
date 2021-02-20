@@ -46,6 +46,8 @@ class Runner:
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
         g_names = []
+        
+        pbar = tqdm.tqdm(total=self.args.graph_nbr_test * num_episodes * self.environment.T)
 
         for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+self.args.graph_nbr_test):
         #for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+5):
@@ -64,8 +66,9 @@ class Runner:
                     invited = []
                     presents = []
 
-                    print('graph nodes: ', self.environment.graphs[g_index].g.nodes)
-                    print('graph edge: ', self.environment.graphs[g_index].g.edges)
+                    if self.args.verbose:
+                        print('graph nodes: ', self.environment.graphs[g_index].g.nodes)
+                        print('graph edge: ', self.environment.graphs[g_index].g.edges)
 
                     for i in range(1, self.environment.T+1):
                         state, state_padding, available_action_mask = self.environment.get_state(g_index)
@@ -74,7 +77,9 @@ class Runner:
                         #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
                                                 #feasible_actions=feasible_actions.copy(), mode=mode)
                         sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode, mask=available_action_mask) 
-                        print('current sub action: ', sec_action)
+    
+                        if self.args.verbose:
+                            print('current sub action: ', sec_action)
                         #ipdb.set_trace()
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
@@ -86,7 +91,9 @@ class Runner:
                             presents += present
                             invited += pri_action
                             pri_action=[ ]
-                            print('present: ', present)
+                            
+                            if self.args.verbose:
+                                print('present: ', present)
 
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
@@ -94,6 +101,9 @@ class Runner:
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents) 
+                        
+                        pbar.update(1)
+
             elif self.args.method == 'adaptive_greedy' or self.args.method == 'lazy_adaptive_greedy':
                 print('method is :', self.args.method)
                 for episode in range(num_episodes):
@@ -119,6 +129,9 @@ class Runner:
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents)
+
+                        pbar.update(1)
+
             elif self.args.method == 'random':
                 print('method is: ', self.args.method)
                 for episode in range(num_episodes):
@@ -127,8 +140,8 @@ class Runner:
                     accumulated_reward = 0
                     invited = random.sample(feasible_actions, self.environment.T)
                     presents, _ = self.environment.transition(invited)
-                    print('invited: ', invited)
-                    print('present: ', presents)
+                    #print('invited: ', invited)
+                    #print('present: ', presents)
                     accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                     #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
@@ -143,8 +156,8 @@ class Runner:
                     accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                     #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
-                    print('invited: ', invited)
-                    print('present: ', presents)
+                    #print('invited: ', invited)
+                    #print('present: ', presents)
             end_time = time.time()
             print('runtime for one graph is: ', end_time-start_time)
 
@@ -182,10 +195,7 @@ class Runner:
             for g_index in range(self.args.graph_nbr_train):  # graph list; first  graph_nbr_train graphs are training, the rest are for test
                 if terminate:
                     break
-
-                if self.args.sample_graph:
-                    self.agent.graphs[g_index].sample()
-                
+                                
                 graph_name = self.agent.graphs[g_index].graph_name
                 print('graph: {}, nodes: {}, edges: {}'.format(g_index, len(self.environment.graphs[g_index].nodes), len(self.environment.graphs[g_index].edges)))
                 for episode in range(self.args.max_episodes):
