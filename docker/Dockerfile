@@ -1,6 +1,6 @@
 FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
 
-MAINTAINER Wei Qiu
+MAINTAINER Maintainer
 
 EXPOSE 3000
 
