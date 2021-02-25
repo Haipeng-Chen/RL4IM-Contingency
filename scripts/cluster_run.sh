@@ -7,6 +7,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
 
+cd ..
+
 #155-156 #these models are used as the base model; theoretically these models are enough for all tasks
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=1
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=6 budget=2 q=1 method='adaptive_greedy'
