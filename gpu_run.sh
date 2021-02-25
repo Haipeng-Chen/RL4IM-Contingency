@@ -279,14 +279,49 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=4 propagate_p=0.15 lr=0.01
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=4 propagate_p=0.15 lr=0.01
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=4 propagate_p=0.15 lr=0.01
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=4 propagate_p=0.15 lr=0.01
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=4 propagate_p=0.15 lr=0.01
+
+# Feb 19 11.30pm increase m =5, decrease propagate_p to 0.1 # 343 -351
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1
+
+# lr = 0.01 version
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 lr=0.01
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 lr=0.01
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 lr=0.01
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 lr=0.01
 
 
+# Feb 20 1am increase p to 0.3 # 356-363
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 p=0.3
+
+# lr = 0.01 version
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 lr=0.01 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 lr=0.01 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 lr=0.01 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 lr=0.01 p=0.3
 
 
+# Feb 20 3am increase m to 6  #368-371
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=6 propagate_p=0.1 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=6 propagate_p=0.1 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=6 propagate_p=0.1 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=6 propagate_p=0.1 p=0.3
 
 
+# Feb 20 3.30am follows 356 357 360 363, with higher T # 378 379
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=28 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 p=0.3
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=32 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=5 propagate_p=0.1 p=0.3
 
+# follows 371 with larger T 376 377
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=6 propagate_p=0.1 p=0.3
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=28 budget=4 save_every=2 q=0.6 mode='train' node_train=200 node_test=200 m=6 propagate_p=0.1 p=0.3
 
 
 

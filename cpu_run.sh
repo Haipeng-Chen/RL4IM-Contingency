@@ -153,14 +153,36 @@
 #python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.2 graph_nbr_test=10
 
 # Feb 19 8pm change propagate_p to 0.15 #306 - 310
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10;
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10;
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10;
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10;
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 q=0.6 m=4 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.15 graph_nbr_test=10
 
 
+# Feb 19 11.16pm # 337 - 340
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10;
 
+
+# Feb 20 1am # 352 - 355  # increase p
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+
+
+# Feb 20 2.30am 364-367 inrease m to 6
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=8 budget=4 q=0.6 m=6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=12 budget=4 q=0.6 m=6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=16 budget=4 q=0.6 m=6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+#python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=20 budget=4 q=0.6 m=6 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+
+# increase budget even more, follows 355 setting #i 372 373
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=24 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=28 budget=4 q=0.6 m=5 mode=test node_test=200 graph_node_var=20 method=random sample_graph=False propagate_p=0.1 graph_nbr_test=10 p=0.3;
 
 
 
