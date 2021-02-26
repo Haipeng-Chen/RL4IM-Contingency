@@ -7,8 +7,6 @@
 #SBATCH --gres=gpu:1
 #SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
 
-#declare -i T
-#defaul values
 T=8
 BUDGET=4
 SAVE_EVERY=2
