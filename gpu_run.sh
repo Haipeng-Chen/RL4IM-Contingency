@@ -17,26 +17,32 @@ NODE_TEST=200
 M=7
 PROPAGATE_P=0.1
 P=0.3
+METHOD='rl'
 
-while getopts a:b:c:d:e:f:g:i:j option
+while getopts f:g:q:t:b:e:h:i:j:m:s: option
 do
 case "${option}"
 in
-a) T=${OPTARG};;
-b) BUDGET=${OPTARG};;
-c) SAVE_EVERY=${OPTARG};;
-d) Q=${OPTARG};;
-e) MODE=${OPTARG};;
+#problem settings (evaluate)
 f) NODE_TRAIN=${OPTARG};;
 g) NODE_TEST=${OPTARG};;
+q) Q=${OPTARG};;
+t) T=${OPTARG};;
+b) BUDGET=${OPTARG};;
+#other problem settings
+e) MODE=${OPTARG};;
 h) M=${OPTARG};;
 i) PROPAGATE_P=${OPTARG};;
 j) P=${OPTARG};;
-k) METHOD=${OPTARG};;
+#methods related
+m) METHOD=${OPTARG};;
+s) SAVE_EVERY=${OPTARG};;
 esac
 done
 
-#echo 'type of T is: $T'
+echo 'mode is:' $MODE
+echo 'method is:' $METHOD
+echo 'budget is:' $BUDGET
 #declare -i T
 
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=$T budget=$BUDGET save_every=$SAVE_EVERY q=$Q mode=$MODE node_train=$NODE_TRAIN node_test=$NODE_TEST m=$M propagate_p=$PROPAGATE_P p=$P
+python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=$T budget=$BUDGET save_every=$SAVE_EVERY q=$Q mode=$MODE node_train=$NODE_TRAIN node_test=$NODE_TEST m=$M propagate_p=$PROPAGATE_P p=$P method=$METHOD
