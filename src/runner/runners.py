@@ -96,7 +96,7 @@ class Runner:
                                 print('present: ', present)
 
                         if done:
-                            accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                            accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                             episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
@@ -123,7 +123,7 @@ class Runner:
                             feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
 
                         if i == self.environment.T:
-                            accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                            accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                             #episode_accumulated_rewards.append(accumulated_reward)
                             episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                             #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
@@ -143,7 +143,7 @@ class Runner:
                     if self.args.verbose:
                         print('invited: ', invited)
                         print('present: ', presents)
-                    accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                    accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                     #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
             elif self.args.method == 'greedy':
@@ -154,7 +154,7 @@ class Runner:
                     accumulated_reward = 0
                     invited, _ = celf(self.environment.graphs[g_index].g, self.environment.T, p=self.environment.propagate_p, mc=10)
                     presents, _ = self.environment.transition(invited)
-                    accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.environment.num_simul)
+                    accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
                     #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                     #print('invited: ', invited)

@@ -85,7 +85,8 @@
 #do
 #    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P sleep 5
 #done
-#
+
+
 ## Feb 27 2.20pm train on setting as above # 495-499
 #NODE_TRAIN=500
 #NODE_TEST=500
@@ -118,29 +119,47 @@
 #    sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P sleep 5
 #done
 
-# 2.50pm further decrease m to 4  #510-514
+
+## Feb 27 4.40pm #510-529
+#MODE='test'
+#METHOD='random'
+#NODE_TRAIN=500
+#NODE_TEST=500
+#P=0.05
+#for M in 3 4 5
+#do
+#for T in 4 8 12 16 20
+#do
+#    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M sleep 10
+#done
+#done
+#
+#
+#
+## Feb 27 2.20pm train on setting as above # 530-539
+#NODE_TRAIN=500
+#NODE_TEST=500
+#p=0.05
+#for M in 3 4 5
+#do
+#for T in 4 8 12 16 20 
+#do
+#    sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M sleep 10
+#done
+#done
+
+
+# Feb 27 4.40pm #510-529
 MODE='test'
 METHOD='random'
-NODE_TRAIN=500
-NODE_TEST=500
+NODE_TRAIN=1000
+NODE_TEST=1000
 P=0.05
-M=4
+M=6 
 for T in 4 8 12 16 20
 do
-    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P sleep 5
+    sleep 3; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M 
 done
-
-
-# Feb 27 2.20pm train on setting as above # 515-519
-NODE_TRAIN=500
-NODE_TEST=500
-p=0.05
-M=4
-for T in 4 8 12 16 20 
-do
-    sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P sleep 5
-done
-
 
 
 

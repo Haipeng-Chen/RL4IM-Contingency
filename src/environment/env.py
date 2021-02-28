@@ -159,8 +159,7 @@ class NetworkEnv(object):
     def f_multi(self, x):
         s=list(x) 
         #print('cascade model is: ', env.cascade)
-        val = self.run_cascade(seeds=s, cascade=self.cascade, sample=200)
-        #val = self.run_cascade(seeds=s, cascade=self.cascade, sample=self.num_simul)
+        val = self.run_cascade(seeds=s, cascade=self.cascade, sample=self.args.greedy_sample_size)
         return val
  
     #the simple state transition process
@@ -217,7 +216,7 @@ class Environment(NetworkEnv):
         self.q = q
         self.T = T
         self.cascade = cascade
-        self.num_simul = num_simul
+        self.num_simul = self.args.num_simul_train
         self.t = 0
         self.done = False
         self.reward = 0
