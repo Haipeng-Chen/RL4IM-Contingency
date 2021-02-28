@@ -47,7 +47,7 @@ class Runner:
         mode = 'test'
         g_names = []
         
-        pbar = tqdm.tqdm(total=self.args.graph_nbr_test * num_episodes * self.environment.T)
+        #pbar = tqdm.tqdm(total=self.args.graph_nbr_test * num_episodes * self.environment.T)
 
         for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+self.args.graph_nbr_test):
         #for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+5):
@@ -102,7 +102,7 @@ class Runner:
                             #print('invited: ', invited)
                             #print('present: ', presents) 
                         
-                        pbar.update(1)
+                        #pbar.update(1)
 
             elif self.args.method == 'adaptive_greedy' or self.args.method == 'lazy_adaptive_greedy':
                 print('method is :', self.args.method)
@@ -130,7 +130,7 @@ class Runner:
                             #print('invited: ', invited)
                             #print('present: ', presents)
 
-                        pbar.update(1)
+                        #pbar.update(1)
 
             elif self.args.method == 'random':
                 print('method is: ', self.args.method)
@@ -187,7 +187,7 @@ class Runner:
         global_episode = 0
         terminate  = False
 
-        pbar = tqdm.tqdm(total=self.args.max_global_t)
+        #pbar = tqdm.tqdm(total=self.args.max_global_t)
 
         for epoch in range(self.args.nbr_epoch):
             print('epoch: ', epoch)
@@ -258,7 +258,7 @@ class Runner:
 
                         if done:
                             # progress bar
-                            pbar.update(curr_episode_t)
+                            #pbar.update(curr_episode_t)
 
                             print(f"\n[INFO] Global step: {self.agent.global_t}, Cumulative rewards: {cumul_reward}, Runtime (s): {(time.time()-st):.2f}")
                             print("-"*60)
@@ -283,8 +283,8 @@ class Runner:
                         #maximal number of training steps 
                             terminate = True
                             break 
-                    #if global_episode % self.args.save_every  == 0 and self.agent.global_t>500: #TODO
-                    if global_episode % self.args.save_every  == 0:
+                    #if global_episode % self.args.save_every  == 0:
+                    if self.agent.global_t+1 % self.args.save_every < self.environment.T:
                         # save the model
                         self.agent.save_model(self.model_path)
                         g_names, episode_accumulated_rewards = self.evaluate()

@@ -149,24 +149,87 @@
 #done
 
 
-# Feb 27 4.40pm #510-529
+## Feb 27 11.20pm #545-549
+#MODE='test'
+#METHOD='random'
+#NODE_TRAIN=1000
+#NODE_TEST=1000
+#P=0.05
+#M=6 
+#for T in 4 8 12 16 20
+#do
+#    sleep 3; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M 
+#done
+
+
+# Feb 27 11.40pm increase node size to 10K #
+#MODE='test'
+#METHOD='random'
+#NODE_TRAIN=10000
+#NODE_TEST=10000
+#P=0.05
+#M=6
+#for T in 4 8 12 16 20
+#do
+#    sleep 6; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M
+#done
+
+# Feb 28 0.40am increase node size to 1K #
+#MODE='test'
+#METHOD='random'
+#NODE_TRAIN=1000
+#NODE_TEST=1000
+#P=0.05
+#for M in 5 7 
+#do
+#for T in 4 8 12 16 20
+#do
+#    sleep 6; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M
+#done
+#done
+
+# Feb 28 11.50am use T=2 4 6 8 10 12 #570-587
 MODE='test'
 METHOD='random'
 NODE_TRAIN=1000
 NODE_TEST=1000
+BUDGET=2
 P=0.05
-M=6 
-for T in 4 8 12 16 20
+for M in 5 6 7
 do
-    sleep 3; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M 
+for T in 2 4 6 8 10 12
+do
+    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET
+done
 done
 
+# Feb 28 11.55am training version of above #588-605
+NODE_TRAIN=1000
+NODE_TEST=1000
+BUDGET=2
+p=0.05
+for M in 5 6 7
+do
+for T in 2 4 6 8 10 12
+do
+    sleep 10; sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET 
+done
+done
 
-
-
-
-
-
+# Feb 28 11.50am use T=2 4 6 8 10 12 #570-18
+MODE='test'
+METHOD='lazy_adaptive_greedy'
+NODE_TRAIN=1000
+NODE_TEST=1000
+BUDGET=2
+P=0.05
+for M in 5 6 7
+do
+for T in 2 4 6 8 10 12
+do
+    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET
+done
+done
 
 
 
