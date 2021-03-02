@@ -13,6 +13,7 @@ from src.IC import celf
 from src.utils.logging import Logger
 from src.utils.os_utils import generate_id
 import ipdb
+import tracemalloc
 
 
 class Runner:
@@ -42,6 +43,8 @@ class Runner:
     def evaluate(self, num_episodes=20):
         """ Start evaluation """
         print(f'\n{"-"*50}start evaluation{"-"*50}')
+        tracemalloc.start()
+
         episode_accumulated_rewards = np.empty((self.args.graph_nbr_test, num_episodes))
         feasible_actions = list(range(self.environment.N))
         mode = 'test'
@@ -171,6 +174,9 @@ class Runner:
         
         ave_cummulative_rewards = np.mean(episode_accumulated_rewards, axis=1)
         ave_cummulative_reward = np.mean(ave_cummulative_rewards)
+        current, peak = tracemalloc.get_traced_memory()
+        print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")
+        tracemalloc.stop()
         print('average cummulative reward vector is: ', ave_cummulative_rewards)
         print('average cummulative reward is: ', ave_cummulative_reward)
         print(f'{"-"*50}end evaluation{"-"*50}')
@@ -284,7 +290,9 @@ class Runner:
                             terminate = True
                             break 
                     #if global_episode % self.args.save_every  == 0:
-                    if self.agent.global_t+1 % self.args.save_every < self.environment.T:
+                    print('remainder is:', self.agent.global_t % self.args.save_every)
+                    if self.agent.global_t % self.args.save_every < self.environment.T:
+                        print('saving the model')
                         # save the model
                         self.agent.save_model(self.model_path)
                         g_names, episode_accumulated_rewards = self.evaluate()

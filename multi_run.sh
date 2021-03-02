@@ -189,50 +189,152 @@
 #done
 
 # Feb 28 11.50am use T=2 4 6 8 10 12 #570-587
+#MODE='test'
+#METHOD='random'
+#NODE_TRAIN=1000
+#NODE_TEST=1000
+#BUDGET=2
+#P=0.05
+#for M in 5 6 7
+#do
+#for T in 2 4 6 8 10 12
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET
+#done
+#done
+
+#588-621 discard
+
+
+## Feb 28 11.50am use T=2 4 6 8 10 12 # 622-627
+#MODE='test'
+#METHOD='lazy_adaptive_greedy'
+#NODE_TRAIN=1000
+#NODE_TEST=1000
+#BUDGET=2
+#P=0.05
+#M=6
+#for T in 2 4 6 8 10 12
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET
+#done
+
+#628-645 discard
+
+# Feb 28 11.55pm training version of above # 646-651
+#NODE_TRAIN=1000
+#NODE_TEST=1000
+#BUDGET=2
+#P=0.05
+#M=6
+#for T in 2 4 6 8 10 12
+#do
+#    sleep 10; sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET
+#done
+#
+#
+### Feb 28 11.55pm # rerun lazy-ada-greedy because greedy_sample_size is too large
+#MODE='test'
+#METHOD='lazy_adaptive_greedy'
+#NODE_TRAIN=1000
+#NODE_TEST=1000
+#BUDGET=2
+#P=0.05
+#M=6
+#GREEDY_SAMPLE_SIZE=5
+#for T in 2 4 6 8 10 12
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE
+#done
+
+#MODE='test'
+#METHOD='lazy_adaptive_greedy'
+#NODE_TRAIN=1000
+#NODE_TEST=1000
+#BUDGET=2
+#P=0.05
+#M=6
+#GREEDY_SAMPLE_SIZE=10
+#for T in 2 4 6 8 10 12
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE
+#done
+
+
+## March 1 10.30pm train #683-  
+#NODE_TRAIN=500
+#NODE_TEST=500
+#BUDGET=2
+#P=0.05
+#M=5
+#for T in 2 4 6 8 10 12
+#do
+#    sleep 10; sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET
+#done
+#
+## March 1 3pm #
+#MODE='test'
+#METHOD='random'
+#NODE_TEST=500
+#BUDGET=2
+#P=0.05
+#M=5
+#for T in 2 4 6 8 10 12
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET 
+#done
+#
+### March 1 3pm # 707-712
+#MODE='test'
+#METHOD='lazy_adaptive_greedy'
+#NODE_TEST=500
+#BUDGET=2
+#P=0.05
+#M=5
+#GREEDY_SAMPLE_SIZE=5
+#for T in 2 4 6 8 10 12
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE
+#done
+
+#695-706 713-723 discard
+
+# Mar 02 0.50am test on erdos renyi graph #724-
 MODE='test'
 METHOD='random'
-NODE_TRAIN=1000
-NODE_TEST=1000
-BUDGET=2
-P=0.05
-for M in 5 6 7
+NODE_TEST=500
+BUDGET=4
+GRAPH_TYPE='erdos_renyi'
+M=5
+P=0.025 
+for T in 4 8 12 16 20  
 do
-for T in 2 4 6 8 10 12
-do
-    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET
-done
+    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE
 done
 
-# Feb 28 11.55am training version of above #588-605
-NODE_TRAIN=1000
-NODE_TEST=1000
-BUDGET=2
-p=0.05
-for M in 5 6 7
-do
-for T in 2 4 6 8 10 12
-do
-    sleep 10; sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET 
-done
-done
-
-# Feb 28 11.50am use T=2 4 6 8 10 12 #570-18
 MODE='test'
 METHOD='lazy_adaptive_greedy'
-NODE_TRAIN=1000
-NODE_TEST=1000
-BUDGET=2
-P=0.05
-for M in 5 6 7
+NODE_TEST=500
+BUDGET=4
+GRAPH_TYPE='erdos_renyi'
+M=5
+P=0.025
+GREEDY_SAMPLE_SIZE=5
+for T in 4 8 12 16 20
 do
-for T in 2 4 6 8 10 12
+    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -y $GRAPH_TYPE
+done
+#
+NODE_TRAIN=500
+NODE_TEST=500
+BUDGET=4
+GRAPH_TYPE='erdos_renyi'
+P=0.025
+M=5
+for T in 4 8 12 16 20
 do
-    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET
+    sleep 10; sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE
 done
-done
-
-
-
 
 
 
