@@ -284,7 +284,7 @@
 #    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET 
 #done
 #
-### March 1 3pm # 707-712
+### March 1 3pm # 707-712 # none of the following finishes even for one graph
 #MODE='test'
 #METHOD='lazy_adaptive_greedy'
 #NODE_TEST=500
@@ -299,42 +299,102 @@
 
 #695-706 713-723 discard
 
-# Mar 02 0.50am test on erdos renyi graph #724-
+## Mar 02 0.50am test on erdos renyi graph #724-728
+#MODE='test'
+#METHOD='random'
+#NODE_TEST=500
+#BUDGET=4
+#GRAPH_TYPE='erdos_renyi'
+#M=5
+#P=0.025 
+#for T in 4 8 12 16 20  
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE
+#done
+#
+##729-733
+#MODE='test'
+#METHOD='lazy_adaptive_greedy'
+#NODE_TEST=500
+#BUDGET=4
+#GRAPH_TYPE='erdos_renyi'
+#M=5
+#P=0.025
+#GREEDY_SAMPLE_SIZE=5
+#for T in 4 8 12 16 20
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -y $GRAPH_TYPE
+#done
+#
+## 734-738
+#NODE_TRAIN=500
+#NODE_TEST=500
+#BUDGET=4
+#GRAPH_TYPE='erdos_renyi'
+#P=0.025
+#M=5
+#for T in 4 8 12 16 20
+#do
+#    sleep 10; sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE
+#done
+
+
+
+# March 20 run DIC model
 MODE='test'
-METHOD='random'
-NODE_TEST=500
-BUDGET=4
-GRAPH_TYPE='erdos_renyi'
+METHOD='lazy_adaptive_greedy'
+NODE_TEST=200
+BUDGET=2
+P=0.05
 M=5
-P=0.025 
-for T in 4 8 12 16 20  
+GREEDY_SAMPLE_SIZE=5
+CASCADE='DIC'
+for T in 6 8
 do
-    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE
+    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE
 done
 
 MODE='test'
-METHOD='lazy_adaptive_greedy'
-NODE_TEST=500
-BUDGET=4
-GRAPH_TYPE='erdos_renyi'
+METHOD='random'
+NODE_TEST=200
+BUDGET=2
+P=0.05
 M=5
-P=0.025
 GREEDY_SAMPLE_SIZE=5
-for T in 4 8 12 16 20
+CASCADE='DIC'
+for T in 6 8
 do
-    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -y $GRAPH_TYPE
+    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE
 done
-#
-NODE_TRAIN=500
-NODE_TEST=500
-BUDGET=4
-GRAPH_TYPE='erdos_renyi'
-P=0.025
+
+MODE='train'
+NODE_TRAIN=200
+NODE_TEST=200
+BUDGET=2
+P=0.05
 M=5
-for T in 4 8 12 16 20
+CASCADE='DIC'
+for T in 6 8 
 do
-    sleep 10; sbatch gpu_run.sh -t $T -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE
+    sleep 10; sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE -k $CASCADE 
 done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

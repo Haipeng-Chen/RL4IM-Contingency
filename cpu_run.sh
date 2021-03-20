@@ -19,8 +19,9 @@ P=0.1
 METHOD='rl'
 GREEDY_SAMPLE_SIZE=100
 GRAPH_TYPE='erdos_renyi'
+CASCADE='IC'
 
-while getopts f:g:q:t:b:c:e:h:i:j:m:s: option
+while getopts f:g:q:t:b:c:e:h:i:j:k:m:s: option
 do
 case "${option}"
 in
@@ -36,6 +37,7 @@ e) MODE=${OPTARG};;
 h) M=${OPTARG};;
 i) PROPAGATE_P=${OPTARG};;
 j) P=${OPTARG};;
+k) CASCADE=${OPTARG};;
 #methods related
 m) METHOD=${OPTARG};;
 s) SAVE_EVERY=${OPTARG};;
