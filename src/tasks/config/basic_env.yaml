@@ -1,27 +1,30 @@
 #-----------------------------------environment args-----------------------------------
-#graph_index: 2  # graph index
-#graph_name: "default_graph"
+mode: 'train' # str, {'train', 'test'}
 graph_type: 'powerlaw'  # 'erdos_renyi', 'powerlaw' metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
 graph_nbr_train: 200 # , type=int, default='1', help='number of differente graph to generate for the training sample')
 graph_nbr_test: 5 # , type=int, default='1', help='number of differente graph to generate for the test sample')
 node_train: 200 # "number of node in generated train graphs", 100+ 50, 100
 node_test: 200 # "number of node in generated test graphs", 100+ 50, 100
-p: 0.05  #, default=0.14, help="p, parameter in graph degree distribution")
-m: 3  #, default=4, help="m, parameter in graph degree distribution")
-T: 9  # time horizon
+graph_node_var: 20
+T: 9  # time horizon #note that this definition is slightly different from the paper
 budget: 3  # budget at each main step
-propagate_p: 0.1  # influence propagation probability
+q: 0.6  # probability of invited node being present
+
+#paras for power-law graphs
+p: 0.05  #help="p, parameter in graph degree distribution for power-law graphs")
+m: 3  #help="m, parameter in graph degree distribution for power-law graphs")
+
+# for cascade models
+cascade: 'IC'  # cascade model
+propagate_p: 0.1  # influence propagation probability for IC cascade
 l: 0.05  # influence of each neighbor in LT cascade
 d: 1  # d in SC cascade
-q: 0.6  # probability of invited node being present
-cascade: 'IC'  # cascade model
+
+# paras for baselines
 greedy_sample_size: 20  # sample size for value estimation of greedy algorithms
 num_simul_train: 200
 num_simul_test: 1000
 
-mode: 'train' # str, {'train', 'test'}
-
-graph_node_var: 20
-
+# for real network
 sample_nodes_ratio: 0.5  # 50%, or more options: [0.2, 0.3, 0.7, 0.9]
 sample_nodes_prob: 1.0   # randomly keep 80% of the sampled nodes
