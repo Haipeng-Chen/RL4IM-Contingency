@@ -12,6 +12,8 @@ batch: None  # type=int, metavar='nagent', default=None, help='batch run several
 verbose: False # action='store_true', default=True, help='Display cumulative results at each step')
 task: 'colge'
 save_every: 20 # save model and do validation every few episodes, default 20
+num_simul_train: 200
+num_simul_test: 1000
 
 # epsilon greedy
 init_epsilon: 0.99
@@ -24,17 +26,7 @@ method: 'rl'  # ['rl', 'ada_greedy', 'lazy_adaptive_greedy']
 # these are used as ablation study
 use_state_abs: True
 reward_type: 3 #int {0, 1, 2, 3}
-#
-# #graph_type: 'erdos_renyi' # , metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
-# #graph_nbr: 8 # , type=int, default='1', help='number of differente graph to generate for the training sample')
-# #node: 20 # type=int, metavar='nnode', default=20, help="number of node in generated graphs")
-# #p: 0.14  #, default=0.14, help="p, parameter in graph degree distribution")
-# #m: 4  #, default=4, help="m, parameter in graph degree distribution")
 
 model_scheme: 'type1'  # {'normal': 'run graphs with same sizes', 
                         #  'type1': 'padding', 
                         #  'type2': 'for loop for graphs with various nodes'}
-realgraph: ""  # "Exhibition", "Flu", "Hospital", "India", "irvine"
-
-sample_graph: False 
-sample_graph_name: 'Hospital' # ["Exhibition", "Flu", "Hospital", "India", "irvine"]

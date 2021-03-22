@@ -22,9 +22,10 @@ d: 1  # d in SC cascade
 
 # paras for baselines
 greedy_sample_size: 20  # sample size for value estimation of greedy algorithms
-num_simul_train: 200
-num_simul_test: 1000
 
 # for real network
+realgraph: ""  # "Exhibition", "Flu", "Hospital", "India", "irvine"
+sample_graph: False 
+sample_graph_name: 'Hospital' # ["Exhibition", "Flu", "Hospital", "India", "irvine"]
 sample_nodes_ratio: 0.5  # 50%, or more options: [0.2, 0.3, 0.7, 0.9]
 sample_nodes_prob: 1.0   # randomly keep 80% of the sampled nodes

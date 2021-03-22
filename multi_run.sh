@@ -340,56 +340,165 @@
 
 
 
-# March 20 run DIC model
+# March 20 run DIC model # 746-755
+#MODE='test'
+#METHOD='lazy_adaptive_greedy'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#CASCADE='DIC'
+#for GREEDY_SAMPLE_SIZE in 5 10 20 50 100
+#do
+#for T in 6 8
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE
+#done
+#done
+
+# March 20 # 743 740
+#MODE='test'
+#METHOD='random'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#GREEDY_SAMPLE_SIZE=5
+#CASCADE='DIC'
+#for T in 6 8
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE
+#done
+
+# March 20 10.15pm # 756-767
+#MODE='train'
+#NODE_TRAIN=200
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#NUM_SIMUL_TRAIN=200
+#CASCADE='DIC'
+#for LR in 0.0001 0.01
+#do
+#for EPSILON_DECAY_STEPS in 1000 1500
+#do
+#for T in 6 
+#do
+#    sleep 10; sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN
+#done
+#done
+#done
+
+# March 21 0.40am # 772-776
+#MODE='test'
+#METHOD='lazy_adaptive_greedy'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#CASCADE='DIC'
+#GREEDY_SAMPLE_SIZE=50
+#for T in 4 6 8 10 12
+#do
+#    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE
+#done
+
+# March 21 0.40am #777-796
+#MODE='train'
+#NODE_TRAIN=200
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#NUM_SIMUL_TRAIN=200
+#CASCADE='DIC'
+#GRAPH_TYPE='powerlaw'
+#T=6
+#EPSILON_DECAY_STEPS=1500
+#LR=0.001
+#for NUM_SIMUL_TRAIN in 1 10 50 100 200 
+#do
+#for ITER  in 1 2 3 4 # see if RL is stable 
+#do
+#    sleep 10; sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN
+#done
+#done
+
+# March 21 10.40pm train RL4IM # 797-811
+#MODE='train'
+#NODE_TRAIN=200
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#NUM_SIMUL_TRAIN=10
+#CASCADE='DIC'
+#GRAPH_TYPE='powerlaw'
+#T=6
+#EPSILON_DECAY_STEPS=1500
+#LR=0.001
+#for T in 4 6 8 10 12
+#do
+#for ITER in 1 2 3 
+#do 
+#    sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20
+#done
+#done
+
+
+# 812
 MODE='test'
-METHOD='lazy_adaptive_greedy'
-NODE_TEST=200
-BUDGET=2
-P=0.05
-M=5
-GREEDY_SAMPLE_SIZE=5
-CASCADE='DIC'
-for T in 6 8
-do
-    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE
-done
-
-MODE='test'
-METHOD='random'
-NODE_TEST=200
-BUDGET=2
-P=0.05
-M=5
-GREEDY_SAMPLE_SIZE=5
-CASCADE='DIC'
-for T in 6 8
-do
-    sleep 10; sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE
-done
-
-MODE='train'
-NODE_TRAIN=200
+METHOD='rl'
 NODE_TEST=200
 BUDGET=2
 P=0.05
 M=5
 CASCADE='DIC'
-for T in 6 8 
-do
-    sleep 10; sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -y $GRAPH_TYPE -k $CASCADE 
-done
+GREEDY_SAMPLE_SIZE=50
+GRAPH_TYPE='powerlaw'
+#
+#T=6
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/783/models
+#LOAD_STEP=1704
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20
+# 818-822
+T=4
+CHECK_POINT_PATH=./temp_dir/colge/sacred/799/models
+LOAD_STEP=1100
+sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#
+T=6
+CHECK_POINT_PATH=./temp_dir/colge/sacred/801/models
+LOAD_STEP=1524
+sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+T=8
+CHECK_POINT_PATH=./temp_dir/colge/sacred/803/models
+LOAD_STEP=1640
+sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+T=10
+CHECK_POINT_PATH=./temp_dir/colge/sacred/807/models
+LOAD_STEP=1620
+sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+T=12
+CHECK_POINT_PATH=./temp_dir/colge/sacred/811/models
+LOAD_STEP=1608
+sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
 
 
-
-
-
-
-
-
-
-
-
-
+# March 21 random # 813-817
+#MODE='test'
+#METHOD='random'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#CASCADE='DIC'
+#GREEDY_SAMPLE_SIZE=50
+#for T in 4 6 8 10 12
+#do
+#    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 20
+#done
 
 
 

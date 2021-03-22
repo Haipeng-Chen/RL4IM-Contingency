@@ -15,7 +15,7 @@ from src.agent.colge.agent import DQAgent
 from src.agent.baseline import *
 from src.environment.graph import Graph
 from src.environment.env import NetworkEnv, Environment
-from src.tasks.task_basic_dqn import get_graph
+#from src.tasks.task_basic_dqn import get_graph
 from src.runner.utils import try_load_checkpint
 import ipdb
 
