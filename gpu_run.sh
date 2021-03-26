@@ -15,6 +15,7 @@ NODE_TRAIN=200
 NODE_TEST=200
 
 GRAPH_TYPE='erdos_renyi'
+REAL_GRAPH=''
 MODE='train'
 M=7
 PROPAGATE_P=0.1
@@ -28,7 +29,7 @@ SAVE_EVERY=20
 GREEDY_SAMPLE_SIZE=100
 NUM_SIMUL_TRAIN=100
 
-while getopts f:g:q:t:b:c:e:h:i:j:k:l:m:n:o:p:r:s:z: option
+while getopts f:g:q:t:b:c:d:e:h:i:j:k:l:m:n:o:p:r:s:z: option
 do
 case "${option}"
 in
@@ -40,6 +41,7 @@ t) T=${OPTARG};;
 b) BUDGET=${OPTARG};;
 #other problem settings
 c) GRAPH_TYPE=${OPTARG};;
+d) REAL_GRAPH=${OPTARG};;
 e) MODE=${OPTARG};;
 h) M=${OPTARG};;
 i) PROPAGATE_P=${OPTARG};;
@@ -62,4 +64,4 @@ echo 'method is:' $METHOD
 echo 'budget is:' $BUDGET
 #declare -i T
 
-python main.py --config=colge --env-config=basic_env --results-dir=temp_dir with T=$T budget=$BUDGET save_every=$SAVE_EVERY q=$Q mode=$MODE node_train=$NODE_TRAIN node_test=$NODE_TEST m=$M propagate_p=$PROPAGATE_P p=$P method=$METHOD greedy_sample_size=$GREEDY_SAMPLE_SIZE graph_type=$GRAPH_TYPE lr=$LR epsilon_decay_steps=$EPSILON_DECAY_STEPS num_simul_train=$NUM_SIMUL_TRAIN checkpoint_path=$CHECK_POINT_PATH load_step=$LOAD_STEP 
+python main.py --config=rl4im --env-config=basic_env --results-dir=temp_dir with T=$T budget=$BUDGET save_every=$SAVE_EVERY q=$Q mode=$MODE node_train=$NODE_TRAIN node_test=$NODE_TEST m=$M propagate_p=$PROPAGATE_P p=$P method=$METHOD greedy_sample_size=$GREEDY_SAMPLE_SIZE graph_type=$GRAPH_TYPE real_graph=$REAL_GRAPH cascade=$CASCADE lr=$LR epsilon_decay_steps=$EPSILON_DECAY_STEPS num_simul_train=$NUM_SIMUL_TRAIN checkpoint_path=$CHECK_POINT_PATH load_step=$LOAD_STEP 

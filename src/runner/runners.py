@@ -240,24 +240,6 @@ class Runner:
                         cumul_reward += reward
                         print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Epsilon: {self.agent.curr_epsilon:.2f}")
                         
-                        #if (self.agent.global_t+1) % 100 == 0:
-                        #    # save the model
-                        #    self.agent.save_model(self.model_path)
-                        #    g_names, episode_accumulated_rewards = self.evaluate()
-                        #    mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
-                        #    for i, graph_name in enumerate(g_names):
-                        #        self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
-                        #                             value=mean_accumulated_reward_per_graph[i],
-                        #                             t=self.agent.global_t)
-                        #        if graph_name not in graph_eval_reward:
-                        #            graph_eval_reward[graph_name] = [mean_accumulated_reward_per_graph[i]]
-                        #        else:
-                        #            graph_eval_reward[graph_name].append(mean_accumulated_reward_per_graph[i])
-
-
-                        #if (self.agent.global_t + 1) % 100 == 0:
-                        #    self.agent.save_model(self.model_path)
-
                         self.logger.log_stat(key=f'{graph_name}/epsilon', 
                                              value=self.agent.curr_epsilon, 
                                              t=self.agent.global_t)
@@ -289,13 +271,10 @@ class Runner:
                         #maximal number of training steps 
                             terminate = True
                             break 
-                    #if global_episode % self.args.save_every  == 0:
-                    print('remainder is:', self.agent.global_t % self.args.save_every)
                     if self.agent.global_t % self.args.save_every < self.environment.T:
                         print('saving the model')
-                        # save the model
                         self.agent.save_model(self.model_path)
-                        g_names, episode_accumulated_rewards = self.evaluate()
+                        g_names, episode_accumulated_rewards = self.evaluate()  #TODO: decrease samples 20->5; decrese validation inf samples 1000->100
                         mean_accumulated_reward_per_graph = np.mean(episode_accumulated_rewards, axis=1)
                         for i, graph_name in enumerate(g_names):
                             self.logger.log_stat(key=f'{graph_name}/eval_episode_reward',
@@ -306,10 +285,6 @@ class Runner:
                             else:
                                 graph_eval_reward[graph_name].append(episode_accumulated_rewards[i].tolist())
                         
-                        #self.logger.log_stat(key=f'{graph_name}/eval_episode_reward', 
-                        #                     value=mean_eval_reward, 
-                        #                     t=self.agent.global_t)
-
                 # save per episode
                 with open(os.path.join(self.results_path, 'train_episode_rewards.json'), 'w') as f:
                     json.dump(graph_cumul_reward, f, indent=4)

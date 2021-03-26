@@ -447,43 +447,43 @@
 #done
 
 
-# 812
-MODE='test'
-METHOD='rl'
-NODE_TEST=200
-BUDGET=2
-P=0.05
-M=5
-CASCADE='DIC'
-GREEDY_SAMPLE_SIZE=50
-GRAPH_TYPE='powerlaw'
-#
+# 812, 818-822
+#MODE='test'
+#METHOD='rl'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#CASCADE='DIC'
+#GREEDY_SAMPLE_SIZE=50
+#GRAPH_TYPE='powerlaw'
+##
+##T=6
+##CHECK_POINT_PATH=./temp_dir/colge/sacred/783/models
+##LOAD_STEP=1704
+##sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20
+## 
+#T=4
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/799/models
+#LOAD_STEP=1100
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+##
 #T=6
-#CHECK_POINT_PATH=./temp_dir/colge/sacred/783/models
-#LOAD_STEP=1704
-#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20
-# 818-822
-T=4
-CHECK_POINT_PATH=./temp_dir/colge/sacred/799/models
-LOAD_STEP=1100
-sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
-#
-T=6
-CHECK_POINT_PATH=./temp_dir/colge/sacred/801/models
-LOAD_STEP=1524
-sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
-T=8
-CHECK_POINT_PATH=./temp_dir/colge/sacred/803/models
-LOAD_STEP=1640
-sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
-T=10
-CHECK_POINT_PATH=./temp_dir/colge/sacred/807/models
-LOAD_STEP=1620
-sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
-T=12
-CHECK_POINT_PATH=./temp_dir/colge/sacred/811/models
-LOAD_STEP=1608
-sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/801/models
+#LOAD_STEP=1524
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=8
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/803/models
+#LOAD_STEP=1640
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=10
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/807/models
+#LOAD_STEP=1620
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=12
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/811/models
+#LOAD_STEP=1608
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
 
 
 # March 21 random # 813-817
@@ -500,12 +500,218 @@ sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET
 #    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 20
 #done
 
+# Mar 22 3.30pm test CHANGE on IC model vary sample size # 823-827 (T=8), 843-847 (T=6) 
+#MODE='test'
+#METHOD='lazy_adaptive_greedy'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#CASCADE='IC'
+#GRAPH_TYPE='powerlaw'
+#for GREEDY_SAMPLE_SIZE in 5 10 20 50 100
+#do
+#for T in 6
+#do 
+#    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 20;
+#done
+#done
+
+# Mar 22 3.40pm train RL on IC model # 828-842
+#MODE='train'
+#NODE_TRAIN=200
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#NUM_SIMUL_TRAIN=10
+#CASCADE='IC'
+#GRAPH_TYPE='powerlaw'
+#EPSILON_DECAY_STEPS=1500
+#LR=0.001
+#for T in 4 6 8 10 12
+#do
+#for ITER in 1 2 3 
+#do 
+#   sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20;
+#done
+#done
+
+# test RL on IC model #848-852 
+#MODE='test'
+#METHOD='rl'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#CASCADE='IC'
+#GREEDY_SAMPLE_SIZE=50
+#GRAPH_TYPE='powerlaw'
+#T=4
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/828/models
+#LOAD_STEP=1720
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=6
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/832/models
+#LOAD_STEP=1242
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=8
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/836/models
+#LOAD_STEP=1840
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=10
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/837/models
+#LOAD_STEP=1440
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=12
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/840/models
+#LOAD_STEP=1560
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
 
 
+# test random/CHANGE (sample = 50 5) on IC model #854-868
+#MODE='test'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#CASCADE='IC'
+#GRAPH_TYPE='powerlaw'
+#GREEDY_SAMPLE_SIZE=5
+#METHOD='lazy_adaptive_greedy'
+#for T in 4 6 8 10 12
+#do 
+#    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 20;
+#done
+
+# previous DIC model runs are wrong; test random, CHANGE (sample=5, 50) on DIC model # propagation_p=0.1: 904-938; 0.2: 939-968 (for all the following 4 set of exps) 
+#MODE='test'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#CASCADE='DIC'
+#PROPAGATE_P=0.2
+#GRAPH_TYPE='powerlaw'
+#GREEDY_SAMPLE_SIZE=5
+#METHOD='lazy_adaptive_greedy'
+#for GREEDY_SAMPLE_SIZE in 5 50
+#do
+#for T in 4 8 12 16 20
+#do
+#    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 20;
+#done
+#done
+
+## test random on DIC model 
+#MODE='test'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#PROPAGATE_P=0.2
+#CASCADE='DIC'
+#GRAPH_TYPE='powerlaw'
+#GREEDY_SAMPLE_SIZE=5
+#METHOD='random'
+#for T in 4 8 12 16 20 
+#do 
+#    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 20;
+#done
+#
+## train RL DIC model 
+#MODE='train'
+#NODE_TRAIN=200
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#PROPAGATE_P=0.2
+#NUM_SIMUL_TRAIN=10
+#CASCADE='DIC'
+#GRAPH_TYPE='powerlaw'
+#T=6
+#EPSILON_DECAY_STEPS=1500
+#LR=0.001
+#for T in 4 8 12 16 20 
+#do
+#for ITER in 1 2 3 
+#do 
+#    sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20
+#done
+#done
+
+# RL test DIC model 
+#MODE='test'
+#METHOD='rl'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#PROPAGATE_P=0.2
+#CASCADE='DIC'
+#GREEDY_SAMPLE_SIZE=50
+#GRAPH_TYPE='powerlaw'
+#T=4
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/920/models
+#LOAD_STEP=1900
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=8
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/923/models
+#LOAD_STEP=1880
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=12
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/926/models
+#LOAD_STEP=1860
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=16
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/930/models
+#LOAD_STEP=1968
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#T=20
+#CHECK_POINT_PATH=./temp_dir/colge/sacred/931/models
+#LOAD_STEP=1740
+#sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
 
 
+# try real/customized graph # 969-
+#MODE='test'
+#NODE_TEST=200
+#BUDGET=2
+#P=0.05
+#M=5
+#PROPAGATE_P=0.5
+#CASCADE='DIC'
+#GRAPH_TYPE='powerlaw'
+#GREEDY_SAMPLE_SIZE=5
+#METHOD='random' 
+#REAL_GRAPH='India'
+#for T in 8 
+#do  
+#    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $REAL_GRAPH -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 2;
+#done
 
 
-
-
+# train RL DIC model 
+MODE='train'
+NODE_TRAIN=200
+NODE_TEST=200
+BUDGET=2
+P=0.05
+M=5
+PROPAGATE_P=0.5
+NUM_SIMUL_TRAIN=10
+CASCADE='DIC'
+GRAPH_TYPE='powerlaw'
+REAL_GRAPH='India'
+T=6
+EPSILON_DECAY_STEPS=1500
+LR=0.001
+for T in 8
+do
+for ITER in 1 2 3 
+do 
+    sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20
+done
+done
 
