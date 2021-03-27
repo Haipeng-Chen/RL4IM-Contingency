@@ -52,39 +52,72 @@ def runIC (G, S, p=0.01 ):
                  T.append(v)
     return T
 
-def runDIC (G, S, p=0.01, q=0.001 ):
-    ''' Runs independent cascade model.
+def runDIC (G, S, p=0.01, q=0, r=2 ):
+    ''' Runs Deflated IC model.
     Input: G -- networkx graph object
     S -- initial list of vertices
-    V1 -- set of first attpemt influenced node
-    V2 -- set of second attpemt influenced node
-    p -- propagation probability
-    q -- 1 neighbor propagation probability
+    p -- propagation probability with >=r active neighbors 
+    q -- propagation probability with <r active neighbors
+    r -- threshold in r-complex contagion 
     Output: T -- resulted influenced set of vertices (including S)
     '''
+    q = 0
     T = deepcopy(S)
-    V1=[]
-    V2=[]
-    i = 0
+    flag = 0
+    if 8 in T and 9 in T: 
+        print(f'T is: {T}; length of T is: {len(T)}')
+        flag = 1
     for u in T: # T may increase size during iterations
          for v in G[u]: # check whether new node v is influenced by chosen node u
-             #w = G[u][v]['weight']
              w = 1
              if v not in T:
-                 if v not in V1:
-                     if random.random() < q: # First infect as small prob
-                         T.append(v)
-                     else:
-                         V1.append(v)
-                 elif v in V1 and v not in V2:
-                     if random.random() < (1-(1-p**2)-q)/(1-q): #q+(1-q)x=(1-(1-p^2)), x=(1-(1-p^2)-q)/(1-q)
-                         T.append(v)
-                     else:
-                         V2.append(v) #the node is atempted by more then 2 times
-                 elif v in V2:
-                     if random.random() < p:
-                         T.append(v)
+                 num_active_neighbor = len(set(T).intersection(set(G[v])))
+                 temp = random.random() 
+                 if (num_active_neighbor >= r and temp < 1 - (1-p)**w) or (num_active_neighbor < r and temp < 1- (1-q)**w):
+                     T.append(v)
+    #if 8 in T and 9 in T: 
+        #print(f'T is: {T}; length of T is: {len(T)}')
+        #pdb.set_trace()
+    if flag == 1:
+        print(f'T is: {T}; length of T is: {len(T)}')
     return T
+
+
+
+
+#def runDIC (G, S, p=0.01, q=0.001 ):
+#    ''' Runs independent cascade model.
+#    Input: G -- networkx graph object
+#    S -- initial list of vertices
+#    V1 -- set of first attpemt influenced node
+#    V2 -- set of second attpemt influenced node
+#    p -- propagation probability
+#    q -- 1 neighbor propagation probability
+#    Output: T -- resulted influenced set of vertices (including S)
+#    '''
+#    T = deepcopy(S)
+#    V1=[]
+#    V2=[]
+#    i = 0
+#    for u in T: # T may increase size during iterations
+#         for v in G[u]: # check whether new node v is influenced by chosen node u
+#             #w = G[u][v]['weight']
+#             w = 1
+#             if v not in T:
+#                 if v not in V1:
+#                     if random.random() < q: # First infect as small prob
+#                         T.append(v)
+#                     else:
+#                         V1.append(v)
+#                 elif v in V1 and v not in V2:
+#                     if random.random() < (1-(1-p**2)-q)/(1-q): #q+(1-q)x=(1-(1-p^2)), x=(1-(1-p^2)-q)/(1-q)
+#                         T.append(v)
+#                     else:
+#                         V2.append(v) #the node is atempted by more then 2 times
+#                 elif v in V2:
+#                     if random.random() < p:
+#                         T.append(v)
+#    return T
 
 def runLT (G, S, l=0.01 ):
     ''' Runs independent cascade model.

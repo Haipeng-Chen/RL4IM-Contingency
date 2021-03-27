@@ -84,20 +84,12 @@ class Graph:
         _temp_g = self.orig_g.subgraph(sampled_nodes.tolist()).copy()
 
         edges = list(_temp_g.edges())
-        # indices = range(len(edges))
-        # indices = np.random.choice(indices, size=int(np.floor(self.args.sample_nodes_prob * len(edges))), replace=False)
-        # edges = [edges[idx] for idx in indices]
 
         nodes = sampled_nodes.tolist()
         index_map = {node: idx for idx, node in zip(range(len(sampled_nodes)), nodes)}
         _temp_g = nx.relabel_nodes(_temp_g, index_map)
 
-        # # 转换索引 避免bug
-        # for i, edge in enumerate(edges):
-        #     edges[i] = (index_map[edge[0]], index_map[edge[1]])
-
         self.g = _temp_g
-        # self.g.add_edges_from(edges)
         self.cur_n = nx.number_of_nodes(self.g)
         self.max_node_num = self.cur_n
 

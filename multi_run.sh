@@ -675,43 +675,46 @@
 
 
 # try real/customized graph # 969-
+#Q=1.0
 #MODE='test'
 #NODE_TEST=200
-#BUDGET=2
+#BUDGET=3
 #P=0.05
 #M=5
-#PROPAGATE_P=0.5
+#PROPAGATE_P=0
 #CASCADE='DIC'
 #GRAPH_TYPE='powerlaw'
-#GREEDY_SAMPLE_SIZE=5
-#METHOD='random' 
-#REAL_GRAPH='India'
-#for T in 8 
+#GREEDY_SAMPLE_SIZE=100
+##METHOD='lazy_adaptive_greedy' 
+#METHOD='random'
+#REAL_GRAPH='toy'
+#for T in 3 
 #do  
-#    sbatch cpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $REAL_GRAPH -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 2;
+#    sbatch cpu_run.sh -q $Q -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $REAL_GRAPH -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 2;
 #done
 
 
 # train RL DIC model 
+Q=1.0
 MODE='train'
 NODE_TRAIN=200
 NODE_TEST=200
-BUDGET=2
+BUDGET=3
 P=0.05
 M=5
-PROPAGATE_P=0.5
+PROPAGATE_P=1
 NUM_SIMUL_TRAIN=10
 CASCADE='DIC'
 GRAPH_TYPE='powerlaw'
-REAL_GRAPH='India'
-T=6
+REAL_GRAPH='toy'
+T=3
 EPSILON_DECAY_STEPS=1500
-LR=0.001
-for T in 8
+LR=0.01
+for T in 3
 do
 for ITER in 1 2 3 
 do 
-    sbatch gpu_run.sh -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20
+    sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 2
 done
 done
 

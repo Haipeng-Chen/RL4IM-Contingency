@@ -23,9 +23,9 @@ def load_grah(args):
     graph_dic = {}
     
     path = Path(os.path.dirname(os.path.realpath(__file__))).parent.parent
-    if len(args.real_graph) != 0:
+    if args.real_graph != None:
         #print('loading real graph')
-        real_world_graphs = ["Exhibition", "Flu", "Hospital", "India", "irvine"]
+        real_world_graphs = ["toy", "Exhibition", "Flu", "Hospital", "India", "irvine"]
         assert args.real_graph in real_world_graphs, f'{args.real_graph} not in the real graph list'
 
         args.graph_nbr_train = 1

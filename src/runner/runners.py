@@ -9,6 +9,7 @@ import torch as th
 import matplotlib.pyplot as plt
 
 from src.IC import celf
+#TODO: move celf to agent.baselines
 
 from src.utils.logging import Logger
 from src.utils.os_utils import generate_id
@@ -40,7 +41,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episodes=20):
+    def evaluate(self, num_episodes=5):
         """ Start evaluation """
         print(f'\n{"-"*50}start evaluation{"-"*50}')
         tracemalloc.start()
@@ -76,14 +77,11 @@ class Runner:
                     for i in range(1, self.environment.T+1):
                         state, state_padding, available_action_mask = self.environment.get_state(g_index)
                         if self.args.use_state_abs:
-                            state = self.state_abstraction(state) ####
-                        #sec_action = self.agent.act(th.from_numpy(state).float().transpose(1, 0)[None, ...],
-                                                #feasible_actions=feasible_actions.copy(), mode=mode)
+                            state = self.state_abstraction(state) 
                         sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode, mask=available_action_mask) 
     
                         if self.args.verbose:
                             print('current sub action: ', sec_action)
-                        #ipdb.set_trace()
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)
@@ -101,7 +99,6 @@ class Runner:
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                             episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
-                            #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
                             #print('invited: ', invited)
                             #print('present: ', presents) 
                         
@@ -155,7 +152,7 @@ class Runner:
                     self.environment.reset(g_index=g_index, mode=mode)
                     feasible_actions = list(range(self.environment.N))
                     accumulated_reward = 0
-                    invited, _ = celf(self.environment.graphs[g_index].g, self.environment.T, p=self.environment.propagate_p, mc=10)
+                    invited, _ = celf(self.environment.graphs[g_index].g, self.environment.T, p=self.environment.propagate_p, mc=10) 
                     presents, _ = self.environment.transition(invited)
                     accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
@@ -199,7 +196,7 @@ class Runner:
             print('epoch: ', epoch)
             if terminate:
                 break
-            for g_index in range(self.args.graph_nbr_train):  # graph list; first  graph_nbr_train graphs are training, the rest are for test
+            for g_index in range(self.args.graph_nbr_train):  
                 if terminate:
                     break
                                 
@@ -220,15 +217,13 @@ class Runner:
                         
                         curr_episode_t += 1
                         
-                        state, state_padding, available_action_mask = self.environment.get_state(g_index)
+                        state, state_padding, available_action_mask = self.environment.get_state(g_index) #TODO: move it outside of environment
                         if self.args.use_state_abs:
-                            state = self.state_abstraction(state) ####
+                            state = self.state_abstraction(state) 
                             state_padding = self.state_abstraction(state_padding)
                         if (i-1) % self.environment.budget == 0:
                             pri_action=[ ]
-                        #sec_action = self.agent.act(th.from_numpy(abs_state).float().transpose(1, 0)[None, ...],
-                                                #feasible_actions=feasible_actions.copy(), mode=mode)
-                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode, mask=available_action_mask) ####
+                        sec_action = self.agent.act(state, feasible_actions=feasible_actions.copy(), mode=mode, mask=available_action_mask) 
 
                         feasible_actions = self.environment.try_remove_feasible_action(feasible_actions, sec_action)
                         pri_action.append(sec_action)

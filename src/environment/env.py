@@ -12,14 +12,8 @@ from src.IC import runLT_repeat
 from src.IC import runSC_repeat
 from src.agent.baseline import *
 
-#from IC import runIC_repeat
-#from IC import runDIC_repeat
-#from IC import runLT_repeat
-#from IC import runSC_repeat 
-#from baseline import *
-
 import time
-
+import pdb
 
 class NetworkEnv(object):
     '''
@@ -75,7 +69,7 @@ class NetworkEnv(object):
                 uncertain_seeds = []
                 [uncertain_seeds.append(v) for v in range(self.N) if self.state[2][v]==1]
                 # reward_max
-                seeds = fix_seeds
+                seeds = fix_seeds.copy()
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
@@ -95,7 +89,7 @@ class NetworkEnv(object):
                 uncertain_seeds = []
                 [uncertain_seeds.append(v) for v in range(self.N) if self.state[2][v]==1]
                 # reward_max
-                seeds = fix_seeds
+                seeds = fix_seeds.copy()
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
@@ -107,8 +101,8 @@ class NetworkEnv(object):
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_min = self.q*(influence_with - influece_without)
-                reward_min = reward_min/self.N*100
-                self.reward = reward_min*(1-self.q)+reward_max*self.q   ####
+                reward_min = reward_min/self.N*100 ####
+                self.reward = reward_min*self.q+reward_max*(1-self.q)
             else:
                 assert(False)
 
@@ -276,75 +270,3 @@ def arg_parse():
 
     return parser.parse_args()
 
-# THE FOLLOWING CODE ARE FOR TESTING
-#if __name__ == '__main__':
-#
-#    args = arg_parse()
-#    graph_index = args.graph_index 
-#    baseline = args.baseline
-#    T = args.T
-#    #budget_ratio = args.budget_ratio
-#    budget = args.budget
-#    cascade = args.cascade
-#    propagate_p = args.propagate_p
-#    l = args.l
-#    d = args.d
-#    q = args.q
-#    num_simul = args.num_simul
-#    greedy_sample_size = args.greedy_sample_size
-#
-#    graph_list = ['test_graph','Hospital','India','Exhibition','Flu','irvine','Escorts','Epinions']
-#    graph_name = graph_list[graph_index]
-#    path = 'graph_data/' + graph_name + '.txt'
-#    G = nx.read_edgelist(path, nodetype=int)
-#    mapping = dict(zip(G.nodes(),range(len(G))))
-#    G = nx.relabel_nodes(G,mapping)
-#    print('selected graph: ', graph_name)
-#    print('#nodes: ', len(G.nodes))
-#    print('#edges: ', len(G.edges))
-#    env=NetworkEnv(G=G, T=T, budget=budget, propagate_p = propagate_p, l=l, d=d, q=q, cascade=cascade)
-#
-#
-#    rewards = []
-#    def f_multi(x):
-#        s=list(x) 
-#        val = env.run_cascade(seeds=s, cascade=env.cascade, sample=greedy_sample_size)
-#        return val
-#
-#    episodes = 5 
-#    runtime1 = 0
-#    runtime2 = 0
-#    for i in range(episodes):
-#        print('----------------------------------------------')
-#        print('episode: ', i)
-#        env.reset()
-#        actions = []
-#        presents = []
-#        while(env.done == False):
-#            start = time.time()
-#            if baseline == 'random':
-#                action = random.sample(env.feasible_actions, env.budget) 
-#            elif baseline == 'maxdegree':
-#                action = max_degree(env.feasible_actions, env.G, env.budget)
-#            elif baseline == 'ada_greedy':
-#                action, _ = adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
-#            elif baseline == 'lazy_ada_greedy':
-#                action, _ = lazy_adaptive_greedy(env.feasible_actions,env.budget,f_multi,presents)
-#            else:
-#                assert(False)
-#            runtime1 += time.time()-start
-#            start = time.time()
-#            actions.append(action)
-#            invited = action
-#            present, _ = env.transition(action)
-#            presents+=present
-#            runtime2 += time.time()-start
-#            env.step(action)
-#        rewards.append(env.reward) 
-#        print('reward: ', env.reward)
-#        print('invited: ', actions)
-#        print('present: ', presents)
-#    print()
-#    print('----------------------------------------------')
-#    print('average reward for {} policy is: {}, std is: {}'.format(baseline, np.mean(rewards), np.std(rewards)))
-#    print('total runtime for action selection is: {}, total runtime for env.step is: {}'.format(runtime1, runtime2))
