@@ -4,6 +4,7 @@ import numpy as np
 import networkx as nx
 import collections
 
+import pdb
 
 # seed = np.random.seed(120)
 
@@ -22,7 +23,7 @@ class Graph:
 
             self.orig_g = copy.deepcopy(self.g)
             
-            if self.args.sample_graph:
+            if self.args.sample_nodes_ratio < 1.0: #TODO: sanity check
                 self.size = int(np.floor(self.args.sample_nodes_ratio * len(self.orig_g.nodes)))
                 self.init_sub_graph()
         

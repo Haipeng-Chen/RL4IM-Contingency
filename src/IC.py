@@ -63,10 +63,6 @@ def runDIC (G, S, p=0.01, q=0, r=2 ):
     '''
     q = 0
     T = deepcopy(S)
-    flag = 0
-    if 8 in T and 9 in T: 
-        print(f'T is: {T}; length of T is: {len(T)}')
-        flag = 1
     for u in T: # T may increase size during iterations
          for v in G[u]: # check whether new node v is influenced by chosen node u
              w = 1
@@ -75,11 +71,6 @@ def runDIC (G, S, p=0.01, q=0, r=2 ):
                  temp = random.random() 
                  if (num_active_neighbor >= r and temp < 1 - (1-p)**w) or (num_active_neighbor < r and temp < 1- (1-q)**w):
                      T.append(v)
-    #if 8 in T and 9 in T: 
-        #print(f'T is: {T}; length of T is: {len(T)}')
-        #pdb.set_trace()
-    if flag == 1:
-        print(f'T is: {T}; length of T is: {len(T)}')
     return T
 
 

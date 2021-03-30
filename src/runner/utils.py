@@ -1,8 +1,8 @@
 import os
 
 
-def try_load_checkpint(args, runner, agent):
-    if args.checkpoint_path != "":
+def load_checkpint(args, runner, agent):
+    if args.checkpoint_path != None:
 
         timesteps = []
         timestep_to_load = 0

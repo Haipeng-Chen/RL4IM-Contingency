@@ -673,48 +673,130 @@
 #LOAD_STEP=1740
 #sbatch gpu_run.sh -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -z $GREEDY_SAMPLE_SIZE -k $CASCADE -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
 
-
-# try real/customized graph # 969-
+#----------------------------------March 28: Experiments from now are recorded in results/rl4im------------------------
+## try real/customized graph # ER: 75-84 #PL: 
 #Q=1.0
 #MODE='test'
 #NODE_TEST=200
-#BUDGET=3
+#BUDGET=8
 #P=0.05
-#M=5
-#PROPAGATE_P=0
+#M=4
+#PROPAGATE_P=0.1
 #CASCADE='DIC'
+##GRAPH_TYPE='erdos_renyi'
 #GRAPH_TYPE='powerlaw'
-#GREEDY_SAMPLE_SIZE=100
-##METHOD='lazy_adaptive_greedy' 
-#METHOD='random'
-#REAL_GRAPH='toy'
-#for T in 3 
+#GREEDY_SAMPLE_SIZE=50
+#METHOD='lazy_adaptive_greedy' 
+#IS_REAL_GRAPH=False
+#for METHOD in 'lazy_adaptive_greedy' 'random'
+#do
+#for T in 4 8 12 16 20 
 #do  
-#    sbatch cpu_run.sh -q $Q -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $REAL_GRAPH -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 2;
+#    BUDGET=$T; sbatch cpu_run.sh -q $Q -t $T -e $MODE -m $METHOD -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -z $GREEDY_SAMPLE_SIZE -k $CASCADE; sleep 20;
+#done
+#done
+
+## train RL DIC model #ER: 60-74 #PL: 
+#Q=1.0
+#MODE='train'
+#NODE_TRAIN=200
+#NODE_TEST=200
+#BUDGET=1
+#P=0.05
+#M=4
+#PROPAGATE_P=0.1
+#NUM_SIMUL_TRAIN=50
+#CASCADE='DIC'
+##GRAPH_TYPE='erdos_renyi'
+#GRAPH_TYPE='powerlaw'
+#IS_REAL_GRAPH=False
+#T=8
+#EPSILON_DECAY_STEPS=1500
+#LR=0.003
+#for T in 4 8 12 16 20 
+#do
+#BUDGET=$T
+#for ITER in 1 2 3 
+#do 
+#    sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20;
+#done
 #done
 
 
-# train RL DIC model 
+# RL test #85-89
 Q=1.0
-MODE='train'
+MODE='test'
 NODE_TRAIN=200
 NODE_TEST=200
-BUDGET=3
+BUDGET=1
 P=0.05
-M=5
-PROPAGATE_P=1
-NUM_SIMUL_TRAIN=10
+M=4
+PROPAGATE_P=0.1
+NUM_SIMUL_TRAIN=50
 CASCADE='DIC'
+#GRAPH_TYPE='erdos_renyi'
 GRAPH_TYPE='powerlaw'
-REAL_GRAPH='toy'
-T=3
+IS_REAL_GRAPH=False
+T=8
 EPSILON_DECAY_STEPS=1500
-LR=0.01
-for T in 3
-do
-for ITER in 1 2 3 
-do 
-    sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 2
-done
-done
-
+LR=0.003
+## ER graph: 85-89
+#T=4
+#CHECK_POINT_PATH=./results/rl4im/sacred/61/models
+#LOAD_STEP=1640
+#BUDGET=$T
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+##
+#T=8
+#CHECK_POINT_PATH=./results/rl4im/sacred/65/models
+#LOAD_STEP=640
+#BUDGET=$T
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+##
+#T=12
+#CHECK_POINT_PATH=./results/rl4im/sacred/66/models
+#LOAD_STEP=1860
+#BUDGET=$T
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+##
+#T=16
+#CHECK_POINT_PATH=./results/rl4im/sacred/71/models
+#LOAD_STEP=1312
+#BUDGET=$T
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+##
+#T=20
+#CHECK_POINT_PATH=./results/rl4im/sacred/74/models
+#LOAD_STEP=800
+#BUDGET=$T
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+## PL graph: 115-119
+T=4
+CHECK_POINT_PATH=./results/rl4im/sacred/100/models
+LOAD_STEP=1380
+BUDGET=$T
+sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#
+T=8
+CHECK_POINT_PATH=./results/rl4im/sacred/105/models
+LOAD_STEP=1104
+BUDGET=$T
+sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#
+T=12
+CHECK_POINT_PATH=./results/rl4im/sacred/106/models
+LOAD_STEP=780
+BUDGET=$T
+sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#
+T=16
+CHECK_POINT_PATH=./results/rl4im/sacred/109/models
+LOAD_STEP=1984
+BUDGET=$T
+sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#
+T=20
+CHECK_POINT_PATH=./results/rl4im/sacred/113/models
+LOAD_STEP=1580
+BUDGET=$T
+sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;

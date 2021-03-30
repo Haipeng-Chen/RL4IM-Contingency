@@ -12,7 +12,7 @@ import src.agent.rl4im.models as models
 from src.environment.graph import Graph
 from src.agent.rl4im.utils.config import load_model_config
 
-import ipdb
+import pdb
 
 
 def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
@@ -28,7 +28,7 @@ def epsilon_decay(init_v: float, final_v: float, step_t: int, decay_step: int):
 class DQAgent:
     def __init__(self, graph, model, lr, bs, n_step, args=None):
         
-        self.method = 'rl'  # use lowercase 
+        self.method = 'rl'  
         self.graphs = graph
         self.embed_dim = 64
         self.model_name = model
@@ -69,7 +69,7 @@ class DQAgent:
             self.model = models.W2V_QN(G=self.graphs[self.games], **args_init)
 
         self.loss = 0
-        self.criterion = torch.nn.MSELoss(reduction='sum')
+        self.criterion = torch.nn.MSELoss(reduction='mean')
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.T = 5
         self.t = 1
@@ -86,11 +86,7 @@ class DQAgent:
        
     """
     def reset(self, g_index, mode='train'):
-        if mode == 'test':  # do not change the graph index
-            #TODO: 
-            self.games = g_index
-        else:
-            self.games = g_index
+        self.games = g_index
         
         if (len(self.memory_n) != 0) and (len(self.memory_n) % 300000 == 0):
             self.memory_n = random.sample(self.memory_n, 120000)
@@ -106,12 +102,6 @@ class DQAgent:
         self.last_reward = -0.01
         self.last_done=0
         self.iter=1
-
-        #self.init_epsilon = 1.
-        #self.final_epsilon = 0.01
-        #self.curr_epsilon = self.init_epsilon
-        #self.epsilon_decay_steps = 100
-        #self.global_t = 0
 
     def act(self, observation, feasible_actions, mode, mask=None):
         # to cuda
@@ -131,9 +121,6 @@ class DQAgent:
         if self.curr_epsilon > np.random.rand() and mode != 'test':
             action = np.random.choice(feasible_actions)
         else:  # called for both test and train mode
-            #if mode == 'test' and len(feasible_actions)==200:
-                #print('observation: ', observation)
-                #ipdb.set_trace()
             q_a = self.model(observation, self.adj, mask=mask)
             q_a = q_a.detach().cpu().numpy()
             
@@ -145,9 +132,6 @@ class DQAgent:
             
             #action = np.where((q_a[0, :, 0] == np.max(q_a[0, :, 0][observation.cpu().numpy()[0, :, 0] == 0])))[0][0]
             action = int(np.argmax(q_a[0, :, 0]))
-            #if mode == 'test' and len(feasible_actions)==200:
-                #print('action: ', action)
-                #ipdb.set_trace()
 
         if mode != 'test':
             # Update epsilon while training
@@ -169,7 +153,7 @@ class DQAgent:
             observation = th.from_numpy(observation).float().transpose(1, 0)[None, ...]
 
         loss = None
-        if len(self.memory_n) > self.minibatch_length + self.n_step: #or self.games > 2:
+        if len(self.memory_n) > self.minibatch_length + self.n_step:
 
             (last_observation_tens, action_tens, reward_tens, observation_tens, done_tens, adj_tens, obs_mask) = self.get_sample()
             if self.args.model_scheme == 'type2':
@@ -198,10 +182,7 @@ class DQAgent:
             loss.backward()
             self.optimizer.step()
             print(f"[INFO] model update: t: {self.t}, loss: {loss}")
-
-            #self.epsilon = self.eps_end + max(0., (self.eps_start- self.eps_end) * (self.eps_step - self.t) / self.eps_step)
-            #if self.epsilon_ > self.epsilon_min:
-               #self.epsilon_ *= self.discount_factor
+        
         if self.iter > 1:
             self.remember(self.last_observation, self.last_action, self.last_reward, observation.clone(), self.last_done*1, mask)
 
@@ -213,7 +194,7 @@ class DQAgent:
 
         if self.iter > self.n_step:
             self.remember_n(done)
-        
+
         self.iter += 1
         self.t += 1
         self.last_action = action

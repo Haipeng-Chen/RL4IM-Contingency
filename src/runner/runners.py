@@ -18,7 +18,7 @@ import tracemalloc
 
 
 class Runner:
-    def __init__(self, args, environment, agent, verbose=True, logger: Logger=None):
+    def __init__(self, args, environment, agent, verbose=False, logger: Logger=None):
         self.environment = environment
         self.agent = agent
         self.verbose = verbose
@@ -41,7 +41,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episodes=5):
+    def evaluate(self, num_episodes=1):#TODO: change to 20 when q !=1.0
         """ Start evaluation """
         print(f'\n{"-"*50}start evaluation{"-"*50}')
         tracemalloc.start()
@@ -54,7 +54,6 @@ class Runner:
         #pbar = tqdm.tqdm(total=self.args.graph_nbr_test * num_episodes * self.environment.T)
 
         for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+self.args.graph_nbr_test):
-        #for g_index in range(self.args.graph_nbr_train, self.args.graph_nbr_train+5):
             start_time = time.time()
             g_name = self.environment.graphs[g_index].graph_name
             g_names.append(g_name)
@@ -99,8 +98,8 @@ class Runner:
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                             episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
-                            #print('invited: ', invited)
-                            #print('present: ', presents) 
+                            print('invited: ', invited)
+                            print('present: ', presents) 
                         
                         #pbar.update(1)
 
@@ -233,7 +232,7 @@ class Runner:
                         #loss = self.agent.reward(th.from_numpy(state).float().transpose(1, 0)[None, ...], sec_action, reward, done)
                         loss = self.agent.reward(state_padding, sec_action, reward, done, available_action_mask) ####
                         cumul_reward += reward
-                        print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Epsilon: {self.agent.curr_epsilon:.2f}")
+                        print(f"[INFO] Global_t: {self.agent.global_t}, Episode_t: {i}, Action: {sec_action}, Reward: {reward:.2f}, Loss: {loss}, Epsilon: {self.agent.curr_epsilon:.2f}")
                         
                         self.logger.log_stat(key=f'{graph_name}/epsilon', 
                                              value=self.agent.curr_epsilon, 
@@ -263,7 +262,6 @@ class Runner:
                             break    
                                     
                         if self.agent.global_t+1 >= self.args.max_global_t:
-                        #maximal number of training steps 
                             terminate = True
                             break 
                     if self.agent.global_t % self.args.save_every < self.environment.T:
