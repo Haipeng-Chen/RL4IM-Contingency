@@ -9,7 +9,7 @@ from expts.gengraph import random_sbm
 
 #code for graph analysis
 def analyze_graph():
-    data_path = 'data/rand_sbm'
+    data_path = 'data/graph_data'
     for filename in glob.glob(os.path.join(data_path, '*.pkl')):
         with open(filename, 'rb') as f:
             graph = pk.load(f)
@@ -29,9 +29,7 @@ def analyze_graph():
 
 
 def visualize_graph():
-    #data_path = "data/mammal/rob.pkl"
-    data_path = 'data/rt/copen_occupy.pkl'
-    #data_path = 'data/rt/damascus.pkl'
+    data_path = 'data/graph_data/India.txt'
     with open(data_path,'rb') as f:
         graph = pk.load(f)
         sort_components = sorted(nx.connected_components(graph), key = len, reverse=True)

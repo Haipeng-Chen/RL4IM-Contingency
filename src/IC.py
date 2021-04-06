@@ -22,7 +22,7 @@ import pandas as pd
 from collections import Counter
 
 
-def runIC (G, S, p=0.01 ):
+def runIC (G, S, p=0.1 ):
     ''' Runs independent cascade model.
     Input: G -- networkx graph object
     S -- initial list of vertices
@@ -52,7 +52,7 @@ def runIC (G, S, p=0.01 ):
                  T.append(v)
     return T
 
-def runDIC (G, S, p=0.01, q=0, r=2 ):
+def runDIC (G, S, p=0.1, q=0, r=2 ):
     ''' Runs Deflated IC model.
     Input: G -- networkx graph object
     S -- initial list of vertices

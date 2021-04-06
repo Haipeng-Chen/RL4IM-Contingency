@@ -31,7 +31,7 @@ SAVE_EVERY=20
 GREEDY_SAMPLE_SIZE=100
 NUM_SIMUL_TRAIN=100
 
-while getopts f:g:q:t:b:c:d:u:e:h:i:j:k:l:m:n:o:p:r:s:z: option
+while getopts f:g:q:t:b:c:d:u:v:e:h:i:j:k:l:m:n:o:p:r:s:z: option
 do
 case "${option}"
 in
@@ -45,8 +45,8 @@ b) BUDGET=${OPTARG};;
 c) GRAPH_TYPE=${OPTARG};;
 d) IS_REAL_GRAPH=${OPTARG};;
 u) SAMPLE_NODES_RATIO=${OPTARG};;
+v) REAL_GRAPH_NAME=${OPTARG};;
 e) MODE=${OPTARG};;
-a) REAL_GRAPH_NAME=${OPTARG};;
 h) M=${OPTARG};;
 i) PROPAGATE_P=${OPTARG};;
 j) P=${OPTARG};;
