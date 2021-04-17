@@ -12,8 +12,8 @@ batch: None  # type=int, metavar='nagent', default=None, help='batch run several
 verbose: False #False # action='store_true', default=True, help='Display cumulative results at each step')
 task: 'rl4im'
 save_every: 20 # save model and do validation every few episodes, default 20
-num_simul_train: 200
-num_simul_test: 1000
+num_simul_train: 100
+num_simul_test: 50
 
 # epsilon greedy
 init_epsilon: 0.99

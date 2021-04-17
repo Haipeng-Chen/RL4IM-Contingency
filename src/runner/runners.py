@@ -13,8 +13,8 @@ from src.IC import celf
 
 from src.utils.logging import Logger
 from src.utils.os_utils import generate_id
-import ipdb
 import tracemalloc
+import pdb
 
 
 class Runner:
@@ -41,7 +41,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episodes=1):#TODO: change to 20 when q !=1.0
+    def evaluate(self, num_episodes=10): #TODO
         """ Start evaluation """
         print(f'\n{"-"*50}start evaluation{"-"*50}')
         tracemalloc.start()
@@ -123,11 +123,7 @@ class Runner:
 
                         if i == self.environment.T:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
-                            #episode_accumulated_rewards.append(accumulated_reward)
                             episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
-                            #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
-                            #print('invited: ', invited)
-                            #print('present: ', presents)
 
                         #pbar.update(1)
 
@@ -144,7 +140,6 @@ class Runner:
                         print('present: ', presents)
                     accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
-                    #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
             elif self.args.method == 'greedy':
                 print('method is: ', self.args.method)
                 for episode in range(num_episodes):
@@ -155,9 +150,6 @@ class Runner:
                     presents, _ = self.environment.transition(invited)
                     accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                     episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
-                    #print('accumulated reward of episode {} is: {}'.format(episode, accumulated_reward))
-                    #print('invited: ', invited)
-                    #print('present: ', presents)
             end_time = time.time()
             print('runtime for one graph is: ', end_time-start_time)
 

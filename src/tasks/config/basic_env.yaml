@@ -1,7 +1,7 @@
 #-----------------------------------environment args-----------------------------------
 mode: 'train' # str, {'train', 'test'}
 graph_type: 'powerlaw'  # 'erdos_renyi', 'powerlaw' metavar='GRAPH', default='erdos_renyi', help ='Type of graph to optimize')
-graph_nbr_train: 200 # , type=int, default='1', help='number of differente graph to generate for the training sample')
+graph_nbr_train: 20 # , type=int, default='1', help='number of differente graph to generate for the training sample')
 graph_nbr_test: 5 # , type=int, default='1', help='number of differente graph to generate for the test sample')
 node_train: 200 # "number of node in generated train graphs", 100+ 50, 100
 node_test: 200 # "number of node in generated test graphs", 100+ 50, 100
@@ -26,5 +26,5 @@ greedy_sample_size: 20  # sample size for value estimation of greedy algorithms
 # for real network
 is_real_graph: False  
 real_graph_name: 'Hospital' # ["Exhibition", "Flu", "Hospital", "India", "irvine"]
-sample_nodes_ratio: 0.8  
+sample_nodes_ratio: 1.0  
 #sample_edges_keep_prob: 1.0   # randomly keep a percentage of the sampled edges
