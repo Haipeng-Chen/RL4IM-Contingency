@@ -14,7 +14,7 @@ from src.runner import runners
 from src.agent.rl4im.agent import DQAgent
 from src.agent.baseline import *
 from src.environment.graph import Graph
-from src.environment.env import NetworkEnv, Environment
+from src.environment.env import Environment
 from src.runner.utils import load_checkpint
 import ipdb
 
