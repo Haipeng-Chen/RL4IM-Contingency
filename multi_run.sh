@@ -952,7 +952,7 @@ for SAMPLE_NODES_RATIO in 0.9 0.95
 do
 for ITER in 1 2 3 
 do 
-   sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20;
+   sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -o $NUM_SIMUL_TRAIN; sleep 20;
 done
 done
 
@@ -974,10 +974,10 @@ GRAPH_TYPE='powerlaw'
 EPSILON_DECAY_STEPS=1500
 LR=0.003
 T=8
-for SAMPLE_NODES_RATIO in 0.9 0.95
-do
 for METHOD in 'lazy_adaptive_greedy' 'random'
 do
-    sbatch cpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20;
+for SAMPLE_NODES_RATIO in 0.9 0.95
+do
+    sbatch cpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -o $NUM_SIMUL_TRAIN; sleep 20;
 done
 done
