@@ -13,7 +13,7 @@ verbose: False #False # action='store_true', default=True, help='Display cumulat
 task: 'rl4im'
 save_every: 20 # save model and do validation every few episodes, default 20
 num_simul_train: 100
-num_simul_test: 50
+num_simul_test: 100
 
 # epsilon greedy
 init_epsilon: 0.99
@@ -21,11 +21,11 @@ final_epsilon: 0.01
 epsilon_decay_steps: 1000
 #
 #
-method: 'rl'  # ['rl', 'ada_greedy', 'lazy_adaptive_greedy']
+method: 'rl'  # ['rl', 'random', 'lazy_adaptive_greedy']
 #
 # these are used as ablation study
 use_state_abs: True
-reward_type: 0 #int {0, 1, 2, 3}
+reward_type: 3 #int {0, 1, 2, 3} 
 
 model_scheme: 'type1'  # ways to handle various graph size in graph embedding #{'normal': 'run graphs with same sizes', 'type1': 'padding', 'type2': 'for loop for graphs with various nodes'} #TODO
 

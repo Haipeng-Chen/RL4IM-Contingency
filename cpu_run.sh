@@ -26,12 +26,13 @@ CASCADE='IC'
 
 LR=0.001
 METHOD='rl'
+REWARD_TYPE=3
 EPSILON_DECAY_STEPS=1000
 SAVE_EVERY=20
 GREEDY_SAMPLE_SIZE=100
 NUM_SIMUL_TRAIN=100
 
-while getopts f:g:q:t:b:c:d:u:v:e:h:i:j:k:l:m:n:o:p:r:s:z: option
+while getopts f:g:q:t:b:c:d:u:v:e:h:i:j:k:l:m:a:n:o:p:r:s:z: option
 do
 case "${option}"
 in
@@ -54,6 +55,7 @@ k) CASCADE=${OPTARG};;
 #methods related
 l) LR=${OPTARG};;
 m) METHOD=${OPTARG};;
+a) REWARD_TYPE=${OPTARG};;
 n) EPSILON_DECAY_STEPS=${OPTARG};;
 o) NUM_SIMUL_TRAIN=${OPTARG};;
 p) CHECK_POINT_PATH=${OPTARG};;
@@ -67,4 +69,4 @@ done
 #echo 'method is:' $METHOD
 #echo 'budget is:' $BUDGET
 
-python main.py --config=rl4im --env-config=basic_env --results-dir=results with T=$T budget=$BUDGET save_every=$SAVE_EVERY q=$Q mode=$MODE node_train=$NODE_TRAIN node_test=$NODE_TEST m=$M propagate_p=$PROPAGATE_P p=$P method=$METHOD greedy_sample_size=$GREEDY_SAMPLE_SIZE graph_type=$GRAPH_TYPE is_real_graph=$IS_REAL_GRAPH sample_nodes_ratio=$SAMPLE_NODES_RATIO cascade=$CASCADE real_graph_name=$REAL_GRAPH_NAME lr=$LR epsilon_decay_steps=$EPSILON_DECAY_STEPS num_simul_train=$NUM_SIMUL_TRAIN checkpoint_path=$CHECK_POINT_PATH load_step=$LOAD_STEP
+python main.py --config=rl4im --env-config=basic_env --results-dir=cpu_results with T=$T budget=$BUDGET save_every=$SAVE_EVERY q=$Q mode=$MODE node_train=$NODE_TRAIN node_test=$NODE_TEST m=$M propagate_p=$PROPAGATE_P p=$P method=$METHOD reward_type=$REWARD_TYPE greedy_sample_size=$GREEDY_SAMPLE_SIZE graph_type=$GRAPH_TYPE is_real_graph=$IS_REAL_GRAPH sample_nodes_ratio=$SAMPLE_NODES_RATIO cascade=$CASCADE real_graph_name=$REAL_GRAPH_NAME lr=$LR epsilon_decay_steps=$EPSILON_DECAY_STEPS num_simul_train=$NUM_SIMUL_TRAIN checkpoint_path=$CHECK_POINT_PATH load_step=$LOAD_STEP

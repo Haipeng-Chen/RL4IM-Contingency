@@ -1,6 +1,8 @@
-High-School: |V|=327 |E|=5818
 football: |V|=115 |E|=613
 polbooks: |V|=105 |E|=441
-India: |V|=202 |E|=
-Hospital: |V|=75 
+India: |V|=202 |E|=692
+Hospital: |V|=75 |E|=32424 
+High-School: |V|=327 |E|=5818
+Exhibition: |V|=410 |E|=2765
 Escorts: |V|=10106 |E|=39024
+irvine: |V|=1899 |E|=13838

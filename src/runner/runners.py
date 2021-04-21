@@ -41,7 +41,7 @@ class Runner:
         abs_state = state[0]+state[2]*self.args.q
         return abs_state
 
-    def evaluate(self, num_episodes=10): #TODO
+    def evaluate(self, num_episodes=20): #TODO
         """ Start evaluation """
         print(f'\n{"-"*50}start evaluation{"-"*50}')
         tracemalloc.start()
@@ -92,14 +92,12 @@ class Runner:
                             invited += pri_action
                             pri_action=[ ]
                             
-                            if self.args.verbose:
-                                print('present: ', present)
-
                         if done:
                             accumulated_reward = self.environment.run_cascade(seeds=presents, cascade=self.environment.cascade, sample=self.args.num_simul_test)
                             episode_accumulated_rewards[g_index-self.args.graph_nbr_train, episode] = accumulated_reward / float(len(self.environment.graphs[g_index].nodes))
-                            print('invited: ', invited)
-                            print('present: ', presents) 
+                            if self.args.verbose:
+                                print('invited: ', invited)
+                                print('present: ', presents) 
                         
                         #pbar.update(1)
 

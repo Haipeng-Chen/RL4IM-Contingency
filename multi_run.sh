@@ -929,7 +929,9 @@
 #T=8
 #sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -o $NUM_SIMUL_TRAIN; sleep 20;
 
-# train RL on IC model on real graphs 
+# train RL on IC model on real graphs #April 18 # 426-485: graph={India, football, polbooks}, method={rl, cg, rd}, propagate_p={0.1, 0.15}, ratio={0.9, 0.95}  # no success
+# try larger graphs # results folder for cpu runs changed to cpu_results #graphs={Exhibition, High-School}, propagate_p={0.1, 0.15, 0.2}, ratio={0.4, 0.5, 0.6} rl: results/486-539 non-rl: cpu_results/1-36
+#
 MODE='train'
 NODE_TRAIN=200
 NODE_TEST=200
@@ -937,10 +939,11 @@ BUDGET=2
 Q=0.6
 P=0.05
 M=3
-PROPAGATE_P=0.1
+PROPAGATE_P=0.15
 NUM_SIMUL_TRAIN=10
 CASCADE='IC'
 METHOD='rl' 
+REWARD_TYPE=3
 IS_REAL_GRAPH=True
 SAMPLE_NODES_RATIO=0.95
 REAL_GRAPH_NAME='India'
@@ -948,14 +951,21 @@ GRAPH_TYPE='powerlaw'
 EPSILON_DECAY_STEPS=1500
 LR=0.003
 T=8 
-for SAMPLE_NODES_RATIO in 0.9 0.95
+for REAL_GRAPH_NAME in 'Exhibition' 'High-School'
 do
-for ITER in 1 2 3 
-do 
-   sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -o $NUM_SIMUL_TRAIN; sleep 20;
-done
+    for PROPAGATE_P in 0.1 0.15 0.2 
+    do
+        for SAMPLE_NODES_RATIO in 0.4 0.5 0.6
+        do
+            for ITER in 1 2 3 
+            do 
+                sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -v $REAL_GRAPH_NAME -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -a $REWARD_TYPE -o $NUM_SIMUL_TRAIN; sleep 10;
+            done
+        done
+    done
 done
 
+# test version of the above
 MODE='test'
 NODE_TRAIN=200
 NODE_TEST=200
@@ -963,21 +973,67 @@ BUDGET=2
 Q=0.6
 P=0.05
 M=3
-PROPAGATE_P=0.1
+PROPAGATE_P=0.15
 NUM_SIMUL_TRAIN=10
 CASCADE='IC'
-METHOD='lazy_adaptive_greedy' 
+METHOD='lazy_adaptive_greedy'
+REWARD_TYPE=3
 IS_REAL_GRAPH=True
 SAMPLE_NODES_RATIO=0.95
-REAL_GRAPH_NAME='India'
+REAL_GRAPH_NAME='irvine'
 GRAPH_TYPE='powerlaw'
 EPSILON_DECAY_STEPS=1500
 LR=0.003
 T=8
-for METHOD in 'lazy_adaptive_greedy' 'random'
+for REAL_GRAPH_NAME in 'Exhibition' 'High-School' 
 do
-for SAMPLE_NODES_RATIO in 0.9 0.95
-do
-    sbatch cpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -o $NUM_SIMUL_TRAIN; sleep 20;
+    for PROPAGATE_P in 0.1 0.15 0.2 
+    do
+        for SAMPLE_NODES_RATIO in 0.4 0.5 0.6
+        do
+            for METHOD in 'lazy_adaptive_greedy' 'random'
+            do
+                sbatch cpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -v $REAL_GRAPH_NAME -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -a $REWARD_TYPE -o $NUM_SIMUL_TRAIN; sleep 10;
+            done
+        done
+    done
 done
-done
+
+
+#MODE='test'
+#NODE_TRAIN=200
+#NODE_TEST=200
+#BUDGET=2
+#Q=0.6
+#P=0.05
+#M=3
+#PROPAGATE_P=0.15
+#NUM_SIMUL_TRAIN=10
+#CASCADE='IC'
+#METHOD='rl'
+#REWARD_TYPE=3
+#IS_REAL_GRAPH=True
+#SAMPLE_NODES_RATIO=0.95
+#REAL_GRAPH_NAME='irvine'
+#GRAPH_TYPE='powerlaw'
+#EPSILON_DECAY_STEPS=1500
+#LR=0.003
+#T=8
+##
+#SAMPLE_NODES_RATIO=0.30
+#CHECK_POINT_PATH=./results/rl4im/sacred/412/models
+#LOAD_STEP=624
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -a $REWARD_TYPE -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+#CHECK_POINT_PATH=./results/rl4im/sacred/414/models
+#LOAD_STEP=984
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -a $REWARD_TYPE -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
+##
+#SAMPLE_NODES_RATIO=0.4
+#CHECK_POINT_PATH=./results/rl4im/sacred/419/models
+#LOAD_STEP=1144
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -a $REWARD_TYPE -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20; 
+##
+#SAMPLE_NODES_RATIO=0.4
+#CHECK_POINT_PATH=./results/rl4im/sacred/421/models
+#LOAD_STEP=880
+#sbatch gpu_run.sh -q $Q -t $T -e $MODE -f $NODE_TRAIN -g $NODE_TEST -j $P -h $M -i $PROPAGATE_P -b $BUDGET -c $GRAPH_TYPE -d $IS_REAL_GRAPH -u $SAMPLE_NODES_RATIO -k $CASCADE -n $EPSILON_DECAY_STEPS -l $LR -m $METHOD -a $REWARD_TYPE -o $NUM_SIMUL_TRAIN -p $CHECK_POINT_PATH -r $LOAD_STEP; sleep 20;
