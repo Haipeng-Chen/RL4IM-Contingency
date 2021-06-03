@@ -6,8 +6,8 @@ graph_nbr_test: 5 # , type=int, default='1', help='number of differente graph to
 node_train: 200 # "number of node in generated train graphs", 100+ 50, 100
 node_test: 200 # "number of node in generated test graphs", 100+ 50, 100
 graph_node_var: 20
-T: 9  # time horizon #note that this definition is slightly different from the paper
-budget: 3  # budget at each main step
+T: 8  # time horizon #note that this definition is slightly different from the paper
+budget: 4  # budget at each main step
 q: 0.6  # probability of invited node being present
 
 #paras for graphs
