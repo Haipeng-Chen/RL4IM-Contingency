@@ -1,4 +1,0 @@
-[INFO 13:22:09] Experiments Running command 'my_main'
-[INFO 13:22:09] Experiments Started run with ID "619"
-[DEBUG 13:22:09] Experiments Starting Heartbeat
-[DEBUG 13:22:09] my_main Started

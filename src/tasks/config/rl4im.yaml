@@ -3,7 +3,7 @@ agent: 'Agent' # metavar='AGENT_CLASS', default='Agent', type=str, help='Class t
 model: 'S2V_QN_1' #type=str, default='S2V_QN_1', help='network model name') # ['S2V_QN_1', 'S2V_QN_2', 'GCN_QN_1', 'LINE_QN', 'W2V_QN']
 ngames: 1  # type=int, metavar='n', default=1, help='number of games to simulate')
 max_episodes: 1  # type=int, metavar='n', default='1000', help='max number of iterations per game')
-max_global_t: 2000
+max_global_t: 2000 #type=int, help='max number of time steps in training'
 nbr_epoch: 10000 # type=int, metavar='nepoch', default=10000, help="maximal number of epochs")
 lr: 0.001 # type=float, default=1e-4, help="learning rate")
 bs: 32  #32 # type=int, default=32, help="minibatch size for training")
@@ -11,9 +11,9 @@ n_step: 3 # type=int, default=3, help="n step in RL")
 batch: None  # type=int, metavar='nagent', default=None, help='batch run several agent at the same time')
 verbose: False #False # action='store_true', default=True, help='Display cumulative results at each step')
 task: 'rl4im'
-save_every: 20 # save model and do validation every few episodes, default 20
-num_simul_train: 30
-num_simul_test: 1000
+save_every: 20 # save model and do validation every few time steps, default 20
+num_simul_train: 30 # number of simulations of the IC influence process to get an estimate of inlfunece in the training process
+num_simul_test: 1000 # number of simulations of the IC influence process to get an estimate of inlfunece in the test process 
 
 # epsilon greedy
 init_epsilon: 0.99
@@ -27,7 +27,7 @@ method: 'rl'  # ['rl', 'random', 'lazy_adaptive_greedy']
 use_state_abs: True
 reward_type: 3 #int {0, 1, 2, 3} 
 
-model_scheme: 'type1'  # ways to handle various graph size in graph embedding #{'normal': 'run graphs with same sizes', 'type1': 'padding', 'type2': 'for loop for graphs with various nodes'} #TODO
+model_scheme: 'type1'  # ways to handle various graph size in graph embedding #{'normal': 'run graphs with same sizes', 'type1': 'padding', 'type2': 'for loop for graphs with various nodes'} 
 
 checkpoint_path: None
 load_step: 0  # you can set the step, if it is zero, the mode of the max time step will be loaded

@@ -82,12 +82,6 @@ def run_rl4im(_run, config, logger, run_args=None):
             agent.cuda()
     elif args.method == 'random':
         agent = None  
-    elif args.method == 'greedy':
-        agent = None  
-    elif args.method == 'maxdegree': 
-        agent = maxdegreeAgent()
-    elif args.method == 'adaptive_greedy':
-        agent = adaptive_greedyAgent()
     elif args.method == 'lazy_adaptive_greedy':
         agent = lazy_adaptive_greedyAgent()
     else: 

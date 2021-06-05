@@ -4,41 +4,31 @@ import math
 import random
 import argparse
 import pulp
-#from influence import influence, parallel_influence
 import os
 from src.IC import runIC_repeat
-from src.IC import runDIC_repeat
-from src.IC import runLT_repeat
-from src.IC import runSC_repeat
 from src.agent.baseline import *
 
 import time
-import pdb
 
 
 class Environment(object):
     '''
-    Environment for peer leader selection process of influence maximization
-    
-    we consider fully known and static graph first, will potentially extend to: 1) dynamic graph 2) unknown graph 3) influence at each step 4) ...
+    Environment for influence maximization
     G is a nx graph
-    node 'attr': a trinary value where 0 is not-selected; 1 is selected and present; 2 is selected but not present; I am planning to put the state and action embedding outside environment 
     state is 3xN binary array, 
     -- 1st row: invited in previous main step and came (=1), 
     -- 2nd row: invited but not come (=1); 
-    -- 3rd row: invited in previous sub step (=1) or not (=0) --- it is only useful in states in the sub steps, not updated in env  
-    -- elements (=0) on both 1st and 2nd rows are not invited and thus are feasible actions
-    note that the 3rd row of state is only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
+    -- 3rd row: invited in previous sub step (=1) or not (=0) --- only updated outside environment (in rl4im.py: greedy_action_GCN() and memory store step)
     '''
     def __init__(self, mode='train', T=20, budget=5, propagate_p = 0.1, l=0.05, d=1, q=1, cascade='IC', num_simul=1000, graphs=None, name='MVC', args=None):
         self.args = args
         self.name = name
-        self.G = graphs[0] ####
-        self.graph_init = self.G  #####
+        self.G = graphs[0] 
+        self.graph_init = self.G  
 
         self.graphs = graphs
         self.mode = mode
-        self.N = len(self.G.g)  ####
+        self.N = len(self.G.g)  
         self.budget = budget
         self.A = nx.to_numpy_matrix(self.G.g)  
         self.propagate_p = propagate_p
@@ -94,15 +84,15 @@ class Environment(object):
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_max = self.q*(influence_with - influece_without) 
-                reward_max = reward_max/self.N*100 #####
+                reward_max = reward_max/self.N*100 
                 # reward_min
                 seeds = fix_seeds + uncertain_seeds
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_min = self.q*(influence_with - influece_without) 
-                reward_min = reward_min/self.N*100  ####
-                self.reward = (reward_max+reward_min)/2   ####
+                reward_min = reward_min/self.N*100  
+                self.reward = (reward_max+reward_min)/2   
             elif reward_type == 3:
                 fix_seeds = []
                 [fix_seeds.append(v) for v in range(self.N) if self.state[0][v]==1]
@@ -114,14 +104,14 @@ class Environment(object):
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_max = self.q*(influence_with - influece_without)
-                reward_max = reward_max/self.N*100 ####
+                reward_max = reward_max/self.N*100 
                 # reward_min
                 seeds = fix_seeds + uncertain_seeds
                 influece_without = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 seeds.append(sec_action)
                 influence_with = self.run_cascade(seeds=seeds, cascade=self.cascade, sample=self.num_simul)
                 reward_min = self.q*(influence_with - influece_without)
-                reward_min = reward_min/self.N*100 ####
+                reward_min = reward_min/self.N*100 
                 self.reward = reward_min*self.q+reward_max*(1-self.q)
             else:
                 assert(False)
@@ -156,23 +146,14 @@ class Environment(object):
         return next_state, self.reward, self.done
             
     def run_cascade(self, seeds, cascade='IC', sample=1000):
-        #there may be better ways of passing the arguments
         if cascade == 'IC':
             reward, _ = runIC_repeat(self.G.g, seeds, p=self.propagate_p, sample=sample)
-        elif cascade == 'DIC':
-            reward, _ = runDIC_repeat(self.G.g, seeds, p=self.propagate_p, q=0.001, sample=sample)
-        elif cascade == 'LT':
-            reward, _ = runLT_repeat(self.G.g, seeds, l=self.l, sample=sample)
-        elif cascade == 'SC':
-            reward, _ = runSC_repeat(self.G.g, seeds, d=self.d, sample=sample)
         else:
             assert(False)
         return reward
 
-    #TODO
     def f_multi(self, x):
         s=list(x) 
-        #print('cascade model is: ', env.cascade)
         val = self.run_cascade(seeds=s, cascade=self.cascade, sample=self.args.greedy_sample_size)
         return val
  
@@ -182,16 +163,13 @@ class Environment(object):
         absent = []
         for i in invited:
             present.append(i) if random.random() <= self.q else absent.append(i)
-        #[present.append(i) for i in invited if random.random() <= q]
         return present, absent
 
     def reset(self, g_index=0, mode='train'):
         self.mode = mode
         if mode == 'test': 
-            #self.graph_index = g_index 
             self.G = self.graphs[g_index]
         else:
-            #self.graph_index = g_index
             self.G = self.graphs[g_index]
         self.N = len(self.G.g)
         self.A = nx.to_numpy_matrix(self.G.g)

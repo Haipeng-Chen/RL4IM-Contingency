@@ -40,12 +40,6 @@ class DQAgent:
         self.n_step=n_step
         self.args = args
 
-        #self.epsilon_=1
-        #self.epsilon_min=0.02
-        #self.discount_factor =0.999990
-        #self.eps_end=0.02
-        #self.eps_start=1
-        #self.eps_step=20000
         self.t=1
         self.memory = []
         self.memory_n=[]
