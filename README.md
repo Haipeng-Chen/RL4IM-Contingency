@@ -1,9 +1,10 @@
 Code for the paper :
 ## "Contingency-Aware Influence Maximization: A Reinforcement Learning Approach"
 
-### Authors : Haipeng Chen, Wei Qiu, Han-Ching Ou, Bo An, Milind Tambe
+#### Authors : Haipeng Chen<sup>1</sup>, Wei Qiu<sup>2</sup>, Han-Ching Ou<sup>1</sup>, Bo An<sup>2</sup>, Milind Tambe<sup>1</sup>
+#### <sup>1</sup>Harvard University &nbsp; &nbsp; <sup>2</sup>Nanyang Technological University
 
-### Accepted by UAI-2021.
+#### Accepted by UAI-2021.
 
 
 ## Instructions:
