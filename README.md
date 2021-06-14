@@ -12,7 +12,7 @@ Code for the paper :
 
 First, install libraries via `requirements.txt`:
 ```
-pip install requirements.txt 
+pip install -r requirements.txt 
 ```
 
 Then install `pytorch_sparse` via wheel files. Go to this site: https://github.com/rusty1s/pytorch_sparse to download wheel files.
