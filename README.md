@@ -10,12 +10,12 @@ Code for the paper :
 ## Instructions:
 ### Installation
 
-First, install libraries via `requirement.txt`:
+First, install libraries via `requirements.txt`:
 ```
 pip install requirements.txt 
 ```
 
-Then install `pytorch_sparse` via wheel files go to this site: https://github.com/rusty1s/pytorch_sparse
+Then install `pytorch_sparse` via wheel files. Go to this site: https://github.com/rusty1s/pytorch_sparse to download wheel files.
 
 ### Docker
 
