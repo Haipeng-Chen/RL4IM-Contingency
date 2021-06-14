@@ -25,14 +25,14 @@ Follow the instructions in https://github.com/Haipeng-Chen/RL4IM-with-Contingenc
 ### Run the code
 #### RL training
 1. Default command line:
-```python
+```bash
 python main.py --config=rl4im --env-config=basic_env --results-dir=results with lr=1e-3
 ```
 All the default environment and method-related parameters are stored in `src/tasks/config`. You can set params after `with`.
 
 2. Alternatively, you may batch run jobs using `sh multi_run.sh`. Example settings in the paper are specified there which could be used to quickly reproduce the results.  
 
-Run with Docker on GPU `0` for example:
+3. Or run with Docker on GPU `0`, for example:
 
 ```bash
 bash run_interactive.sh 0 python3.7 main.py --config=rl4im --env-config=basic_env --results-dir=results with lr=1e-3
