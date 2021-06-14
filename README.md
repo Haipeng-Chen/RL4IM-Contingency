@@ -9,7 +9,17 @@ Code for the paper :
 
 ## Instructions:
 ### Installation
-Install `pytorch_sparse` via wheel files go to this site: https://github.com/rusty1s/pytorch_sparse
+
+First, install libraries via `requirement.txt`:
+```
+pip install requirements.txt 
+```
+
+Then install `pytorch_sparse` via wheel files go to this site: https://github.com/rusty1s/pytorch_sparse
+
+### Docker
+
+Follow the instructions in https://github.com/Haipeng-Chen/RL4IM-with-Contingency/blob/main/docker/README.md
 
 
 ### Run the code
@@ -22,10 +32,10 @@ All the default environment and method-related parameters are stored in `src/tas
 
 2. Alternatively, you may batch run jobs using `sh multi_run.sh`. Example settings in the paper are specified there which could be used to quickly reproduce the results.  
 
-Run with Docker on GPU `0`
+Run with Docker on GPU `0` for example:
 
 ```bash
-bash run_interactive.sh 0 python3.7 main.py --config=rl4im --env-config=basic_env --results-dir=temp_dir with lr=1e-4
+bash run_interactive.sh 0 python3.7 main.py --config=rl4im --env-config=basic_env --results-dir=results with lr=1e-3
 ```
 
 #### RL validation (find best checkpoint)
