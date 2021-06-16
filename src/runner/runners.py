@@ -34,7 +34,6 @@ class Runner:
         tracemalloc.start()
 
         episode_accumulated_rewards = np.empty((self.args.graph_nbr_test, num_episodes))
-        feasible_actions = list(range(self.environment.N))
         mode = 'test'
         g_names = []
         
@@ -48,7 +47,7 @@ class Runner:
                     # select other graphs
                     self.environment.reset(g_index=g_index, mode=mode)
                     self.agent.reset(g_index=g_index, mode=mode)  
-                    feasible_actions = list(range(self.environment.N))
+                    feasible_actions = list(self.environment.graphs[g_index].nodes())
                     accumulated_reward = 0
                     pri_action = [ ]
                     invited = []
@@ -88,7 +87,7 @@ class Runner:
                 print('method is :', self.args.method)
                 for episode in range(num_episodes):
                     self.environment.reset(g_index=g_index, mode=mode)
-                    feasible_actions = list(range(self.environment.N))
+                    feasible_actions = list(self.environment.graphs[g_index].nodes())
                     invited = []
                     presents = []
                     accumulated_reward = 0
@@ -109,7 +108,7 @@ class Runner:
                 print('method is: ', self.args.method)
                 for episode in range(num_episodes):
                     self.environment.reset(g_index=g_index, mode=mode)
-                    feasible_actions = list(range(self.environment.N))
+                    feasible_actions = list(self.environment.graphs[g_index].nodes())
                     accumulated_reward = 0
                     invited = random.sample(feasible_actions, self.environment.T)
                     presents, _ = self.environment.transition(invited)
@@ -168,7 +167,7 @@ class Runner:
                     self.agent.reset(g_index)  
                     cumul_reward = 0.0
                     pri_action = [ ]
-                    feasible_actions = list(range(self.environment.N))
+                    feasible_actions = list(self.environment.graphs[g_index].nodes())
 
                     curr_episode_t = 0
                     for i in range(1, self.environment.T+1):
