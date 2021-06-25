@@ -15,7 +15,7 @@ First, install libraries via `requirements.txt`:
 pip install -r requirements.txt 
 ```
 
-Then install `pytorch_sparse` via wheel files. Go to this site: https://github.com/rusty1s/pytorch_sparse to download wheel files.
+Then install `pytorch_sparse` via wheel files. Go to this site: https://github.com/rusty1s/pytorch_sparse to install or download wheel files via this link: https://pytorch-geometric.com/whl/.
 
 ### Docker
 
