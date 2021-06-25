@@ -221,7 +221,7 @@ if [ -z "$CHECK_POINT_PATH" ]
 then
     echo "CHECK_POINT_PATH is empty"
 else
-    RUN_COMMAND="RUN_COMMAND checkpoint_path=$CHECK_POINT_PATH load_step=$LOAD_STEP"
+    RUN_COMMAND="${RUN_COMMAND} checkpoint_path=$CHECK_POINT_PATH load_step=$LOAD_STEP"
 fi
 
 
