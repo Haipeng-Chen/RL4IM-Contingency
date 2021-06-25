@@ -1,3 +1,12 @@
+#!/bin/bash
+#SBATCH -n 1              # Number of cores (-n)
+#SBATCH -N 1                # Ensure that all cores are on one Node (-N)
+#SBATCH -t 0-12:00          # Runtime in D-HH:MM, minimum of 10 minutes
+#SBATCH -p tambe_gpu #Your_partition # Partition to submit to
+#SBATCH --mem=10000           # Memory pool for all cores (see also --mem-per-cpu)
+#SBATCH --gres=gpu:1
+#SBATCH -o output/%j.out  # File to which STDOUT will be written, %j inserts jobid
+
 T=8
 BUDGET=4
 Q=0.6
@@ -8,7 +17,7 @@ GRAPH_TYPE='erdos_renyi'
 IS_REAL_GRAPH=False
 SAMPLE_NODES_RATIO=1
 MODE='train'
-REAL_GRAPH_NAME='India'
+REAL_GRAPH_NAME=None
 M=5
 PROPAGATE_P=0.1
 P=0.1
