@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 import random
+import numpy as np
 import networkx as nx
 from src.agent.baseline import *
 
