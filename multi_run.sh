@@ -105,7 +105,7 @@ BASE_CMD="--Q $Q \
           --gpuid ${GPU_ID}"
 
 #### RL training
-Q1: ablation study of reward shaping and state-abstraction
+# Q1: ablation study of reward shaping and state-abstraction
 RL_TRAIN_CMD_ABL_ALL="${BASE_CMD} --USE_STATE_ABS $USE_STATE_ABS"
 for REWARD_TYPE  in 0 1 3
 do  
