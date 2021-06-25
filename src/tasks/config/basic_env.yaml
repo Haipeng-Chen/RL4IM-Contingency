@@ -23,3 +23,6 @@ d: 1  # d in SC cascade
 # paras for baselines
 greedy_sample_size: 20  # sample size for value estimation of greedy algorithms
 is_real_graph: False  
+
+real_graph_name: "India"
+sample_nodes_ratio: 1

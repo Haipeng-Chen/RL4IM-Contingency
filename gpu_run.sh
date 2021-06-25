@@ -25,45 +25,211 @@ EPSILON_DECAY_STEPS=1000
 SAVE_EVERY=20
 GREEDY_SAMPLE_SIZE=100
 
-while getopts f:g:q:t:b:c:d:u:v:e:h:i:j:k:w:x:y:o:l:m:n:p:r:s:z: option
-do
-case "${option}"
-in
-#problem settings (evaluate)
-f) NODE_TRAIN=${OPTARG};;
-g) NODE_TEST=${OPTARG};;
-q) Q=${OPTARG};;
-t) T=${OPTARG};;
-b) BUDGET=${OPTARG};;
-#other problem settings
-c) GRAPH_TYPE=${OPTARG};;
-d) IS_REAL_GRAPH=${OPTARG};;
-u) SAMPLE_NODES_RATIO=${OPTARG};;
-v) REAL_GRAPH_NAME=${OPTARG};;
-e) MODE=${OPTARG};;
-h) M=${OPTARG};;
-i) PROPAGATE_P=${OPTARG};;
-j) P=${OPTARG};;
-k) CASCADE=${OPTARG};;
-#methods (evaluate)
-w) REWARD_TYPE=${OPTARG};;
-x) USE_STATE_ABS=${OPTARG};;
-y) GRAPH_NBR_TRAIN=${OPTARG};;
-#methods (others)
-l) LR=${OPTARG};;
-m) METHOD=${OPTARG};;
-n) EPSILON_DECAY_STEPS=${OPTARG};;
-o) NUM_SIMUL_TRAIN=${OPTARG};;
-p) CHECK_POINT_PATH=${OPTARG};;
-r) LOAD_STEP=${OPTARG};;
-s) SAVE_EVERY=${OPTARG};;
-z) GREEDY_SAMPLE_SIZE=${OPTARG};;
-esac
+CHECK_POINT_PATH=""
+LOAD_STEP=0
+
+############################################################################
+ARGUMENT_LIST=(
+    "platform"
+    "gpuid"
+    "NODE_TRAIN"
+    "NODE_TEST"
+    "Q"
+    "T"
+    "BUDGET"
+    "GRAPH_TYPE"
+    "IS_REAL_GRAPH"
+    "SAMPLE_NODES_RATIO"
+    "REAL_GRAPH_NAME"
+    "MODE"
+    "M"
+    "PROPAGATE_P"
+    "P"
+    "CASCADE"
+    "REWARD_TYPE"
+    "USE_STATE_ABS"
+    "GRAPH_NBR_TRAIN"
+    "LR"
+    "METHOD"
+    "EPSILON_DECAY_STEPS"
+    "NUM_SIMUL_TRAIN"
+    "CHECK_POINT_PATH"
+    "LOAD_STEP"
+    "SAVE_EVERY"
+    "GREEDY_SAMPLE_SIZE"
+)
+
+# read arguments
+opts=$(getopt \
+    --longoptions "$(printf "%s:," "${ARGUMENT_LIST[@]}")" \
+    --name "$(basename "$0")" \
+    --options "" \
+    -- "$@" 
+)
+
+# set default value
+# there are three ways: normal, slurm, docker
+#   normal: run tasks with python (on your laptop or on remote machines)
+#   slurm: run tasks with sbatch
+#   docker: run tasks with docker
+platform="normal"
+gpuid=3
+
+eval set --$opts
+
+while true; do
+    case "$1" in
+    --platform)
+        shift
+        platform=$1
+        ;;
+    --gpuid)
+        shift
+        gpuid=$1
+        ;;
+    --NODE_TRAIN)
+        shift
+        NODE_TRAIN=$1
+        ;;
+    --NODE_TEST)
+        shift
+        NODE_TEST=$1
+        ;;
+    --Q)
+        shift
+        Q=$1
+        ;;
+    --T)
+        shift
+        T=$1
+        ;;
+    --BUDGET)
+        shift
+        BUDGET=$1
+        ;;
+    --GRAPH_TYPE)
+        shift
+        GRAPH_TYPE=$1
+        ;;
+    --SAMPLE_NODES_RATIO)
+        shift
+        SAMPLE_NODES_RATIO=$1
+        ;;
+    --REAL_GRAPH_NAME)
+        shift
+        REAL_GRAPH_NAME=$1
+        ;;
+    --MODE)
+        shift
+        MODE=$1
+        ;;
+    --M)
+        shift
+        M=$1
+        ;;
+    --PROPAGATE_P)
+        shift
+        PROPAGATE_P=$1
+        ;;
+    --P)
+        shift
+        P=$1
+        ;;
+    --CASCADE)
+        shift
+        CASCADE=$1
+        ;;
+    --REWARD_TYPE)
+        shift
+        REWARD_TYPE=$1
+        ;;
+    --USE_STATE_ABS)
+        shift
+        USE_STATE_ABS=$1
+        ;;
+    --GRAPH_NBR_TRAIN)
+        shift
+        GRAPH_NBR_TRAIN=$1
+        ;;
+    --LR)
+        shift
+        LR=$1
+        ;;
+    --METHOD)
+        shift
+        METHOD=$1
+        ;;
+    --EPSILON_DECAY_STEPS)
+        shift
+        EPSILON_DECAY_STEPS=$1
+        ;;
+    --CHECK_POINT_PATH)
+        shift
+        CHECK_POINT_PATH=$1
+        ;;
+    --SAVE_EVERY)
+        shift
+        SAVE_EVERY=$1
+        ;;
+    --GREEDY_SAMPLE_SIZE)
+        shift
+        GREEDY_SAMPLE_SIZE=$1
+        ;;
+    --)
+        shift
+        break
+        ;;
+    # *)
+    #     shift
+    #     break
+    #     ;;
+    esac
+    shift
 done
+############################################################################
 
-#echo 'mode is:' $MODE
-#echo 'method is:' $METHOD
-#echo 'budget is:' $BUDGET
+RUN_COMMAND="--config=rl4im \
+    --env-config=basic_env \
+    --results-dir=results \
+    with \
+    T=$T \
+    budget=$BUDGET \
+    save_every=$SAVE_EVERY \
+    q=$Q \
+    mode=$MODE \
+    node_train=$NODE_TRAIN \
+    node_test=$NODE_TEST \
+    m=$M \
+    propagate_p=$PROPAGATE_P \
+    p=$P \
+    method=$METHOD \
+    greedy_sample_size=$GREEDY_SAMPLE_SIZE \
+    graph_type=$GRAPH_TYPE \
+    is_real_graph=$IS_REAL_GRAPH \
+    sample_nodes_ratio=$SAMPLE_NODES_RATIO \
+    cascade=$CASCADE \
+    reward_type=$REWARD_TYPE \
+    use_state_abs=$USE_STATE_ABS \
+    graph_nbr_train=$GRAPH_NBR_TRAIN \
+    num_simul_train=$NUM_SIMUL_TRAIN \
+    real_graph_name=$REAL_GRAPH_NAME \
+    lr=$LR \
+    epsilon_decay_steps=$EPSILON_DECAY_STEPS"
 
-python main.py --config=rl4im --env-config=basic_env --results-dir=results with T=$T budget=$BUDGET save_every=$SAVE_EVERY q=$Q mode=$MODE node_train=$NODE_TRAIN node_test=$NODE_TEST m=$M propagate_p=$PROPAGATE_P p=$P method=$METHOD greedy_sample_size=$GREEDY_SAMPLE_SIZE graph_type=$GRAPH_TYPE is_real_graph=$IS_REAL_GRAPH sample_nodes_ratio=$SAMPLE_NODES_RATIO cascade=$CASCADE reward_type=$REWARD_TYPE use_state_abs=$USE_STATE_ABS graph_nbr_train=$GRAPH_NBR_TRAIN num_simul_train=$NUM_SIMUL_TRAIN real_graph_name=$REAL_GRAPH_NAME lr=$LR epsilon_decay_steps=$EPSILON_DECAY_STEPS checkpoint_path=$CHECK_POINT_PATH load_step=$LOAD_STEP
 
+if [ -z "$CHECK_POINT_PATH" ]
+then
+    echo "CHECK_POINT_PATH is empty"
+else
+    RUN_COMMAND="RUN_COMMAND checkpoint_path=$CHECK_POINT_PATH load_step=$LOAD_STEP"
+fi
+
+
+if [[ ${platform} == "docker" ]]; then
+    echo ${RUN_COMMAND}
+    bash run_interactive.sh ${gpuid} python main.py ${RUN_COMMAND}
+elif [[ ${platform} == "normal" ]]; then
+    CUDA_VISIBLE_DEVICES=${gpuid} python main.py ${RUN_COMMAND}
+else
+    python main.py ${RUN_COMMAND}
+fi

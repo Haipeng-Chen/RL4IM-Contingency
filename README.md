@@ -15,7 +15,7 @@ First, install libraries via `requirements.txt`:
 pip install -r requirements.txt 
 ```
 
-Then install `pytorch_sparse` via wheel files. Go to this site: https://github.com/rusty1s/pytorch_sparse to install or download wheel files via this link: https://pytorch-geometric.com/whl/.
+Then install `pytorch_sparse` via wheel files. Go to this site: https://github.com/rusty1s/pytorch_sparse to install or download wheel files to speedup installation via this link: https://pytorch-geometric.com/whl/.
 
 ### Docker
 
@@ -28,14 +28,27 @@ Follow the instructions in https://github.com/Haipeng-Chen/RL4IM-with-Contingenc
 ```bash
 python main.py --config=rl4im --env-config=basic_env --results-dir=results with lr=1e-3
 ```
-All the default environment and method-related parameters are stored in `src/tasks/config`. You can set params after `with`.
+All the default environment and method-related parameters are stored in `src/tasks/config`. You can set customized values of hyperparameters after `with` as demonstrated in the above command.
 
-2. Alternatively, you may batch run jobs using `sh multi_run.sh`. Example settings in the paper are specified there which could be used to reproduce the results.  
+2. There are three ways to run tasks, running tasks with bash scripts on the current machine, running tasks on a distributed system via SLURM or running tasks with Docker. You can run jobs using `sh multi_run.sh`. Example settings in the paper are specified there which could be used to reproduce the results.
 
-3. Or run with Docker on GPU `0`, for example:
+(1) Running tasks with bash scripts on the current machine. For example running tasks on GPU `0`:
 
 ```bash
-bash run_interactive.sh 0 python3.7 main.py --config=rl4im --env-config=basic_env --results-dir=results with lr=1e-3
+bash multi_run.sh --platform normal --gpuid 0
+```
+The `normal` means running tasks in the Python environment of current machine.
+
+(2) Running tasks on a distributed system via SLURM. For example running tasks via SLURM on GPU `0`:
+
+```bash
+bash multi_run.sh --platform slurm --gpuid 0
+```
+
+(3) Running tasks with Docker. For example running tasks with Docker on GPU `0`:
+
+```bash
+bash multi_run.sh --platform docker --gpuid 0
 ```
 
 #### RL validation (find the best checkpoint)
