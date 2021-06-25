@@ -49,7 +49,7 @@ runner=${runner}
 if [[ ${platform} == "normal" ]]; then
     runner=bash
 elif [[ ${platform} == "slurm" ]]; then
-    runner=${runner}
+    runner=sbatch
 elif [[ ${platform} == "docker" ]]; then
     runner=bash
 else
