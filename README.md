@@ -55,11 +55,13 @@ An example code of it is also included in `multi_run.sh`
 
 ### Cite
 
+```
 @article{chen2021contingency,
   title={Contingency-Aware Influence Maximization: A Reinforcement Learning Approach},
   author={Chen, Haipeng and Qiu, Wei and Ou, Han-Ching and An, Bo and Tambe, Milind},
   journal={arXiv preprint arXiv:2106.07039},
   year={2021}
 }
+```
 
 
