@@ -40,7 +40,7 @@ bash run_interactive.sh 0 python3.7 main.py --config=rl4im --env-config=basic_en
 
 #### RL validation (find the best checkpoint)
 The training results will be stored under the directory `results/rl4im/sacred/xx` where `xx` is the id of one running of the experiment.
-This step is to find the optimal checkpoint from the validation results. You can use the script `notebooks/validation.ipynb`, where you need to specify the runs id `xx`. We will try to upgrade in the next version with an end-to-end pipeline.
+This step is to find the optimal checkpoint from the validation results. You can use the script `validation.ipynb`, where you need to specify the runs id `xx`. We will try to upgrade in the next version with an end-to-end pipeline.
 
 
 #### RL test
