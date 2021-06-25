@@ -17,10 +17,6 @@ pip install -r requirements.txt
 
 Then install `pytorch_sparse` via wheel files. Go to this site: https://github.com/rusty1s/pytorch_sparse to install or download wheel files to speedup installation via this link: https://pytorch-geometric.com/whl/.
 
-### Docker
-
-Follow the instructions in https://github.com/Haipeng-Chen/RL4IM-with-Contingency/blob/main/docker/README.md
-
 
 ### Run the code
 #### RL training
@@ -45,7 +41,7 @@ The `normal` means running tasks in the Python environment of current machine.
 bash multi_run.sh --platform slurm --gpuid 0
 ```
 
-(3) Running tasks with Docker. For example running tasks with Docker on GPU `0`:
+(3) Running tasks with Docker. Follow the instructions in https://github.com/Haipeng-Chen/RL4IM-with-Contingency/blob/main/docker/README.md For example running tasks with Docker on GPU `0`:
 
 ```bash
 bash multi_run.sh --platform docker --gpuid 0
