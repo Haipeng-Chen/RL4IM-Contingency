@@ -49,7 +49,10 @@ ENV PYTHONPATH "${PYTHONPATH}:/home/docker/.local/lib/python3.7/site-packages/"
 RUN chown -R docker:docker /home/docker/.local/
 RUN chmod -R 777 /home/docker/.local/
 RUN chmod -R 777 /.cache/pip/
-RUN python3.7 -m pip list
+
+RUN sudo ln -s $(which python3.7) /usr/bin/python
+
+RUN python -m pip list
 
 USER docker
 WORKDIR /home/docker/app
