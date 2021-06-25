@@ -30,7 +30,7 @@ python main.py --config=rl4im --env-config=basic_env --results-dir=results with 
 ```
 All the default environment and method-related parameters are stored in `src/tasks/config`. You can set params after `with`.
 
-2. Alternatively, you may batch run jobs using `sh multi_run.sh`. Example settings in the paper are specified there which could be used to quickly reproduce the results.  
+2. Alternatively, you may batch run jobs using `sh multi_run.sh`. Example settings in the paper are specified there which could be used to reproduce the results.  
 
 3. Or run with Docker on GPU `0`, for example:
 
@@ -39,15 +39,15 @@ bash run_interactive.sh 0 python3.7 main.py --config=rl4im --env-config=basic_en
 ```
 
 #### RL validation (find the best checkpoint)
-This step is to find the optimal checkpoint from the validation results. You can use the script validate.ipynb, where you need to specify the runs number. 
-We will try to upgrade in the next version with an end-to-end pipeline.
+The training results will be stored under the directory `results/rl4im/sacred/xx` where `xx` is the id of one running of the experiment.
+This step is to find the optimal checkpoint from the validation results. You can use the script `notebooks/validation.ipynb`, where you need to specify the runs id `xx`. We will try to upgrade in the next version with an end-to-end pipeline.
 
 
 #### RL test
 
 After finding the best check point via the validation process above, you are ready to run the test! An example of RL test is also given in `multi_run.sh`
 
-It will load the model with the max step by default. If you want to load the specified model, add `load_step=OPT`, where OPT is the one you find using the validation process above. 
+It will load the model with the max step by default. If you want to load the specified model, add `load_step=#OPT`, where `#OPT` is the optimal checkpoint you find using the validation process above. 
 
 
 #### Run CHANGE baseline
