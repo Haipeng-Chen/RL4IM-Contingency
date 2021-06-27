@@ -12,7 +12,7 @@ batch: None  # type=int, metavar='nagent', default=None, help='batch run several
 verbose: False #False # action='store_true', default=True, help='Display cumulative results at each step')
 task: 'rl4im'
 save_every: 20 # save model and do validation every few time steps, default 20
-num_simul_train: 30 # number of simulations of the IC influence process to get an estimate of inlfunece in the training process
+num_simul_train: 20 # number of simulations of the IC influence process to get an estimate of inlfunece in the training process
 num_simul_test: 1000 # number of simulations of the IC influence process to get an estimate of inlfunece in the test process 
 
 # epsilon greedy
